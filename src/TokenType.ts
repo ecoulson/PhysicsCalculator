@@ -9,4 +9,5 @@ export enum TokenType {
 	Absolute,
 	LeftParentheses,
 	RightParentheses,
+	Whitespace,
 }

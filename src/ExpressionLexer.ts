@@ -4,6 +4,7 @@ import { UnrecognizedTokenError } from "./UnrecognizedTokenError";
 
 const DIGIT_REGEX : RegExp = /\d/;
 const LETTER_REGEX : RegExp = /^[a-zA-Z]+$/;
+const WHITESPACE_REGEX : RegExp = /\s/;
 
 export class ExpressionLexer {
 	private offset: number;
@@ -19,7 +20,11 @@ export class ExpressionLexer {
 		while(!this.isEndOfExpression()) {
 			let ch = this.expression[this.offset++];
 			let token : Token = this.createToken(ch);
-			tokens.push(token);
+			
+			//disregard whitespace tokens
+			if (token.getTokenType() != TokenType.Whitespace) {
+				tokens.push(token);
+			}
 		}
 		return tokens;
 	}
@@ -33,6 +38,8 @@ export class ExpressionLexer {
 			return this.readNumberToken(char);
 		} else if (LETTER_REGEX.test(char)) {
 			return this.readIdentifierToken(char);
+		} else if (WHITESPACE_REGEX.test(char)) {
+			return new Token(TokenType.Whitespace, '', -1);
 		} else {
 			let pos : number = this.offset - 1;
 			switch (char) {
