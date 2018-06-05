@@ -12,11 +12,10 @@ describe("Lexer Test Suite", () => {
 		try {
 			let lexer = new ExpressionLexer(number1);
 			let tokens : Array<Token> = lexer.lex();
-			expect(tokens[0]).to.deep.equal({
-				tokenType: TokenType.Number,
-				data: number1,
-				pos: 0,
-			});
+			let token : Token = tokens[0];
+			expect(token.getData()).to.equal(number1);
+			expect(token.getTokenType()).to.equal(TokenType.Number);
+			expect(token.getPos()).to.equal(0);
 			done();
 		} catch(err) {
 			done(err);
@@ -27,11 +26,10 @@ describe("Lexer Test Suite", () => {
 		try {
 			let lexer = new ExpressionLexer(number2);
 			let tokens : Array<Token> = lexer.lex();
-			expect(tokens[0]).to.deep.equal({
-				tokenType: TokenType.Number,
-				data: number2,
-				pos: 0,
-			});
+			let token : Token = tokens[0];
+			expect(token.getData()).to.equal(number2);
+			expect(token.getTokenType()).to.equal(TokenType.Number);
+			expect(token.getPos()).to.equal(0);
 			done();
 		} catch(err) {
 			done(err);
