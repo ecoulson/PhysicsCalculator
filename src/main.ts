@@ -1,3 +1,3 @@
-export function main() {
-	console.log("hello, world!");
+export function evaluate(expression: string): number {
+	return 0;
 }
