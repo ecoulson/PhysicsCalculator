@@ -1,5 +1,7 @@
 import { expect } from 'chai';
 
 describe('Test', () => {
-	it('Should return true')
+	it('Should return true', function (done) {
+		done();
+	});
 });
