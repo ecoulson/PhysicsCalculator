@@ -35,8 +35,18 @@ export class ExpressionLexer {
 			return this.readIdentifierToken(char);
 		} else {
 			let pos : number = this.offset - 1;
-			// return new Token(TokenType.Number, "", this.offset - 1);
-			throw new UnrecognizedTokenError(`Unrecognized Token: ${char} at position ${pos}`);
+			switch (char) {
+				case '+':
+					return new Token(TokenType.Add, '+', pos);
+				case '-':
+					return new Token(TokenType.Subtract, '-', pos);
+				case '*':
+					return new Token(TokenType.Multiply, '*', pos);
+				case '/':
+					return new Token(TokenType.Divide, '/', pos);
+				default:
+					throw new UnrecognizedTokenError(`Unrecognized Token: ${char} at position ${pos}`);
+			}
 		}
 	}
 

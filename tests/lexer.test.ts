@@ -6,6 +6,10 @@ import { TokenType } from '../src/TokenType';
 const number1 = "1234567890";
 const number2 = "1234567890.1234567890";
 const identifer = "abcdefghijklmnopqrstuvwxyz";
+const add = "+";
+const subtract = "-";
+const multiply = "*";
+const divide = "/";
 const unrecognized = "©å˙∂∑˙å";
 
 describe("Lexer Test Suite", () => {
@@ -49,7 +53,63 @@ describe("Lexer Test Suite", () => {
 		} catch(err) {
 			done(err);
 		}
-	})
+	});
+
+	it("Should lex an add token at position 0", (done) => {
+		try {
+			let lexer = new ExpressionLexer(add);
+			let tokens : Array<Token> = lexer.lex();
+			let token : Token = tokens[0];
+			expect(token.getData()).to.equal(add);
+			expect(token.getTokenType()).to.equal(TokenType.Add);
+			expect(token.getPos()).to.equal(0);
+			done();
+		} catch(err) {
+			done(err);
+		}
+	});
+
+	it("Should lex a subtract token at position 0", (done) => {
+		try {
+			let lexer = new ExpressionLexer(subtract);
+			let tokens : Array<Token> = lexer.lex();
+			let token : Token = tokens[0];
+			expect(token.getData()).to.equal(subtract);
+			expect(token.getTokenType()).to.equal(TokenType.Subtract);
+			expect(token.getPos()).to.equal(0);
+			done();
+		} catch(err) {
+			done(err);
+		}
+	});
+
+	it("Should lex a multiply token at positon 0", (done) => {
+		try {
+			let lexer = new ExpressionLexer(multiply);
+			let tokens : Array<Token> = lexer.lex();
+			let token : Token = tokens[0];
+			expect(token.getData()).to.equal(multiply);
+			expect(token.getTokenType()).to.equal(TokenType.Multiply);
+			expect(token.getPos()).to.equal(0);
+			done();
+		} catch(err) {
+			done(err);
+		}
+	});
+
+	it("Should lex a divide token at positon 0", (done) => {
+		try {
+			let lexer = new ExpressionLexer(divide);
+			let tokens : Array<Token> = lexer.lex();
+			let token : Token = tokens[0];
+			expect(token.getData()).to.equal(divide);
+			expect(token.getTokenType()).to.equal(TokenType.Divide);
+			expect(token.getPos()).to.equal(0);
+			done();
+		} catch(err) {
+			done(err);
+		}
+	});
 
 	it("Should throw an UnrecognizedTokenError", (done) => {
 		try {
