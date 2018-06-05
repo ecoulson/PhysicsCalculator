@@ -1,5 +1,6 @@
 import { Token } from "./Token";
 import { TokenType } from "./TokenType";
+import { UnrecognizedTokenError } from "./UnrecognizedTokenError";
 
 const DIGIT_REGEX : RegExp = /\d/;
 
@@ -30,7 +31,9 @@ export class ExpressionLexer {
 		if (DIGIT_REGEX.test(char)) {
 			return this.readNumberToken(char);
 		} else {
-			return new Token(TokenType.Number, "", this.offset - 1);
+			let pos : number = this.offset - 1;
+			// return new Token(TokenType.Number, "", this.offset - 1);
+			throw new UnrecognizedTokenError(`Unrecognized Token: ${char} at position ${pos}`);
 		}
 	}
 
