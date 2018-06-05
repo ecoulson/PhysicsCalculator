@@ -14,6 +14,15 @@ const exponentiation = "^";
 const absolute = "|";
 const leftParentheses = "(";
 const rightParentheses = ")";
+const everyToken = "1.2abc+-*/^|()\t";
+const everyTokenType = [
+						TokenType.Number, TokenType.Identifier, 
+						TokenType.Add, TokenType.Subtract, 
+						TokenType.Multiply, TokenType.Divide, 
+						TokenType.Exponentiate, TokenType.Absolute, 
+						TokenType.LeftParentheses, TokenType.RightParentheses
+					];
+const everyTokenPosition = [0,3,6,7,8,9,10,11,12,13];
 const unrecognized = "©å˙∂∑˙å";
 
 describe("Lexer Test Suite", () => {
@@ -182,6 +191,32 @@ describe("Lexer Test Suite", () => {
 			done(err);
 		}
 	});
+
+	it("Should have one of every token (Excluding whitespace)", (done) => {
+		try {
+			let lexer = new ExpressionLexer(everyToken);
+			let tokens : Array<Token> = lexer.lex();
+			for (let i = 0; i < tokens.length; i++) {
+				expect(tokens[i].getTokenType()).to.equal(everyTokenType[i]);
+			}
+			done();
+		} catch(err) {
+			done(err);
+		}
+	});
+
+	it("Each token should be at the correct position", (done) => {
+		try {
+			let lexer = new ExpressionLexer(everyToken);
+			let tokens : Array<Token> = lexer.lex();
+			for (let i = 0; i < tokens.length; i++) {
+				expect(tokens[i].getPos()).to.equal(everyTokenPosition[i]);
+			}
+			done();
+		} catch(err) {
+			done(err);
+		}
+	})
 
 	it("Should throw an UnrecognizedTokenError", (done) => {
 		try {
