@@ -2,7 +2,8 @@
   "name": "physicscalculator",
   "version": "1.0.0",
   "description": "A calculator including units",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "mocha -r ts-node/register tests/**/*.test.ts",
     "build": "tsc"
