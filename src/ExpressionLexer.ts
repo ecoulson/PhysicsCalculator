@@ -20,7 +20,7 @@ export class ExpressionLexer {
 		while(!this.isEndOfExpression()) {
 			let ch = this.expression[this.offset++];
 			let token : Token = this.createToken(ch);
-			
+
 			//disregard whitespace tokens
 			if (token.getTokenType() != TokenType.Whitespace) {
 				tokens.push(token);
@@ -34,7 +34,7 @@ export class ExpressionLexer {
 	}
 
 	private createToken(char: string): Token {		
-		if (DIGIT_REGEX.test(char)) {
+		if (this.isDigit(char)) {
 			return this.readNumberToken(char);
 		} else if (LETTER_REGEX.test(char)) {
 			return this.readIdentifierToken(char);
@@ -65,11 +65,20 @@ export class ExpressionLexer {
 		}
 	}
 
+	private isDigit(char: string): boolean {
+		return DIGIT_REGEX.test(char) || char == '.';
+	}
+
+	private isLetter(char: string): boolean {
+		return LETTER_REGEX.test(char);
+	}
+
 	private readNumberToken(char: string): Token {
 		let pos : number = this.offset - 1;
 		let number : string = char;
-		while (!this.isEndOfExpression()) {
+		while (!this.isEndOfExpression() && this.isDigit(char)) {
 			number += this.expression[this.offset++];
+			char = this.expression[this.offset];
 		}
 		return new Token(TokenType.Number, number, pos);
 	}
@@ -77,8 +86,9 @@ export class ExpressionLexer {
 	private readIdentifierToken(char: string): Token {
 		let pos : number = this.offset - 1;
 		let identifier : string = char;
-		while (!this.isEndOfExpression()) {
+		while (!this.isEndOfExpression() && this.isLetter(char)) {
 			identifier += this.expression[this.offset++];
+			char = this.expression[this.offset];
 		}
 		return new Token(TokenType.Identifier, identifier, pos);
 	}

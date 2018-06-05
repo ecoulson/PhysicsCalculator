@@ -14,7 +14,10 @@ const exponentiation = "^";
 const absolute = "|";
 const leftParentheses = "(";
 const rightParentheses = ")";
-const everyToken = "1.2abc+-*/^|()\t";
+const everyToken = "1234567890.1234567890abcdefghijklmnopqrstuvwxyz+-*/^|()\t";
+const everyTokenValue = [
+	number2, identifer, add, subtract, multiply, divide, exponentiation, absolute, leftParentheses, rightParentheses
+];
 const everyTokenType = [
 						TokenType.Number, TokenType.Identifier, 
 						TokenType.Add, TokenType.Subtract, 
@@ -22,7 +25,7 @@ const everyTokenType = [
 						TokenType.Exponentiate, TokenType.Absolute, 
 						TokenType.LeftParentheses, TokenType.RightParentheses
 					];
-const everyTokenPosition = [0,3,6,7,8,9,10,11,12,13];
+const everyTokenPosition = [0,21,47,48,49,50,51,52,53,54];
 const unrecognized = "©å˙∂∑˙å";
 
 describe("Lexer Test Suite", () => {
@@ -34,6 +37,7 @@ describe("Lexer Test Suite", () => {
 			expect(token.getData()).to.equal(number1);
 			expect(token.getTokenType()).to.equal(TokenType.Number);
 			expect(token.getPos()).to.equal(0);
+			expect(tokens.length).to.equal(1);
 			done();
 		} catch(err) {
 			done(err);
@@ -48,6 +52,7 @@ describe("Lexer Test Suite", () => {
 			expect(token.getData()).to.equal(number2);
 			expect(token.getTokenType()).to.equal(TokenType.Number);
 			expect(token.getPos()).to.equal(0);
+			expect(tokens.length).to.equal(1);
 			done();
 		} catch(err) {
 			done(err);
@@ -62,6 +67,7 @@ describe("Lexer Test Suite", () => {
 			expect(token.getData()).to.equal(identifer);
 			expect(token.getTokenType()).to.equal(TokenType.Identifier);
 			expect(token.getPos()).to.equal(0);
+			expect(tokens.length).to.equal(1);
 			done();
 		} catch(err) {
 			done(err);
@@ -76,6 +82,7 @@ describe("Lexer Test Suite", () => {
 			expect(token.getData()).to.equal(add);
 			expect(token.getTokenType()).to.equal(TokenType.Add);
 			expect(token.getPos()).to.equal(0);
+			expect(tokens.length).to.equal(1);
 			done();
 		} catch(err) {
 			done(err);
@@ -90,6 +97,7 @@ describe("Lexer Test Suite", () => {
 			expect(token.getData()).to.equal(subtract);
 			expect(token.getTokenType()).to.equal(TokenType.Subtract);
 			expect(token.getPos()).to.equal(0);
+			expect(tokens.length).to.equal(1);
 			done();
 		} catch(err) {
 			done(err);
@@ -104,6 +112,7 @@ describe("Lexer Test Suite", () => {
 			expect(token.getData()).to.equal(multiply);
 			expect(token.getTokenType()).to.equal(TokenType.Multiply);
 			expect(token.getPos()).to.equal(0);
+			expect(tokens.length).to.equal(1);
 			done();
 		} catch(err) {
 			done(err);
@@ -118,6 +127,7 @@ describe("Lexer Test Suite", () => {
 			expect(token.getData()).to.equal(divide);
 			expect(token.getTokenType()).to.equal(TokenType.Divide);
 			expect(token.getPos()).to.equal(0);
+			expect(tokens.length).to.equal(1);
 			done();
 		} catch(err) {
 			done(err);
@@ -132,6 +142,7 @@ describe("Lexer Test Suite", () => {
 			expect(token.getData()).to.equal(exponentiation);
 			expect(token.getTokenType()).to.equal(TokenType.Exponentiate);
 			expect(token.getPos()).to.equal(0);
+			expect(tokens.length).to.equal(1);
 			done();
 		} catch(err) {
 			done(err);
@@ -146,6 +157,7 @@ describe("Lexer Test Suite", () => {
 			expect(token.getData()).to.equal(absolute);
 			expect(token.getTokenType()).to.equal(TokenType.Absolute);
 			expect(token.getPos()).to.equal(0);
+			expect(tokens.length).to.equal(1);
 			done();
 		} catch(err) {
 			done(err);
@@ -160,6 +172,7 @@ describe("Lexer Test Suite", () => {
 			expect(token.getData()).to.equal(leftParentheses);
 			expect(token.getTokenType()).to.equal(TokenType.LeftParentheses);
 			expect(token.getPos()).to.equal(0);
+			expect(tokens.length).to.equal(1);
 			done();
 		} catch(err) {
 			done(err);
@@ -174,6 +187,7 @@ describe("Lexer Test Suite", () => {
 			expect(token.getData()).to.equal(rightParentheses);
 			expect(token.getTokenType()).to.equal(TokenType.RightParentheses);
 			expect(token.getPos()).to.equal(0);
+			expect(tokens.length).to.equal(1);
 			done();
 		} catch(err) {
 			done(err);
@@ -197,6 +211,7 @@ describe("Lexer Test Suite", () => {
 			let lexer = new ExpressionLexer(everyToken);
 			let tokens : Array<Token> = lexer.lex();
 			for (let i = 0; i < tokens.length; i++) {
+				expect(tokens[i].getData()).to.equal(everyTokenValue[i]);
 				expect(tokens[i].getTokenType()).to.equal(everyTokenType[i]);
 			}
 			done();
@@ -210,6 +225,7 @@ describe("Lexer Test Suite", () => {
 			let lexer = new ExpressionLexer(everyToken);
 			let tokens : Array<Token> = lexer.lex();
 			for (let i = 0; i < tokens.length; i++) {
+				expect(tokens[i].getData()).to.equal(everyTokenValue[i]);
 				expect(tokens[i].getPos()).to.equal(everyTokenPosition[i]);
 			}
 			done();
