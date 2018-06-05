@@ -1,0 +1,24 @@
+{
+  "name": "physicscalculator",
+  "version": "1.0.0",
+  "description": "A calculator including units",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ecoulson/PhysicsCalculator.git"
+  },
+  "keywords": [
+    "Calculator",
+    "Physics",
+    "Expressions"
+  ],
+  "author": "Evan Coulson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ecoulson/PhysicsCalculator/issues"
+  },
+  "homepage": "https://github.com/ecoulson/PhysicsCalculator#readme"
+}
