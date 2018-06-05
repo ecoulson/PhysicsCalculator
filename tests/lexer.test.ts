@@ -11,6 +11,9 @@ const subtract = "-";
 const multiply = "*";
 const divide = "/";
 const exponentiation = "^";
+const absolute = "|";
+const leftParentheses = "(";
+const rightParentheses = ")";
 const unrecognized = "©å˙∂∑˙å";
 
 describe("Lexer Test Suite", () => {
@@ -119,6 +122,48 @@ describe("Lexer Test Suite", () => {
 			let token : Token = tokens[0];
 			expect(token.getData()).to.equal(exponentiation);
 			expect(token.getTokenType()).to.equal(TokenType.Exponentiate);
+			expect(token.getPos()).to.equal(0);
+			done();
+		} catch(err) {
+			done(err);
+		}
+	});
+
+	it("Should lex an absolute token at positon 0", (done) => {
+		try {
+			let lexer = new ExpressionLexer(absolute);
+			let tokens : Array<Token> = lexer.lex();
+			let token : Token = tokens[0];
+			expect(token.getData()).to.equal(absolute);
+			expect(token.getTokenType()).to.equal(TokenType.Absolute);
+			expect(token.getPos()).to.equal(0);
+			done();
+		} catch(err) {
+			done(err);
+		}
+	});
+
+	it("Should lex a left parentheses token at positon 0", (done) => {
+		try {
+			let lexer = new ExpressionLexer(leftParentheses);
+			let tokens : Array<Token> = lexer.lex();
+			let token : Token = tokens[0];
+			expect(token.getData()).to.equal(leftParentheses);
+			expect(token.getTokenType()).to.equal(TokenType.LeftParentheses);
+			expect(token.getPos()).to.equal(0);
+			done();
+		} catch(err) {
+			done(err);
+		}
+	});
+
+	it("Should lex a left parentheses token at positon 0", (done) => {
+		try {
+			let lexer = new ExpressionLexer(rightParentheses);
+			let tokens : Array<Token> = lexer.lex();
+			let token : Token = tokens[0];
+			expect(token.getData()).to.equal(rightParentheses);
+			expect(token.getTokenType()).to.equal(TokenType.RightParentheses);
 			expect(token.getPos()).to.equal(0);
 			done();
 		} catch(err) {

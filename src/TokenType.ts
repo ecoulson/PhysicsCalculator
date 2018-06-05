@@ -6,4 +6,7 @@ export enum TokenType {
 	Multiply,
 	Divide,
 	Exponentiate,
+	Absolute,
+	LeftParentheses,
+	RightParentheses,
 }
