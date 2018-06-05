@@ -2,10 +2,13 @@ import { TokenType } from "./TokenType";
 
 export class Token {
 	private tokenType: TokenType;
-	private pos: number; 
+	private pos: number;
+	private data: string;
 
-	Token(tokenType: TokenType, pos: number) {
+	constructor(tokenType: TokenType, data: string, pos: number) {
 		this.tokenType = tokenType;
+		this.pos = pos;
+		this.data = data;
 	}
 
 	getTokenType(): TokenType {
@@ -14,5 +17,9 @@ export class Token {
 
 	getPos(): number {
 		return this.pos;
+	}
+
+	getData(): number {
+		return this.data;
 	}
 }

@@ -1,6 +1,5 @@
-import { lex } from "./ExpressionLexer";
+import { ExpressionLexer } from "./ExpressionLexer";
 
 export function evaluate(expression: string): number {
-	lex(expression);
 	return 0;
 }
