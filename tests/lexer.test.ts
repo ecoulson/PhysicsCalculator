@@ -171,6 +171,18 @@ describe("Lexer Test Suite", () => {
 		}
 	});
 
+	it("Should not have a whitespace token at position 0", (done) => {
+		try {
+			let lexer = new ExpressionLexer("\t" + rightParentheses);
+			let tokens : Array<Token> = lexer.lex();
+			let token : Token = tokens[0];
+			expect(token.getTokenType()).to.not.equal(TokenType.Whitespace);
+			done();
+		} catch(err) {
+			done(err);
+		}
+	});
+
 	it("Should throw an UnrecognizedTokenError", (done) => {
 		try {
 			let lexer = new ExpressionLexer(unrecognized);
