@@ -29,10 +29,15 @@ describe("Lexer Test Suite", () => {
 	});
 
 	it("Should throw an UnrecognizedTokenError", (done) => {
-		let lexer = new ExpressionLexer("1234567890");
-		let tokens : Array<Token> = lexer.lex();
-		expect(tokens[0].getTokenType()).to.equal(TokenType.Number);
-		expect(tokens[0].getPos()).to.equal(0);
-		done();
+		try {
+			let lexer = new ExpressionLexer("1234567890");
+			let tokens : Array<Token> = lexer.lex();
+			let error : Error = new Error("Should have thrown an error");
+			done(error);
+		} catch(err) {
+			expect(err).to.haveOwnProperty("name");
+			expect(err.name).to.equal("UnrecognizedTokenError");
+			done();
+		}
 	})
 });
