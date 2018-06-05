@@ -3,13 +3,20 @@ import { expect } from 'chai';
 import { Token } from '../src/Token';
 import { TokenType } from '../src/TokenType';
 
+const number1 = "1234567890";
+const number2 = "1234567890.1234567890";
+const unrecognized = "©å˙∂∑˙å";
+
 describe("Lexer Test Suite", () => {
 	it("Should Lex a number Token at position 0", (done) => {
 		try {
-			let lexer = new ExpressionLexer("1234567890.1234567890");
+			let lexer = new ExpressionLexer(number1);
 			let tokens : Array<Token> = lexer.lex();
-			expect(tokens[0].getTokenType()).to.equal(TokenType.Number);
-			expect(tokens[0].getPos()).to.equal(0);
+			expect(tokens[0]).to.deep.equal({
+				tokenType: TokenType.Number,
+				data: number1,
+				pos: 0,
+			});
 			done();
 		} catch(err) {
 			done(err);
@@ -18,10 +25,13 @@ describe("Lexer Test Suite", () => {
 
 	it("Should Lex a number Token at position 0", (done) => {
 		try {
-			let lexer = new ExpressionLexer("1234567890.1234567890");
+			let lexer = new ExpressionLexer(number2);
 			let tokens : Array<Token> = lexer.lex();
-			expect(tokens[0].getTokenType()).to.equal(TokenType.Number);
-			expect(tokens[0].getPos()).to.equal(0);
+			expect(tokens[0]).to.deep.equal({
+				tokenType: TokenType.Number,
+				data: number2,
+				pos: 0,
+			});
 			done();
 		} catch(err) {
 			done(err);
@@ -30,7 +40,7 @@ describe("Lexer Test Suite", () => {
 
 	it("Should throw an UnrecognizedTokenError", (done) => {
 		try {
-			let lexer = new ExpressionLexer("1234567890");
+			let lexer = new ExpressionLexer(unrecognized);
 			let tokens : Array<Token> = lexer.lex();
 			let error : Error = new Error("Should have thrown an error");
 			done(error);

@@ -1,4 +1,5 @@
 import { Token } from "./Token";
+import { TokenType } from "./TokenType";
 
 export class ExpressionLexer {
 	private offset: number;
@@ -9,7 +10,22 @@ export class ExpressionLexer {
 		this.expression = expression;
 	}
 
-	lex(): Array<Token> {
-		return null;
+	public lex(): Array<Token> {
+		let tokens : Array<Token> = [];
+		while(!this.isEndOfExpression()) {
+			let ch = this.expression[this.offset++];
+			let token : Token = this.createToken(ch);
+			tokens.push(token);
+		}
+		return tokens;
+	}
+
+	private isEndOfExpression(): boolean {
+		return this.offset == this.expression.length;
+	}
+
+	private createToken(char: string): Token {
+		let pos = this.offset - 1;
+		return new Token(TokenType.Number, "", pos);
 	}
 }
