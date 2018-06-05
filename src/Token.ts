@@ -19,7 +19,7 @@ export class Token {
 		return this.pos;
 	}
 
-	getData(): number {
+	getData(): string {
 		return this.data;
 	}
 }
