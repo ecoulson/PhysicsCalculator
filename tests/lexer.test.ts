@@ -10,6 +10,7 @@ const add = "+";
 const subtract = "-";
 const multiply = "*";
 const divide = "/";
+const exponentiation = "^";
 const unrecognized = "©å˙∂∑˙å";
 
 describe("Lexer Test Suite", () => {
@@ -104,6 +105,20 @@ describe("Lexer Test Suite", () => {
 			let token : Token = tokens[0];
 			expect(token.getData()).to.equal(divide);
 			expect(token.getTokenType()).to.equal(TokenType.Divide);
+			expect(token.getPos()).to.equal(0);
+			done();
+		} catch(err) {
+			done(err);
+		}
+	});
+
+	it("Should lex an exponentiation token at positon 0", (done) => {
+		try {
+			let lexer = new ExpressionLexer(exponentiation);
+			let tokens : Array<Token> = lexer.lex();
+			let token : Token = tokens[0];
+			expect(token.getData()).to.equal(exponentiation);
+			expect(token.getTokenType()).to.equal(TokenType.Exponentiate);
 			expect(token.getPos()).to.equal(0);
 			done();
 		} catch(err) {

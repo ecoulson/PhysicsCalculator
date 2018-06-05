@@ -5,4 +5,5 @@ export enum TokenType {
 	Subtract,
 	Multiply,
 	Divide,
+	Exponentiate,
 }

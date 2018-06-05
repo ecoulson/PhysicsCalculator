@@ -44,6 +44,8 @@ export class ExpressionLexer {
 					return new Token(TokenType.Multiply, '*', pos);
 				case '/':
 					return new Token(TokenType.Divide, '/', pos);
+				case '^':
+					return new Token(TokenType.Exponentiate, '^', pos);
 				default:
 					throw new UnrecognizedTokenError(`Unrecognized Token: ${char} at position ${pos}`);
 			}
