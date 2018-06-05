@@ -5,7 +5,9 @@ import { TokenType } from '../src/TokenType';
 
 const number1 = "1234567890";
 const number2 = "1234567890.1234567890";
-const identifer = "abcdefghijklmnopqrstuvwxyz";
+const number3 = "1";
+const identifer1 = "abcdefghijklmnopqrstuvwxyz";
+const identifer2 = "a";
 const add = "+";
 const subtract = "-";
 const multiply = "*";
@@ -16,7 +18,7 @@ const leftParentheses = "(";
 const rightParentheses = ")";
 const everyToken = "1234567890.1234567890abcdefghijklmnopqrstuvwxyz+-*/^|()\t";
 const everyTokenValue = [
-	number2, identifer, add, subtract, multiply, divide, exponentiation, absolute, leftParentheses, rightParentheses
+	number2, identifer1, add, subtract, multiply, divide, exponentiation, absolute, leftParentheses, rightParentheses
 ];
 const everyTokenType = [
 						TokenType.Number, TokenType.Identifier, 
@@ -29,7 +31,7 @@ const everyTokenPosition = [0,21,47,48,49,50,51,52,53,54];
 const unrecognized = "©å˙∂∑˙å";
 
 describe("Lexer Test Suite", () => {
-	it("Should lex a number token at position 0", (done) => {
+	it(`Should lex a number [${number1}] token at position 0`, (done) => {
 		try {
 			let lexer = new ExpressionLexer(number1);
 			let tokens : Array<Token> = lexer.lex();
@@ -44,7 +46,7 @@ describe("Lexer Test Suite", () => {
 		}
 	});
 
-	it("Should lex a number token at position 0", (done) => {
+	it(`Should lex a number [${number2}] token at position 0`, (done) => {
 		try {
 			let lexer = new ExpressionLexer(number2);
 			let tokens : Array<Token> = lexer.lex();
@@ -59,12 +61,42 @@ describe("Lexer Test Suite", () => {
 		}
 	});
 
-	it("Should lex an identifier token at position 0", (done) => {
+	it(`Should lex a number [${number3}] token at position 0`, (done) => {
 		try {
-			let lexer = new ExpressionLexer(identifer);
+			let lexer = new ExpressionLexer(number3);
 			let tokens : Array<Token> = lexer.lex();
 			let token : Token = tokens[0];
-			expect(token.getData()).to.equal(identifer);
+			expect(token.getData()).to.equal(number3);
+			expect(token.getTokenType()).to.equal(TokenType.Number);
+			expect(token.getPos()).to.equal(0);
+			expect(tokens.length).to.equal(1);
+			done();
+		} catch(err) {
+			done(err);
+		}
+	});
+
+	it(`Should lex an identifier [${identifer1}] token at position 0`, (done) => {
+		try {
+			let lexer = new ExpressionLexer(identifer1);
+			let tokens : Array<Token> = lexer.lex();
+			let token : Token = tokens[0];
+			expect(token.getData()).to.equal(identifer1);
+			expect(token.getTokenType()).to.equal(TokenType.Identifier);
+			expect(token.getPos()).to.equal(0);
+			expect(tokens.length).to.equal(1);
+			done();
+		} catch(err) {
+			done(err);
+		}
+	});
+
+	it(`Should lex an identifier [${identifer2}] token at position 0`, (done) => {
+		try {
+			let lexer = new ExpressionLexer(identifer2);
+			let tokens : Array<Token> = lexer.lex();
+			let token : Token = tokens[0];
+			expect(token.getData()).to.equal(identifer2);
 			expect(token.getTokenType()).to.equal(TokenType.Identifier);
 			expect(token.getPos()).to.equal(0);
 			expect(tokens.length).to.equal(1);

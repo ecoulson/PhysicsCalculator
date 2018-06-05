@@ -76,9 +76,12 @@ export class ExpressionLexer {
 	private readNumberToken(char: string): Token {
 		let pos : number = this.offset - 1;
 		let number : string = char;
-		while (!this.isEndOfExpression() && this.isDigit(char)) {
-			number += this.expression[this.offset++];
-			char = this.expression[this.offset];
+
+		if (this.isDigit(this.peek())) {
+			while (!this.isEndOfExpression() && this.isDigit(char)) {
+				number += this.expression[this.offset++];
+				char = this.expression[this.offset];
+			}
 		}
 		return new Token(TokenType.Number, number, pos);
 	}
@@ -86,10 +89,17 @@ export class ExpressionLexer {
 	private readIdentifierToken(char: string): Token {
 		let pos : number = this.offset - 1;
 		let identifier : string = char;
-		while (!this.isEndOfExpression() && this.isLetter(char)) {
-			identifier += this.expression[this.offset++];
-			char = this.expression[this.offset];
+		
+		if (this.isLetter(this.peek())) {
+			while (!this.isEndOfExpression() && this.isLetter(char)) {
+				identifier += this.expression[this.offset++];
+				char = this.expression[this.offset];
+			}
 		}
 		return new Token(TokenType.Identifier, identifier, pos);
+	}
+
+	private peek(): string {
+		return this.expression[this.offset];
 	}
 }
