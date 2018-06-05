@@ -1,6 +1,8 @@
 import { Token } from "./Token";
 import { TokenType } from "./TokenType";
 
+const DIGIT_REGEX : RegExp = /\d/;
+
 export class ExpressionLexer {
 	private offset: number;
 	private expression: string;
@@ -24,8 +26,20 @@ export class ExpressionLexer {
 		return this.offset == this.expression.length;
 	}
 
-	private createToken(char: string): Token {
-		let pos = this.offset - 1;
-		return new Token(TokenType.Number, "", pos);
+	private createToken(char: string): Token {		
+		if (DIGIT_REGEX.test(char)) {
+			return this.readNumberToken(char);
+		} else {
+			return new Token(TokenType.Number, "", this.offset - 1);
+		}
+	}
+
+	private readNumberToken(char: string): Token {
+		let pos : number = this.offset - 1;
+		let number : string = char;
+		while (!this.isEndOfExpression()) {
+			number += this.expression[this.offset++];
+		}
+		return new Token(TokenType.Number, number, pos);
 	}
 }
