@@ -1,4 +1,4 @@
 export enum TokenType {
 	Number,
-	Add,
+	Identifier,
 }

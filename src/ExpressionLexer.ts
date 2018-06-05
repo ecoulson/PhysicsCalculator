@@ -3,6 +3,7 @@ import { TokenType } from "./TokenType";
 import { UnrecognizedTokenError } from "./UnrecognizedTokenError";
 
 const DIGIT_REGEX : RegExp = /\d/;
+const LETTER_REGEX : RegExp = /^[a-zA-Z]+$/;
 
 export class ExpressionLexer {
 	private offset: number;
@@ -30,6 +31,8 @@ export class ExpressionLexer {
 	private createToken(char: string): Token {		
 		if (DIGIT_REGEX.test(char)) {
 			return this.readNumberToken(char);
+		} else if (LETTER_REGEX.test(char)) {
+			return this.readIdentifierToken(char);
 		} else {
 			let pos : number = this.offset - 1;
 			// return new Token(TokenType.Number, "", this.offset - 1);
@@ -44,5 +47,14 @@ export class ExpressionLexer {
 			number += this.expression[this.offset++];
 		}
 		return new Token(TokenType.Number, number, pos);
+	}
+
+	private readIdentifierToken(char: string): Token {
+		let pos : number = this.offset - 1;
+		let identifier : string = char;
+		while (!this.isEndOfExpression()) {
+			identifier += this.expression[this.offset++];
+		}
+		return new Token(TokenType.Identifier, identifier, pos);
 	}
 }

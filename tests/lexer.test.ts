@@ -5,10 +5,11 @@ import { TokenType } from '../src/TokenType';
 
 const number1 = "1234567890";
 const number2 = "1234567890.1234567890";
+const identifer = "abcdefghijklmnopqrstuvwxyz";
 const unrecognized = "©å˙∂∑˙å";
 
 describe("Lexer Test Suite", () => {
-	it("Should Lex a number Token at position 0", (done) => {
+	it("Should lex a number token at position 0", (done) => {
 		try {
 			let lexer = new ExpressionLexer(number1);
 			let tokens : Array<Token> = lexer.lex();
@@ -22,7 +23,7 @@ describe("Lexer Test Suite", () => {
 		}
 	});
 
-	it("Should Lex a number Token at position 0", (done) => {
+	it("Should lex a number token at position 0", (done) => {
 		try {
 			let lexer = new ExpressionLexer(number2);
 			let tokens : Array<Token> = lexer.lex();
@@ -35,6 +36,20 @@ describe("Lexer Test Suite", () => {
 			done(err);
 		}
 	});
+
+	it("Should lex an identifier token at position 0", (done) => {
+		try {
+			let lexer = new ExpressionLexer(identifer);
+			let tokens : Array<Token> = lexer.lex();
+			let token : Token = tokens[0];
+			expect(token.getData()).to.equal(identifer);
+			expect(token.getTokenType()).to.equal(TokenType.Identifier);
+			expect(token.getPos()).to.equal(0);
+			done();
+		} catch(err) {
+			done(err);
+		}
+	})
 
 	it("Should throw an UnrecognizedTokenError", (done) => {
 		try {
