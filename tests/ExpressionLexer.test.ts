@@ -1,7 +1,7 @@
-import { ExpressionLexer } from '../src/ExpressionLexer';
 import { expect } from 'chai';
-import { Token } from '../src/Token';
-import { TokenType } from '../src/TokenType';
+import { Token } from '../src/ExpressionLexer/Token';
+import { TokenType } from '../src/ExpressionLexer/TokenType';
+import { ExpressionLexer } from '../src/ExpressionLexer/ExpressionLexer';
 
 const number1 = "1234567890";
 const number2 = "1234567890.1234567890";

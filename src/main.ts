@@ -1,5 +1,6 @@
-import { ExpressionLexer } from "./ExpressionLexer";
-import { Token } from "./Token";
+import { ExpressionLexer } from "./ExpressionLexer/ExpressionLexer";
+import { Token } from "./ExpressionLexer/Token";
+
 
 export function evaluate(expression: string): number {
 	let lexer : ExpressionLexer = new ExpressionLexer(expression);
