@@ -7,12 +7,15 @@ import { SyntaxNode } from '../src/SyntaxTree/SyntaxNode';
 import { NodeType } from '../src/SyntaxTree/NodeTypes';
 import { checkTreeSize, checkTreeStructure } from './Helpers/SyntaxTreeHelper';
 
+const input1 : string = "1";
 const structure1 : Array<NodeType> = [NodeType.Number];
+
+const input2 : string = "1m";
 const structure2 : Array<NodeType> = [NodeType.Number, NodeType.Unit];
 
 describe("SyntaxTree Test Suite", () => {
 	it("Should Be a Tree of a Term With No Unit", () => {
-		let lexer : ExpressionLexer = new ExpressionLexer("1");
+		let lexer : ExpressionLexer = new ExpressionLexer(input1);
 		let tokens : Array<Token> = lexer.lex();
 		let tree : SyntaxTree = new SyntaxTree(tokens);
 		tree.build();
@@ -20,8 +23,8 @@ describe("SyntaxTree Test Suite", () => {
 		checkTreeSize(tree, structure1.length);
 	});
 
-	it("Should Be a Tree of a Term With a Unit", () => {
-		let lexer : ExpressionLexer = new ExpressionLexer("1m");
+	it("Should Be a Tree of a Term With a Simple Unit", () => {
+		let lexer : ExpressionLexer = new ExpressionLexer(input2);
 		let tokens : Array<Token> = lexer.lex();
 		let tree : SyntaxTree = new SyntaxTree(tokens);
 		tree.build();

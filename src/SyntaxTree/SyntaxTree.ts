@@ -47,7 +47,7 @@ export class SyntaxTree {
 			return new UnitNode(unitToken);
 		} else {
 			let errorToken : Token = this.readToken();
-			throw new UnexpectedTokenError(`Unexpected Token ${errorToken.getTokenType()} at position ${errorToken.getPos()}`);
+			throw new UnexpectedTokenError(`Unexpected ${errorToken.getTokenType()} token at position ${errorToken.getPos()}`);
 		}
 	}
 
