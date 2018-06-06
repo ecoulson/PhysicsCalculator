@@ -5,13 +5,15 @@ import { Token } from '../src/ExpressionLexer/Token';
 import { TokenType } from '../src/ExpressionLexer/TokenType';
 import { SyntaxNode } from '../src/SyntaxTree/SyntaxNode';
 import { NodeType } from '../src/SyntaxTree/NodeTypes';
-import { checkTreeSize, checkTreeStructure } from './Helpers/SyntaxTreeHelper';
+import { checkTreeSize, checkTreeStructure, checkTreeValue } from './Helpers/SyntaxTreeHelper';
 
 const input1 : string = "1";
 const structure1 : Array<NodeType> = [NodeType.Number];
+const values1 : Array<any> = [1];
 
 const input2 : string = "1m";
 const structure2 : Array<NodeType> = [NodeType.Number, NodeType.Unit];
+const values2 : Array<any> = [1, "m"];
 
 describe("SyntaxTree Test Suite", () => {
 	it("Should Be a Tree of a Term With No Unit", () => {
@@ -21,6 +23,7 @@ describe("SyntaxTree Test Suite", () => {
 		tree.build();
 		checkTreeStructure(tree, structure1);
 		checkTreeSize(tree, structure1.length);
+		checkTreeValue(tree, values1);
 	});
 
 	it("Should Be a Tree of a Term With a Simple Unit", () => {
@@ -30,5 +33,6 @@ describe("SyntaxTree Test Suite", () => {
 		tree.build();
 		checkTreeStructure(tree, structure2);
 		checkTreeSize(tree, structure2.length);
+		checkTreeValue(tree, values2);
 	});
 });
