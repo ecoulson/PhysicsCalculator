@@ -4,6 +4,7 @@ import { NumberNode } from "./NumberNode";
 import { TokenType } from "../ExpressionLexer/TokenType";
 import { UnitNode } from "./UnitNode";
 import { UnexpectedTokenError } from "./UnexpectedTokenError";
+import { OperatorNode } from "./OperatorNode";
 
 export class SyntaxTree {
 	private tokens : Array<Token>;
@@ -16,39 +17,8 @@ export class SyntaxTree {
 		this.offset = 0;
 	}
 
-	public build(): void {
-		this.root = this.readSums();
-	}
-
-	private readSums(): SyntaxNode {
-		let left = this.readNumber();
-		return left;
-	}
-
 	private hasReadAllTokens(): boolean {
 		return this.offset == this.tokens.length;
-	}
-
-	private readNumber() : SyntaxNode {
-		let numberNode = this.readNode();
-		if (!this.hasReadAllTokens() && this.isNextToken(TokenType.Identifier)) {
-			let unitNode = this.readNode();
-			numberNode.right = unitNode;
-		}
-		return numberNode;
-	}
-
-	private readNode(): SyntaxNode {
-		if (this.isNextToken(TokenType.Number)) {
-			let numberToken = this.readToken();
-			return new NumberNode(numberToken);
-		} else if (this.isNextToken(TokenType.Identifier)) {
-			let unitToken = this.readToken();
-			return new UnitNode(unitToken);
-		} else {
-			let errorToken : Token = this.readToken();
-			throw new UnexpectedTokenError(`Unexpected ${errorToken.getTokenType()} token at position ${errorToken.getPos()}`);
-		}
 	}
 
 	private isNextToken(type: TokenType): boolean {
@@ -57,5 +27,76 @@ export class SyntaxTree {
 
 	private readToken(): Token {
 		return this.tokens[this.offset++];
+	}
+
+	public build(): void {
+		this.root = this.readSums();
+	}
+
+	private readSums(): SyntaxNode {
+		let left = this.readTerm();
+		return left;
+	}
+
+	private readTerm() : SyntaxNode {
+		let numberNode = this.readNumber();
+		if (!this.hasReadAllTokens() && this.isNextToken(TokenType.Identifier)) {
+			let unitNode = this.readComplexUnit();
+			numberNode.right = unitNode;
+		}
+		return numberNode;
+	}
+
+	private readNumber(): SyntaxNode {
+		let sign = 1;
+		while (this.isNextToken(TokenType.Subtract)) {
+			sign *= -1;
+			this.readToken();
+		}
+		if (this.isNextToken(TokenType.Number)) {
+			let numberToken = this.readToken();
+			let signedValue = sign * parseFloat(numberToken.getData());
+			numberToken.setData(signedValue.toString());
+			return new NumberNode(numberToken);
+		} else {
+			let errorToken : Token = this.readToken();
+			throw new UnexpectedTokenError(`Unexpected ${errorToken.getTokenType()} token at position ${errorToken.getPos()}`);
+		}
+	}
+
+	private readComplexUnit(): SyntaxNode {
+		let node : SyntaxNode = this.readExponentUnit();
+		while (!this.hasReadAllTokens() && (this.isNextToken(TokenType.Divide) || this.isNextToken(TokenType.Multiply))) {
+			let operatorToken = this.readToken();
+			let operatorNode = new OperatorNode(operatorToken);
+			let rightNode = this.readExponentUnit();
+			operatorNode.left = node;
+			operatorNode.right = rightNode;
+			node = operatorNode;
+		}
+		return node;
+	}
+
+	private readExponentUnit(): SyntaxNode {
+		let node : SyntaxNode = this.readSimpleUnit();
+		while (!this.hasReadAllTokens() && this.isNextToken(TokenType.Exponentiate)) {
+			let operatorToken = this.readToken();
+			let operatorNode = new OperatorNode(operatorToken);
+			let rightNode = this.readNumber();
+			operatorNode.left = node;
+			operatorNode.right = rightNode;
+			node = operatorNode;
+		}
+		return node;
+	}
+
+	private readSimpleUnit(): SyntaxNode {
+		if (this.isNextToken(TokenType.Identifier)) {
+			let identifierToken = this.readToken();
+			return new UnitNode(identifierToken);
+		} else {
+			let errorToken : Token = this.readToken();
+			throw new UnexpectedTokenError(`Unexpected ${errorToken.getTokenType()} token at position ${errorToken.getPos()}`);
+		}
 	}
 }

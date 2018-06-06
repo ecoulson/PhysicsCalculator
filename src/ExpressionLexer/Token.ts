@@ -11,15 +11,19 @@ export class Token {
 		this.data = data;
 	}
 
-	getTokenType(): TokenType {
+	public getTokenType(): TokenType {
 		return this.tokenType;
 	}
 
-	getPos(): number {
+	public getPos(): number {
 		return this.pos;
 	}
 
-	getData(): string {
+	public getData(): string {
 		return this.data;
 	}
+
+	public setData(data: string) {
+		this.data = data;
+	} 
 }

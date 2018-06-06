@@ -8,5 +8,25 @@
 		"input": "1m",
 		"structure": ["Number", "Unit"],
 		"values": [1, "m"]
+	},
+	{
+		"input": "1m/s",
+		"structure": ["Number", "Operator", "Unit", "Unit"],
+		"values": [1, "/", "m", "s"]
+	},
+	{
+		"input": "1m/s^2",
+		"structure": ["Number", "Operator", "Unit", "Operator", "Unit", "Number"],
+		"values": [1, "/", "m", "^", "s", 2]
+	},
+	{
+		"input": "1m/s^-2",
+		"structure": ["Number", "Operator", "Unit", "Operator", "Unit", "Number"],
+		"values": [1, "/", "m", "^", "s", -2]
+	},
+	{
+		"input": "1kg*m/s^2",
+		"structure": ["Number", "Operator", "Operator", "Unit", "Unit", "Operator", "Unit", "Number"],
+		"values": [1, "/", "*", "kg", "m", "^", "s", 2]
 	}
 ]

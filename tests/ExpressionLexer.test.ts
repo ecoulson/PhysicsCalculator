@@ -191,12 +191,10 @@ describe("Lexer Test Suite", () => {
 
 	it("Should have one of every token (Excluding whitespace)", (done) => {
 		try {
-			let lexer = new ExpressionLexer(inputs[5].input);
+			let lexer = new ExpressionLexer(inputs[7].input);
 			let tokens : Array<Token> = lexer.lex();
-			for (let i = 0; i < tokens.length; i++) {
-				expect(tokens[i].getData()).to.equal(inputs[5].values[i]);
-				expect(tokens[i].getTokenType()).to.equal(inputs[5].types[i]);
-			}
+			expect(tokens[0].getData()).to.equal(")");
+			expect(tokens[0].getTokenType()).to.equal(TokenType.RightParentheses);
 			done();
 		} catch(err) {
 			done(err);
