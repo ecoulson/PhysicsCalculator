@@ -69,4 +69,15 @@
 		"structure": ["Operator", "Number", "Number"],
 		"values": ["/", 1, -1.1]
 	}
+	,
+	{
+		"input": "1^1.1",
+		"structure": ["Operator", "Number", "Number"],
+		"values": ["^", 1, 1.1]
+	},
+	{
+		"input": "1^-1.1",
+		"structure": ["Operator", "Number", "Number"],
+		"values": ["^", 1, -1.1]
+	}
 ]

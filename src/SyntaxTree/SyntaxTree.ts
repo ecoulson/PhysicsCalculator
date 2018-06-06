@@ -47,8 +47,21 @@ export class SyntaxTree {
 	}
 
 	private readFactor() : SyntaxNode {
-		let node = this.readTerm();
+		let node = this.readExponent();
 		while (!this.hasReadAllTokens() && (this.isNextToken(TokenType.Multiply) || this.isNextToken(TokenType.Divide))) {
+			let operatorToken = this.readToken();
+			let operatorNode = new OperatorNode(operatorToken);
+			let rightNode = this.readExponent();
+			operatorNode.left = node;
+			operatorNode.right = rightNode;
+			node = operatorNode;
+		}
+		return node;
+	}
+
+	private readExponent() : SyntaxNode {
+		let node = this.readTerm();
+		while (!this.hasReadAllTokens() && this.isNextToken(TokenType.Exponentiate)) {
 			let operatorToken = this.readToken();
 			let operatorNode = new OperatorNode(operatorToken);
 			let rightNode = this.readTerm();
