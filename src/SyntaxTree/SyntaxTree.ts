@@ -35,7 +35,7 @@ export class SyntaxTree {
 
 	private readSums(): SyntaxNode {
 		let node = this.readFactor();
-		while (!this.hasReadAllTokens() && (this.isNextToken(TokenType.Add) || this.isNextToken(TokenType.Subtract))) {
+		while (!this.hasReadAllTokens() && !this.isNextToken(TokenType.RightParentheses) && (this.isNextToken(TokenType.Add) || this.isNextToken(TokenType.Subtract))) {
 			let operatorToken = this.readToken();
 			let operatorNode = new OperatorNode(operatorToken);
 			let rightNode = this.readFactor();
@@ -60,16 +60,27 @@ export class SyntaxTree {
 	}
 
 	private readExponent() : SyntaxNode {
-		let node = this.readTerm();
+		let node = this.readParentheses();
 		while (!this.hasReadAllTokens() && this.isNextToken(TokenType.Exponentiate)) {
 			let operatorToken = this.readToken();
 			let operatorNode = new OperatorNode(operatorToken);
-			let rightNode = this.readTerm();
+			let rightNode = this.readParentheses();
 			operatorNode.left = node;
 			operatorNode.right = rightNode;
 			node = operatorNode;
 		}
 		return node;
+	}
+
+	private readParentheses() : SyntaxNode {
+		if (!this.hasReadAllTokens() && this.isNextToken(TokenType.LeftParentheses)) {
+			this.readToken();
+			let node = this.readSums();
+			this.readToken();
+			return node;
+		} else {
+			return this.readTerm();
+		}
 	}
 
 	private readTerm() : SyntaxNode {

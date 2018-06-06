@@ -68,8 +68,7 @@
 		"input": "1/-1.1",
 		"structure": ["Operator", "Number", "Number"],
 		"values": ["/", 1, -1.1]
-	}
-	,
+	},
 	{
 		"input": "1^1.1",
 		"structure": ["Operator", "Number", "Number"],
@@ -79,5 +78,15 @@
 		"input": "1^-1.1",
 		"structure": ["Operator", "Number", "Number"],
 		"values": ["^", 1, -1.1]
+	},
+	{
+		"input": "2*(1+2)^2.1",
+		"structure": ["Operator", "Number", "Operator", "Operator", "Number", "Number", "Number"],
+		"values": ["*", 2, "^", "+", 1, 2, 2.1]
+	},
+	{
+		"input": "2/(1-2)^-2.1",
+		"structure": ["Operator", "Number", "Operator", "Operator", "Number", "Number", "Number"],
+		"values": ["/", 2, "^", "-", 1, 2, -2.1]
 	}
 ]
