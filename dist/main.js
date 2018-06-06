@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-function main() {
-    console.log("hello, world!");
+function evaluate(expression) {
+    return 0;
 }
-exports.main = main;
+exports.evaluate = evaluate;
