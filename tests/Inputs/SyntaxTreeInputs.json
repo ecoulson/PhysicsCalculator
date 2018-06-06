@@ -1,0 +1,12 @@
+[
+	{
+		"input": "1",
+		"structure": ["Number"],
+		"values": [1]
+	},
+	{
+		"input": "1m",
+		"structure": ["Number", "Unit"],
+		"values": [1, "m"]
+	}
+]

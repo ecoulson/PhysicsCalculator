@@ -2,104 +2,69 @@ import { expect } from 'chai';
 import { Token } from '../src/ExpressionLexer/Token';
 import { TokenType } from '../src/ExpressionLexer/TokenType';
 import { ExpressionLexer } from '../src/ExpressionLexer/ExpressionLexer';
-
-const number1 = "1234567890";
-const number2 = "1234567890.1234567890";
-const number3 = "1";
-const identifer1 = "abcdefghijklmnopqrstuvwxyz";
-const identifer2 = "a";
-const add = "+";
-const subtract = "-";
-const multiply = "*";
-const divide = "/";
-const exponentiation = "^";
-const absolute = "|";
-const leftParentheses = "(";
-const rightParentheses = ")";
-const everyToken = "1234567890.1234567890abcdefghijklmnopqrstuvwxyz+-*/^|()\t";
-const everyTokenValue = [
-	number2, identifer1, add, subtract, multiply, divide, exponentiation, absolute, leftParentheses, rightParentheses
-];
-const everyTokenType = [
-						TokenType.Number, TokenType.Identifier, 
-						TokenType.Add, TokenType.Subtract, 
-						TokenType.Multiply, TokenType.Divide, 
-						TokenType.Exponentiate, TokenType.Absolute, 
-						TokenType.LeftParentheses, TokenType.RightParentheses
-					];
-const everyTokenPosition = [0,21,47,48,49,50,51,52,53,54];
-const unrecognized = "©å˙∂∑˙å";
+import { readInputFile } from './Helpers/InputHelper';
+const inputs : Array<any> = readInputFile("ExpressionLexerInputs");
 
 describe("Lexer Test Suite", () => {
-	it(`Should lex a number [${number1}] token at position 0`, (done) => {
+	it(`Should lex a number [${inputs[0].input}] token at position 0`, (done) => {
 		try {
-			let lexer = new ExpressionLexer(number1);
+			let lexer = new ExpressionLexer(inputs[0].input);
 			let tokens : Array<Token> = lexer.lex();
 			let token : Token = tokens[0];
-			expect(token.getData()).to.equal(number1);
+			expect(token.getData()).to.equal(inputs[0].input);
 			expect(token.getTokenType()).to.equal(TokenType.Number);
-			expect(token.getPos()).to.equal(0);
-			expect(tokens.length).to.equal(1);
 			done();
 		} catch(err) {
 			done(err);
 		}
 	});
 
-	it(`Should lex a number [${number2}] token at position 0`, (done) => {
+	it(`Should lex a number [${inputs[1].input}] token at position 0`, (done) => {
 		try {
-			let lexer = new ExpressionLexer(number2);
+			let lexer = new ExpressionLexer(inputs[1].input);
 			let tokens : Array<Token> = lexer.lex();
 			let token : Token = tokens[0];
-			expect(token.getData()).to.equal(number2);
+			expect(token.getData()).to.equal(inputs[1].input);
 			expect(token.getTokenType()).to.equal(TokenType.Number);
-			expect(token.getPos()).to.equal(0);
-			expect(tokens.length).to.equal(1);
 			done();
 		} catch(err) {
 			done(err);
 		}
 	});
 
-	it(`Should lex a number [${number3}] token at position 0`, (done) => {
+	it(`Should lex a number [${inputs[2].input}] token at position 0`, (done) => {
 		try {
-			let lexer = new ExpressionLexer(number3);
+			let lexer = new ExpressionLexer(inputs[2].input);
 			let tokens : Array<Token> = lexer.lex();
 			let token : Token = tokens[0];
-			expect(token.getData()).to.equal(number3);
+			expect(token.getData()).to.equal(inputs[2].input);
 			expect(token.getTokenType()).to.equal(TokenType.Number);
-			expect(token.getPos()).to.equal(0);
-			expect(tokens.length).to.equal(1);
 			done();
 		} catch(err) {
 			done(err);
 		}
 	});
 
-	it(`Should lex an identifier [${identifer1}] token at position 0`, (done) => {
+	it(`Should lex an identifier [${inputs[3].input}] token at position 0`, (done) => {
 		try {
-			let lexer = new ExpressionLexer(identifer1);
+			let lexer = new ExpressionLexer(inputs[3].input);
 			let tokens : Array<Token> = lexer.lex();
 			let token : Token = tokens[0];
-			expect(token.getData()).to.equal(identifer1);
+			expect(token.getData()).to.equal(inputs[3].input);
 			expect(token.getTokenType()).to.equal(TokenType.Identifier);
-			expect(token.getPos()).to.equal(0);
-			expect(tokens.length).to.equal(1);
 			done();
 		} catch(err) {
 			done(err);
 		}
 	});
 
-	it(`Should lex an identifier [${identifer2}] token at position 0`, (done) => {
+	it(`Should lex an identifier [${inputs[4].input}] token at position 0`, (done) => {
 		try {
-			let lexer = new ExpressionLexer(identifer2);
+			let lexer = new ExpressionLexer(inputs[4].input);
 			let tokens : Array<Token> = lexer.lex();
 			let token : Token = tokens[0];
-			expect(token.getData()).to.equal(identifer2);
+			expect(token.getData()).to.equal(inputs[4].input);
 			expect(token.getTokenType()).to.equal(TokenType.Identifier);
-			expect(token.getPos()).to.equal(0);
-			expect(tokens.length).to.equal(1);
 			done();
 		} catch(err) {
 			done(err);
@@ -108,13 +73,11 @@ describe("Lexer Test Suite", () => {
 
 	it("Should lex an add token at position 0", (done) => {
 		try {
-			let lexer = new ExpressionLexer(add);
+			let lexer = new ExpressionLexer("+");
 			let tokens : Array<Token> = lexer.lex();
 			let token : Token = tokens[0];
-			expect(token.getData()).to.equal(add);
+			expect(token.getData()).to.equal("+");
 			expect(token.getTokenType()).to.equal(TokenType.Add);
-			expect(token.getPos()).to.equal(0);
-			expect(tokens.length).to.equal(1);
 			done();
 		} catch(err) {
 			done(err);
@@ -123,13 +86,11 @@ describe("Lexer Test Suite", () => {
 
 	it("Should lex a subtract token at position 0", (done) => {
 		try {
-			let lexer = new ExpressionLexer(subtract);
+			let lexer = new ExpressionLexer("-");
 			let tokens : Array<Token> = lexer.lex();
 			let token : Token = tokens[0];
-			expect(token.getData()).to.equal(subtract);
+			expect(token.getData()).to.equal("-");
 			expect(token.getTokenType()).to.equal(TokenType.Subtract);
-			expect(token.getPos()).to.equal(0);
-			expect(tokens.length).to.equal(1);
 			done();
 		} catch(err) {
 			done(err);
@@ -138,13 +99,11 @@ describe("Lexer Test Suite", () => {
 
 	it("Should lex a multiply token at positon 0", (done) => {
 		try {
-			let lexer = new ExpressionLexer(multiply);
+			let lexer = new ExpressionLexer("*");
 			let tokens : Array<Token> = lexer.lex();
 			let token : Token = tokens[0];
-			expect(token.getData()).to.equal(multiply);
+			expect(token.getData()).to.equal("*");
 			expect(token.getTokenType()).to.equal(TokenType.Multiply);
-			expect(token.getPos()).to.equal(0);
-			expect(tokens.length).to.equal(1);
 			done();
 		} catch(err) {
 			done(err);
@@ -153,13 +112,11 @@ describe("Lexer Test Suite", () => {
 
 	it("Should lex a divide token at positon 0", (done) => {
 		try {
-			let lexer = new ExpressionLexer(divide);
+			let lexer = new ExpressionLexer("/");
 			let tokens : Array<Token> = lexer.lex();
 			let token : Token = tokens[0];
-			expect(token.getData()).to.equal(divide);
+			expect(token.getData()).to.equal("/");
 			expect(token.getTokenType()).to.equal(TokenType.Divide);
-			expect(token.getPos()).to.equal(0);
-			expect(tokens.length).to.equal(1);
 			done();
 		} catch(err) {
 			done(err);
@@ -168,13 +125,11 @@ describe("Lexer Test Suite", () => {
 
 	it("Should lex an exponentiation token at positon 0", (done) => {
 		try {
-			let lexer = new ExpressionLexer(exponentiation);
+			let lexer = new ExpressionLexer("^");
 			let tokens : Array<Token> = lexer.lex();
 			let token : Token = tokens[0];
-			expect(token.getData()).to.equal(exponentiation);
+			expect(token.getData()).to.equal("^");
 			expect(token.getTokenType()).to.equal(TokenType.Exponentiate);
-			expect(token.getPos()).to.equal(0);
-			expect(tokens.length).to.equal(1);
 			done();
 		} catch(err) {
 			done(err);
@@ -183,13 +138,11 @@ describe("Lexer Test Suite", () => {
 
 	it("Should lex an absolute token at positon 0", (done) => {
 		try {
-			let lexer = new ExpressionLexer(absolute);
+			let lexer = new ExpressionLexer("|");
 			let tokens : Array<Token> = lexer.lex();
 			let token : Token = tokens[0];
-			expect(token.getData()).to.equal(absolute);
+			expect(token.getData()).to.equal("|");
 			expect(token.getTokenType()).to.equal(TokenType.Absolute);
-			expect(token.getPos()).to.equal(0);
-			expect(tokens.length).to.equal(1);
 			done();
 		} catch(err) {
 			done(err);
@@ -198,13 +151,11 @@ describe("Lexer Test Suite", () => {
 
 	it("Should lex a left parentheses token at positon 0", (done) => {
 		try {
-			let lexer = new ExpressionLexer(leftParentheses);
+			let lexer = new ExpressionLexer("(");
 			let tokens : Array<Token> = lexer.lex();
 			let token : Token = tokens[0];
-			expect(token.getData()).to.equal(leftParentheses);
+			expect(token.getData()).to.equal("(");
 			expect(token.getTokenType()).to.equal(TokenType.LeftParentheses);
-			expect(token.getPos()).to.equal(0);
-			expect(tokens.length).to.equal(1);
 			done();
 		} catch(err) {
 			done(err);
@@ -213,10 +164,10 @@ describe("Lexer Test Suite", () => {
 
 	it("Should lex a left parentheses token at positon 0", (done) => {
 		try {
-			let lexer = new ExpressionLexer(rightParentheses);
+			let lexer = new ExpressionLexer(")");
 			let tokens : Array<Token> = lexer.lex();
 			let token : Token = tokens[0];
-			expect(token.getData()).to.equal(rightParentheses);
+			expect(token.getData()).to.equal(")");
 			expect(token.getTokenType()).to.equal(TokenType.RightParentheses);
 			expect(token.getPos()).to.equal(0);
 			expect(tokens.length).to.equal(1);
@@ -228,7 +179,7 @@ describe("Lexer Test Suite", () => {
 
 	it("Should not have a whitespace token at position 0", (done) => {
 		try {
-			let lexer = new ExpressionLexer("\t" + rightParentheses);
+			let lexer = new ExpressionLexer("\t" + ")");
 			let tokens : Array<Token> = lexer.lex();
 			let token : Token = tokens[0];
 			expect(token.getTokenType()).to.not.equal(TokenType.Whitespace);
@@ -240,11 +191,11 @@ describe("Lexer Test Suite", () => {
 
 	it("Should have one of every token (Excluding whitespace)", (done) => {
 		try {
-			let lexer = new ExpressionLexer(everyToken);
+			let lexer = new ExpressionLexer(inputs[5].input);
 			let tokens : Array<Token> = lexer.lex();
 			for (let i = 0; i < tokens.length; i++) {
-				expect(tokens[i].getData()).to.equal(everyTokenValue[i]);
-				expect(tokens[i].getTokenType()).to.equal(everyTokenType[i]);
+				expect(tokens[i].getData()).to.equal(inputs[5].values[i]);
+				expect(tokens[i].getTokenType()).to.equal(inputs[5].types[i]);
 			}
 			done();
 		} catch(err) {
@@ -254,11 +205,11 @@ describe("Lexer Test Suite", () => {
 
 	it("Each token should be at the correct position", (done) => {
 		try {
-			let lexer = new ExpressionLexer(everyToken);
+			let lexer = new ExpressionLexer(inputs[5].input);
 			let tokens : Array<Token> = lexer.lex();
 			for (let i = 0; i < tokens.length; i++) {
-				expect(tokens[i].getData()).to.equal(everyTokenValue[i]);
-				expect(tokens[i].getPos()).to.equal(everyTokenPosition[i]);
+				expect(tokens[i].getData()).to.equal(inputs[5].values[i]);
+				expect(tokens[i].getPos()).to.equal(inputs[5].pos[i]);
 			}
 			done();
 		} catch(err) {
@@ -268,7 +219,7 @@ describe("Lexer Test Suite", () => {
 
 	it("Should throw an UnrecognizedTokenError", (done) => {
 		try {
-			let lexer = new ExpressionLexer(unrecognized);
+			let lexer = new ExpressionLexer(inputs[6].input);
 			let tokens : Array<Token> = lexer.lex();
 			let error : Error = new Error("Should have thrown an error");
 			done(error);
