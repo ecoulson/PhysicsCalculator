@@ -1,4 +1,4 @@
 export enum NodeType {
-	NumberNode,
-	IdentifierNode,
+	Number = "Number",
+	Unit = "Unit",
 }
