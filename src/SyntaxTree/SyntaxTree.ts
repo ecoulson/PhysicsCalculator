@@ -89,10 +89,7 @@ export class SyntaxTree {
 		let signToken : Token = this.readSign();
 		if (this.isNextToken(TokenType.Number)) {
 			let numberNode = this.readNumber(signToken);
-			if (!this.hasReadAllTokens() && this.isNextToken(TokenType.Identifier)) {
-				let unitNode : SyntaxNode = this.readComplexUnit();
-				numberNode.right = unitNode;
-			}
+			numberNode = this.addUnits(numberNode);
 			return numberNode;
 		} else if (this.isNextToken(TokenType.Identifier)) {
 			let node : SyntaxNode = this.readVariable();
@@ -124,6 +121,16 @@ export class SyntaxTree {
 		} else {
 			let errorToken : Token = this.readToken();
 			throw new UnexpectedTokenError(`Unexpected ${errorToken.getTokenType()} token at position ${errorToken.getPos()}`);
+		}
+	}
+
+	private addUnits(node: SyntaxNode): SyntaxNode {
+		if (!this.hasReadAllTokens() && this.isNextToken(TokenType.Identifier)) {
+			let unitNode : SyntaxNode = this.readComplexUnit();
+			node.right = unitNode;
+			return node;
+		} else {
+			return node;
 		}
 	}
 
