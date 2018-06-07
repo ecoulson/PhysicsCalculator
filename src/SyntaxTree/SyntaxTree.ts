@@ -86,9 +86,9 @@ export class SyntaxTree {
 	}
 
 	private readTerm() : SyntaxNode {
-		let sign : number = this.readSign();
+		let signToken : Token = this.readSign();
 		if (this.isNextToken(TokenType.Number)) {
-			let numberNode = this.readNumber(sign);
+			let numberNode = this.readNumber(signToken);
 			if (!this.hasReadAllTokens() && this.isNextToken(TokenType.Identifier)) {
 				let unitNode : SyntaxNode = this.readComplexUnit();
 				numberNode.right = unitNode;
@@ -96,15 +96,8 @@ export class SyntaxTree {
 			return numberNode;
 		} else if (this.isNextToken(TokenType.Identifier)) {
 			let node : SyntaxNode = this.readVariable();
-			if (!this.hasReadAllTokens() && this.isNextToken(TokenType.LeftParentheses)) {
-				this.readToken();
-				let invokeNode : SyntaxNode = new InvokeNode();
-				let invokeExpression : SyntaxNode = this.readSums();
-				invokeNode.left = node;
-				invokeNode.right = invokeExpression;
-				node = invokeNode;
-				this.readToken();
-			}
+			node = this.transformNodeIfInvoke(node);
+			node = this.transformNodeIfNegative(node, signToken);
 			return node;
 		} else {
 			let token = this.readToken();
@@ -112,19 +105,20 @@ export class SyntaxTree {
 		}
 	}
 
-	private readSign() : number {
+	private readSign() : Token {
 		let sign = 1;
+		let pos = this.offset;
 		while (this.isNextToken(TokenType.Subtract)) {
 			sign *= -1;
 			this.readToken();
 		}
-		return sign;
+		return new Token(TokenType.Number, sign.toString(), pos);
 	}
 
-	private readNumber(sign: number): SyntaxNode {
+	private readNumber(sign: Token): SyntaxNode {
 		if (this.isNextToken(TokenType.Number)) {
 			let numberToken = this.readToken();
-			let signedValue = sign * parseFloat(numberToken.getData());
+			let signedValue = parseInt(sign.getData()) * parseFloat(numberToken.getData());
 			numberToken.setData(signedValue.toString());
 			return new NumberNode(numberToken);
 		} else {
@@ -140,6 +134,35 @@ export class SyntaxTree {
 		} else {
 			let errorToken : Token = this.readToken();
 			throw new UnexpectedTokenError(`Unexpected ${errorToken.getTokenType()} token at position ${errorToken.getPos()}`);
+		}
+	}
+
+	private transformNodeIfInvoke(node : SyntaxNode) : SyntaxNode {
+		if (!this.hasReadAllTokens() && this.isNextToken(TokenType.LeftParentheses)) {
+			this.readToken();
+			let invokeNode : SyntaxNode = new InvokeNode();
+			let invokeExpression : SyntaxNode = this.readSums();
+			invokeNode.left = node;
+			invokeNode.right = invokeExpression;
+			node = invokeNode;
+			this.readToken();
+			return node;
+		} else {
+			return node;
+		}
+	}
+
+	private transformNodeIfNegative(node : SyntaxNode, sign: Token) : SyntaxNode {
+		if (sign.getData() == "-1") {
+			let signToken : Token = new Token(TokenType.Multiply, "*", sign.getPos());
+			let signOperatorNode : SyntaxNode = new OperatorNode(signToken);
+			let numberToken : Token = new Token(TokenType.Number, "-1", -1);
+			signOperatorNode.left = new NumberNode(numberToken);
+			signOperatorNode.right = node;
+			node = signOperatorNode;
+			return node;
+		} else {
+			return node;
 		}
 	}
 
