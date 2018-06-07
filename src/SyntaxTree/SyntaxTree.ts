@@ -98,7 +98,7 @@ export class SyntaxTree {
 			return node;
 		} else {
 			let token = this.readToken();
-			throw new UnexpectedTokenError(`Unexpected token type ${token.getTokenType} at position ${token.getPos}`);
+			throw new UnexpectedTokenError(`Unexpected token type ${token.getTokenType()} at position ${token.getPos()}`);
 		}
 	}
 
