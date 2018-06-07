@@ -108,5 +108,15 @@
 		"input": "2*-sin(0)",
 		"structure": ["Operator", "Number", "Operator", "Number", "Invoke", "Variable", "Number"],
 		"values": ["*", 2, "*", -1, "invoke", "sin", 0]
+	},
+	{
+		"input": "2*sin(x+2)",
+		"structure": ["Operator", "Number", "Invoke", "Variable", "Operator", "Variable", "Number"],
+		"values": ["*", 2, "invoke", "sin", "+", "x", 2]
+	},
+	{
+		"input": "2*-sin(x+2)",
+		"structure": ["Operator", "Number", "Operator", "Number", "Invoke", "Variable", "Operator", "Variable", "Number"],
+		"values": ["*", 2, "*", -1, "invoke", "sin", "+", "x", 2]
 	}
 ]
