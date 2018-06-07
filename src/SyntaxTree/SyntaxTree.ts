@@ -5,6 +5,8 @@ import { TokenType } from "../ExpressionLexer/TokenType";
 import { UnitNode } from "./UnitNode";
 import { UnexpectedTokenError } from "./UnexpectedTokenError";
 import { OperatorNode } from "./OperatorNode";
+import { VariableNode } from "./VariableNode";
+import { InvokeNode } from "./InvokeNode";
 
 export class SyntaxTree {
 	private tokens : Array<Token>;
@@ -84,25 +86,57 @@ export class SyntaxTree {
 	}
 
 	private readTerm() : SyntaxNode {
-		let numberNode = this.readNumber();
-		if (!this.hasReadAllTokens() && this.isNextToken(TokenType.Identifier)) {
-			let unitNode = this.readComplexUnit();
-			numberNode.right = unitNode;
+		let sign : number = this.readSign();
+		if (this.isNextToken(TokenType.Number)) {
+			let numberNode = this.readNumber(sign);
+			if (!this.hasReadAllTokens() && this.isNextToken(TokenType.Identifier)) {
+				let unitNode : SyntaxNode = this.readComplexUnit();
+				numberNode.right = unitNode;
+			}
+			return numberNode;
+		} else if (this.isNextToken(TokenType.Identifier)) {
+			let node : SyntaxNode = this.readVariable();
+			if (!this.hasReadAllTokens() && this.isNextToken(TokenType.LeftParentheses)) {
+				this.readToken();
+				let invokeNode : SyntaxNode = new InvokeNode();
+				let invokeExpression : SyntaxNode = this.readSums();
+				invokeNode.left = node;
+				invokeNode.right = invokeExpression;
+				node = invokeNode;
+				this.readToken();
+			}
+			return node;
+		} else {
+			let token = this.readToken();
+			throw new UnexpectedTokenError(`Unexpected token type ${token.getTokenType} at position ${token.getPos}`);
 		}
-		return numberNode;
 	}
 
-	private readNumber(): SyntaxNode {
+	private readSign() : number {
 		let sign = 1;
 		while (this.isNextToken(TokenType.Subtract)) {
 			sign *= -1;
 			this.readToken();
 		}
+		return sign;
+	}
+
+	private readNumber(sign: number): SyntaxNode {
 		if (this.isNextToken(TokenType.Number)) {
 			let numberToken = this.readToken();
 			let signedValue = sign * parseFloat(numberToken.getData());
 			numberToken.setData(signedValue.toString());
 			return new NumberNode(numberToken);
+		} else {
+			let errorToken : Token = this.readToken();
+			throw new UnexpectedTokenError(`Unexpected ${errorToken.getTokenType()} token at position ${errorToken.getPos()}`);
+		}
+	}
+
+	private readVariable() : SyntaxNode {
+		if (this.isNextToken(TokenType.Identifier)) {
+			let variableToken : Token = this.readToken();
+			return new VariableNode(variableToken);
 		} else {
 			let errorToken : Token = this.readToken();
 			throw new UnexpectedTokenError(`Unexpected ${errorToken.getTokenType()} token at position ${errorToken.getPos()}`);
@@ -127,7 +161,8 @@ export class SyntaxTree {
 		while (!this.hasReadAllTokens() && this.isNextToken(TokenType.Exponentiate)) {
 			let operatorToken = this.readToken();
 			let operatorNode = new OperatorNode(operatorToken);
-			let rightNode = this.readNumber();
+			let sign = this.readSign();
+			let rightNode = this.readNumber(sign);
 			operatorNode.left = node;
 			operatorNode.right = rightNode;
 			node = operatorNode;

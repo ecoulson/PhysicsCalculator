@@ -88,5 +88,15 @@
 		"input": "2/(1-2)^-2.1",
 		"structure": ["Operator", "Number", "Operator", "Operator", "Number", "Number", "Number"],
 		"values": ["/", 2, "^", "-", 1, 2, -2.1]
+	},
+	{
+		"input": "2*x",
+		"structure": ["Operator", "Number", "Variable"],
+		"values": ["*", 2, "x"]
+	},
+	{
+		"input": "2*sin(0)",
+		"structure": ["Operator", "Number", "Invoke", "Variable", "Number"],
+		"values": ["*", 2, "invoke", "sin", 0]
 	}
 ]

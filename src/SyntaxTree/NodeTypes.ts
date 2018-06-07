@@ -1,5 +1,7 @@
 export enum NodeType {
 	Number = "Number",
 	Unit = "Unit",
-	Operator = "Operator"
+	Operator = "Operator",
+	Variable = "Variable",
+	Invoke = "Invoke"
 }
