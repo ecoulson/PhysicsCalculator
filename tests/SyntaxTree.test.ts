@@ -2,13 +2,9 @@ import { expect } from 'chai';
 import { ExpressionLexer } from '../src/ExpressionLexer/ExpressionLexer';
 import { SyntaxTree } from '../src/SyntaxTree/SyntaxTree';
 import { Token } from '../src/ExpressionLexer/Token';
-import { TokenType } from '../src/ExpressionLexer/TokenType';
-import { SyntaxNode } from '../src/SyntaxTree/SyntaxNode';
-import { NodeType } from '../src/SyntaxTree/NodeTypes';
 import { checkTreeSize, checkTreeStructure, checkTreeValue } from './Helpers/SyntaxTreeHelper';
 import { readInputFile } from './Helpers/InputHelper';
 const inputs = readInputFile('SyntaxTreeInputs');
-console.log(inputs.treeCases)
 
 describe("SyntaxTree Test Suite", () => {
 	for (let i = 0; i < inputs.treeCases.length; i++) {
