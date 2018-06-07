@@ -7,6 +7,7 @@ import { UnitNode } from "../../src/SyntaxTree/UnitNode";
 import { OperatorNode } from "../../src/SyntaxTree/OperatorNode";
 import { VariableNode } from "../../src/SyntaxTree/VariableNode";
 import { InvokeNode } from "../../src/SyntaxTree/InvokeNode";
+import { AbsoluteNode } from "../../src/SyntaxTree/AbsoluteNode";
 
 export function checkTreeStructure(tree : SyntaxTree, expectedStructure: Array<NodeType>): void {
 	checkTreeStructureHelper(tree.root, expectedStructure, 0);
@@ -64,6 +65,11 @@ function checkTreeValueHelper(node: SyntaxNode, expectedValues: Array<any>, i) {
 			case NodeType.Invoke:
 				let invokeNode = <InvokeNode>node;
 				expect("invoke").to.equal(expectedValues[i]);
+				break;
+			case NodeType.Absolute:
+				let absoluteNode = <AbsoluteNode>node;
+				expect("absolute").to.equal(expectedValues[i]);
+				break;
 			default:
 				break;
 		}

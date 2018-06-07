@@ -1,127 +1,136 @@
-[
-	{
-		"input": "1",
-		"structure": ["Number"],
-		"values": [1]
-	},
-	{
-		"input": "1m",
-		"structure": ["Number", "Unit"],
-		"values": [1, "m"]
-	},
-	{
-		"input": "1m/s",
-		"structure": ["Number", "Operator", "Unit", "Unit"],
-		"values": [1, "/", "m", "s"]
-	},
-	{
-		"input": "1m/s^2",
-		"structure": ["Number", "Operator", "Unit", "Operator", "Unit", "Number"],
-		"values": [1, "/", "m", "^", "s", 2]
-	},
-	{
-		"input": "1m/s^-2",
-		"structure": ["Number", "Operator", "Unit", "Operator", "Unit", "Number"],
-		"values": [1, "/", "m", "^", "s", -2]
-	},
-	{
-		"input": "1kg*m/s^2",
-		"structure": ["Number", "Operator", "Operator", "Unit", "Unit", "Operator", "Unit", "Number"],
-		"values": [1, "/", "*", "kg", "m", "^", "s", 2]
-	},
-	{
-		"input": "1+1.1",
-		"structure": ["Operator", "Number", "Number"],
-		"values": ["+", 1, 1.1]
-	},
-	{
-		"input": "1-1.1",
-		"structure": ["Operator", "Number", "Number"],
-		"values": ["-", 1, 1.1]
-	},
-	{
-		"input": "1+-1.1",
-		"structure": ["Operator", "Number", "Number"],
-		"values": ["+", 1, -1.1]
-	},
-	{
-		"input": "1--1.1",
-		"structure": ["Operator", "Number", "Number"],
-		"values": ["-", 1, -1.1]
-	},
-	{
-		"input": "1*1.1",
-		"structure": ["Operator", "Number", "Number"],
-		"values": ["*", 1, 1.1]
-	},
-	{
-		"input": "1/1.1",
-		"structure": ["Operator", "Number", "Number"],
-		"values": ["/", 1, 1.1]
-	},
-	{
-		"input": "1*-1.1",
-		"structure": ["Operator", "Number", "Number"],
-		"values": ["*", 1, -1.1]
-	},
-	{
-		"input": "1/-1.1",
-		"structure": ["Operator", "Number", "Number"],
-		"values": ["/", 1, -1.1]
-	},
-	{
-		"input": "1^1.1",
-		"structure": ["Operator", "Number", "Number"],
-		"values": ["^", 1, 1.1]
-	},
-	{
-		"input": "1^-1.1",
-		"structure": ["Operator", "Number", "Number"],
-		"values": ["^", 1, -1.1]
-	},
-	{
-		"input": "2*(1+2)^2.1",
-		"structure": ["Operator", "Number", "Operator", "Operator", "Number", "Number", "Number"],
-		"values": ["*", 2, "^", "+", 1, 2, 2.1]
-	},
-	{
-		"input": "2/(1-2)^-2.1",
-		"structure": ["Operator", "Number", "Operator", "Operator", "Number", "Number", "Number"],
-		"values": ["/", 2, "^", "-", 1, 2, -2.1]
-	},
-	{
-		"input": "2*x",
-		"structure": ["Operator", "Number", "Variable"],
-		"values": ["*", 2, "x"]
-	},
-	{
-		"input": "2*-x",
-		"structure": ["Operator", "Number", "Operator", "Number", "Variable"],
-		"values": ["*", 2, "*", -1, "x"]
-	},
-	{
-		"input": "2*sin(0)",
-		"structure": ["Operator", "Number", "Invoke", "Variable", "Number"],
-		"values": ["*", 2, "invoke", "sin", 0]
-	},
-	{
-		"input": "2*-sin(0)",
-		"structure": ["Operator", "Number", "Operator", "Number", "Invoke", "Variable", "Number"],
-		"values": ["*", 2, "*", -1, "invoke", "sin", 0]
-	},
-	{
-		"input": "2*sin(x+2)",
-		"structure": ["Operator", "Number", "Invoke", "Variable", "Operator", "Variable", "Number"],
-		"values": ["*", 2, "invoke", "sin", "+", "x", 2]
-	},
-	{
-		"input": "2*-sin(x+2)",
-		"structure": ["Operator", "Number", "Operator", "Number", "Invoke", "Variable", "Operator", "Variable", "Number"],
-		"values": ["*", 2, "*", -1, "invoke", "sin", "+", "x", 2]
-	},
-	{
-		"input": "2**-sin(x+2)",
-		"structure": ["Operator", "Number", "Operator", "Number", "Invoke", "Variable", "Operator", "Variable", "Number"],
-		"values": ["*", 2, "*", -1, "invoke", "sin", "+", "x", 2]
-	}
-]
+{
+	"treeCases" : [
+		{
+			"input": "1",
+			"structure": ["Number"],
+			"values": [1]
+		},
+		{
+			"input": "1m",
+			"structure": ["Number", "Unit"],
+			"values": [1, "m"]
+		},
+		{
+			"input": "1m/s",
+			"structure": ["Number", "Operator", "Unit", "Unit"],
+			"values": [1, "/", "m", "s"]
+		},
+		{
+			"input": "1m/s^2",
+			"structure": ["Number", "Operator", "Unit", "Operator", "Unit", "Number"],
+			"values": [1, "/", "m", "^", "s", 2]
+		},
+		{
+			"input": "1m/s^-2",
+			"structure": ["Number", "Operator", "Unit", "Operator", "Unit", "Number"],
+			"values": [1, "/", "m", "^", "s", -2]
+		},
+		{
+			"input": "1kg*m/s^2",
+			"structure": ["Number", "Operator", "Operator", "Unit", "Unit", "Operator", "Unit", "Number"],
+			"values": [1, "/", "*", "kg", "m", "^", "s", 2]
+		},
+		{
+			"input": "1+1.1",
+			"structure": ["Operator", "Number", "Number"],
+			"values": ["+", 1, 1.1]
+		},
+		{
+			"input": "1-1.1",
+			"structure": ["Operator", "Number", "Number"],
+			"values": ["-", 1, 1.1]
+		},
+		{
+			"input": "1+-1.1",
+			"structure": ["Operator", "Number", "Number"],
+			"values": ["+", 1, -1.1]
+		},
+		{
+			"input": "1--1.1",
+			"structure": ["Operator", "Number", "Number"],
+			"values": ["-", 1, -1.1]
+		},
+		{
+			"input": "1*1.1",
+			"structure": ["Operator", "Number", "Number"],
+			"values": ["*", 1, 1.1]
+		},
+		{
+			"input": "1/1.1",
+			"structure": ["Operator", "Number", "Number"],
+			"values": ["/", 1, 1.1]
+		},
+		{
+			"input": "1*-1.1",
+			"structure": ["Operator", "Number", "Number"],
+			"values": ["*", 1, -1.1]
+		},
+		{
+			"input": "1/-1.1",
+			"structure": ["Operator", "Number", "Number"],
+			"values": ["/", 1, -1.1]
+		},
+		{
+			"input": "1^1.1",
+			"structure": ["Operator", "Number", "Number"],
+			"values": ["^", 1, 1.1]
+		},
+		{
+			"input": "1^-1.1",
+			"structure": ["Operator", "Number", "Number"],
+			"values": ["^", 1, -1.1]
+		},
+		{
+			"input": "2*(1+2)^2.1",
+			"structure": ["Operator", "Number", "Operator", "Operator", "Number", "Number", "Number"],
+			"values": ["*", 2, "^", "+", 1, 2, 2.1]
+		},
+		{
+			"input": "2/(1-2)^-2.1",
+			"structure": ["Operator", "Number", "Operator", "Operator", "Number", "Number", "Number"],
+			"values": ["/", 2, "^", "-", 1, 2, -2.1]
+		},
+		{
+			"input": "2*x",
+			"structure": ["Operator", "Number", "Variable"],
+			"values": ["*", 2, "x"]
+		},
+		{
+			"input": "2*-x",
+			"structure": ["Operator", "Number", "Operator", "Number", "Variable"],
+			"values": ["*", 2, "*", -1, "x"]
+		},
+		{
+			"input": "2*sin(0)",
+			"structure": ["Operator", "Number", "Invoke", "Variable", "Number"],
+			"values": ["*", 2, "invoke", "sin", 0]
+		},
+		{
+			"input": "2*-sin(0)",
+			"structure": ["Operator", "Number", "Operator", "Number", "Invoke", "Variable", "Number"],
+			"values": ["*", 2, "*", -1, "invoke", "sin", 0]
+		},
+		{
+			"input": "2*sin(x+2)",
+			"structure": ["Operator", "Number", "Invoke", "Variable", "Operator", "Variable", "Number"],
+			"values": ["*", 2, "invoke", "sin", "+", "x", 2]
+		},
+		{
+			"input": "2*-sin(x+2)",
+			"structure": ["Operator", "Number", "Operator", "Number", "Invoke", "Variable", "Operator", "Variable", "Number"],
+			"values": ["*", 2, "*", -1, "invoke", "sin", "+", "x", 2]
+		},
+		{
+			"input": "2*|-sin(x+2)|",
+			"structure": ["Operator", "Number", "Absolute", "Operator", "Number", "Invoke", "Variable", "Operator", "Variable", "Number"],
+			"values": ["*", 2, "absolute", "*", -1, "invoke", "sin", "+", "x", 2]
+		}
+	],
+	"errorCases": [
+		{
+			"input": "2**-sin(x+2)",
+			"structure": ["Operator", "Number", "Operator", "Number", "Invoke", "Variable", "Operator", "Variable", "Number"],
+			"values": ["*", 2, "*", -1, "invoke", "sin", "+", "x", 2]
+		}
+	]
+}

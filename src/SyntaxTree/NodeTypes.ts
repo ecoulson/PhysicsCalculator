@@ -3,5 +3,6 @@ export enum NodeType {
 	Unit = "Unit",
 	Operator = "Operator",
 	Variable = "Variable",
-	Invoke = "Invoke"
+	Invoke = "Invoke",
+	Absolute = "Absolute",
 }

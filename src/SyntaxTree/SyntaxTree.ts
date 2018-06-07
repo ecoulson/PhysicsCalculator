@@ -7,6 +7,7 @@ import { UnexpectedTokenError } from "./UnexpectedTokenError";
 import { OperatorNode } from "./OperatorNode";
 import { VariableNode } from "./VariableNode";
 import { InvokeNode } from "./InvokeNode";
+import { AbsoluteNode } from "./AbsoluteNode";
 
 export class SyntaxTree {
 	private tokens : Array<Token>;
@@ -37,7 +38,7 @@ export class SyntaxTree {
 
 	private readSums(): SyntaxNode {
 		let node = this.readFactor();
-		while (!this.hasReadAllTokens() && !this.isNextToken(TokenType.RightParentheses) && (this.isNextToken(TokenType.Add) || this.isNextToken(TokenType.Subtract))) {
+		while (!this.hasReadAllTokens() && !this.isNextToken(TokenType.Absolute) && !this.isNextToken(TokenType.RightParentheses) && (this.isNextToken(TokenType.Add) || this.isNextToken(TokenType.Subtract))) {
 			let operatorToken = this.readToken();
 			let operatorNode = new OperatorNode(operatorToken);
 			let rightNode = this.readFactor();
@@ -78,6 +79,13 @@ export class SyntaxTree {
 		if (!this.hasReadAllTokens() && this.isNextToken(TokenType.LeftParentheses)) {
 			this.readToken();
 			let node = this.readSums();
+			this.readToken();
+			return node;
+		} else if (!this.hasReadAllTokens() && this.isNextToken(TokenType.Absolute)) {
+			this.readToken();
+			let node = new AbsoluteNode();
+			let expression = this.readSums();
+			node.right = expression;
 			this.readToken();
 			return node;
 		} else {
