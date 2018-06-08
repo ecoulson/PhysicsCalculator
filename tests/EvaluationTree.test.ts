@@ -8,7 +8,7 @@ const config = readInputFile("EvaluationTreeInputs");
 const inputs = config.cases;
 const variable = config.variable;
 
-describe("EvaluationTree test suite", () => {
+describe("EvaluationTree Test Suite", () => {
 	for (let i = 0; i < inputs.length; i++) {
 		it(`Should evaluate ${inputs[i].in} to ${inputs[i].out}`, () => {
 			let lexer : ExpressionLexer = new ExpressionLexer(inputs[i].in);
