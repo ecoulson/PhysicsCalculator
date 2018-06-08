@@ -1,0 +1,53 @@
+[
+	{
+		"input": "1234567890"
+	},
+	{
+		"input": "1234567890.1234567890"
+	},
+	{
+		"input": "1"
+	},
+	{
+		"input": "abcdefghijklmnopqrstuvwxyz"
+	},
+	{
+		"input": "a"
+	},
+	{
+		"input": "1234567890.1234567890abcdefghijklmnopqrstuvwxyz+-*/^|()\t",
+		"values": [
+			"1234567890.1234567890",
+			"abcdefghijklmnopqrstuvwxyz",
+			"+",
+			"-",
+			"*",
+			"/",
+			"^",
+			"|",
+			"(",
+			")"
+		],
+		"pos": [
+			0,21,47,48,49,50,51,52,53,54
+		],
+		"types": [
+			"Number",
+			"Identifier",
+			"Add",
+			"Subtract",
+			"Multiply",
+			"Divide",
+			"Exponentiate",
+			"Absolute",
+			"LeftParentheses",
+			"RightParentheses"
+		]
+	},
+	{
+		"input": "©å˙∂∑˙å"
+	},
+	{
+		"input": "\t)"
+	}
+]
