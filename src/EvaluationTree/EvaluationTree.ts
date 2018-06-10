@@ -8,6 +8,7 @@ import { OperatorNode } from "../SyntaxTree/OperatorNode";
 import { IllegalOperatorError } from "./IllegalOperatorError";
 import { UnitStruct } from "./UnitStruct";
 import { UnitNode } from "../SyntaxTree/UnitNode";
+import { IllegalUnitOperationError } from "./IllegalUnitOperationError";
 
 export class EvaluationTree {
 	private root: SyntaxNode;
@@ -17,11 +18,10 @@ export class EvaluationTree {
 	}
 
 	public evaluateValue(variable: number): number {
-		let unitStruct : UnitStruct = new UnitStruct();
-		return this.evaluateValueHelper(this.root, variable, unitStruct);
+		return this.evaluateValueHelper(this.root, variable);
 	}
 
-	private evaluateValueHelper(node: SyntaxNode, variable: number, unitStruct: UnitStruct): number {
+	private evaluateValueHelper(node: SyntaxNode, variable: number): number {
 		if (node == null) {
 			return 0;
 		} else if (node.type == NodeType.Number) {
@@ -35,15 +35,15 @@ export class EvaluationTree {
 			let invokeNode : InvokeNode = <InvokeNode>node;
 			let functionName : string = (<VariableNode>invokeNode.left).variable;
 			let functionEvaluationTree = null // get tree from workspace
-			let functionParameter = this.evaluateValueHelper(invokeNode.right, variable, unitStruct);
+			let functionParameter = this.evaluateValueHelper(invokeNode.right, variable);
 			// return this.evaluateValueHelper(functionEvaluationTree.root, functionParameter);
 			return 0;
 		} else if (node.type == NodeType.Absolute) {
-			return Math.abs(this.evaluateValueHelper(node.right, variable, unitStruct));
+			return Math.abs(this.evaluateValueHelper(node.right, variable));
 		} else if (node.type == NodeType.Operator) {
 			let operatorNode : OperatorNode = <OperatorNode>node;
-			let a : number = this.evaluateValueHelper(operatorNode.left, variable, unitStruct);
-			let b : number = this.evaluateValueHelper(operatorNode.right, variable, unitStruct);
+			let a : number = this.evaluateValueHelper(operatorNode.left, variable);
+			let b : number = this.evaluateValueHelper(operatorNode.right, variable);
 			switch(operatorNode.operator) {
 				case '+':
 					return a + b;
@@ -61,33 +61,31 @@ export class EvaluationTree {
 		}
 	}
 
-	public evaluateUnits(node: SyntaxNode, unitStruct: UnitStruct): void {
-		if (node.type == NodeType.Operator) {
-			let operatorNode = <OperatorNode>node;
-			switch (operatorNode.operator) {
-				case "+":
-					let aNode = <UnitNode>operatorNode.left;
-					let bNode = <UnitNode>
-					if (operatorNode.left)
-					break;
-				case "-":
+	public buildUnitTree(): SyntaxNode {
+		return this.buildUnitTreeHelper(this.root);
+	}
 
-					break;
-				case "*":
-
-					break;
-				case "/":
-
-					break;
-				case "^":
-
-					break;
+	public buildUnitTreeHelper(node: SyntaxNode ) : SyntaxNode {
+		if (node.type == NodeType.Number) {
+			return node.right;
+		} else if (node.type == NodeType.Operator) {
+			let operatorNode : OperatorNode = <OperatorNode>node;
+			let leftUnit: SyntaxNode = this.buildUnitTreeHelper(node.left);
+			let rightUit: SyntaxNode = this.buildUnitTreeHelper(node.right);
+			switch(operatorNode.operator) {
+				case '+':
+					
+				case '-':
+					return a - b;
+				case '*':
+					return a * b;
+				case '/':
+					return a / b;
+				case '^':
+					return Math.pow(a, b);
 				default:
 					throw new IllegalOperatorError("Illegal Operator " + operatorNode.operator);
 			}
-		} else if (node.type == NodeType.Unit) {
-			let unitNode = <UnitNode>node;
-			unitStruct.nominator.push(unitNode);
 		}
 	}
 }
