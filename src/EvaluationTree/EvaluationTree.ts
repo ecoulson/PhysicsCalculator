@@ -9,12 +9,15 @@ import { IllegalOperatorError } from "./IllegalOperatorError";
 import { UnitStruct } from "./UnitStruct";
 import { UnitNode } from "../SyntaxTree/UnitNode";
 import { IllegalUnitOperationError } from "./IllegalUnitOperationError";
+import { IllegalNodeError } from "./IllegalNodeError";
 
 export class EvaluationTree {
 	private root: SyntaxNode;
+	public unitRoot: SyntaxNode;
 
 	constructor(tree: SyntaxTree) {
 		this.root = tree.root;
+		this.unitRoot = this.buildUnitTree();
 	}
 
 	public evaluateValue(variable: number): number {
@@ -61,31 +64,101 @@ export class EvaluationTree {
 		}
 	}
 
-	public buildUnitTree(): SyntaxNode {
+	private buildUnitTree(): SyntaxNode {
 		return this.buildUnitTreeHelper(this.root);
 	}
 
-	public buildUnitTreeHelper(node: SyntaxNode ) : SyntaxNode {
+	private buildUnitTreeHelper(node: SyntaxNode ) : SyntaxNode {
 		if (node.type == NodeType.Number) {
 			return node.right;
+		} else if (node.type == NodeType.Unit) {
+			return node;
 		} else if (node.type == NodeType.Operator) {
 			let operatorNode : OperatorNode = <OperatorNode>node;
 			let leftUnit: SyntaxNode = this.buildUnitTreeHelper(node.left);
 			let rightUit: SyntaxNode = this.buildUnitTreeHelper(node.right);
+			let unitOperator: OperatorNode;
 			switch(operatorNode.operator) {
 				case '+':
-					
+					unitOperator = OperatorNode.createNode('+');
+					unitOperator.left = leftUnit;
+					unitOperator.right = rightUit;
+					return unitOperator;
 				case '-':
-					return a - b;
+					unitOperator = OperatorNode.createNode('-');
+					unitOperator.left = leftUnit;
+					unitOperator.right = rightUit;
+					return unitOperator;
 				case '*':
-					return a * b;
+					unitOperator = OperatorNode.createNode('*');
+					unitOperator.left = leftUnit;
+					unitOperator.right = rightUit;
+					return unitOperator;
 				case '/':
-					return a / b;
+					unitOperator = OperatorNode.createNode('/');
+					unitOperator.left = leftUnit;
+					unitOperator.right = rightUit;
+					return unitOperator;
 				case '^':
-					return Math.pow(a, b);
+					unitOperator = OperatorNode.createNode('^');
+					unitOperator.left = leftUnit;
+					unitOperator.right = rightUit;
+					return unitOperator;
 				default:
 					throw new IllegalOperatorError("Illegal Operator " + operatorNode.operator);
 			}
+		} else {
+			throw new IllegalNodeError(`Node of Type ${node.type} Cannot Exist in The Unit Tree`);
+		}
+	}
+
+	public evaluateUnits(): UnitStruct {
+		let unitStruct = new UnitStruct();
+		this.evaluateUnitsHelper(this.unitRoot, unitStruct);
+		return unitStruct;
+	}
+
+	private evaluateUnitsHelper(node : SyntaxNode, unitStruct: UnitStruct) {
+		if (node.type == NodeType.Unit) {
+			return node;
+		} else if (node.type == NodeType.Number) {
+			return node;
+		} else if (node) {
+			let operatorNode : OperatorNode = <OperatorNode>node;
+			let leftUnit: SyntaxNode = this.buildUnitTreeHelper(node.left);
+			let rightUit: SyntaxNode = this.buildUnitTreeHelper(node.right);
+			let unitOperator: OperatorNode;
+			switch(operatorNode.operator) {
+				case '+':
+					unitOperator = OperatorNode.createNode('+');
+					unitOperator.left = leftUnit;
+					unitOperator.right = rightUit;
+					return unitOperator;
+				case '-':
+					unitOperator = OperatorNode.createNode('-');
+					unitOperator.left = leftUnit;
+					unitOperator.right = rightUit;
+					return unitOperator;
+				case '*':
+					unitOperator = OperatorNode.createNode('*');
+					unitOperator.left = leftUnit;
+					unitOperator.right = rightUit;
+					return unitOperator;
+				case '/':
+					unitOperator = OperatorNode.createNode('/');
+					unitOperator.left = leftUnit;
+					unitOperator.right = rightUit;
+					return unitOperator;
+				case '^':
+					unitOperator = OperatorNode.createNode('^');
+					unitOperator.left = leftUnit;
+					unitOperator.right = rightUit;
+					return unitOperator;
+				default:
+					throw new IllegalOperatorError("Illegal Operator " + operatorNode.operator);
+			}
+		} else {
+			throw new IllegalNodeError(`Node of Type ${node.type} Cannot Exist in The Unit Tree`);
 		}
 	}
 }

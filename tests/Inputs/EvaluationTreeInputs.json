@@ -33,5 +33,32 @@
 			"in": "(2+5)*x",
 			"out": 14
 		}
+	],
+	"unitCases": [
+		{
+			"in": "1m",
+			"structure": ["Unit"],
+			"values": ["m"]
+		},
+		{
+			"in": "1m+1m",
+			"structure": ["Operator", "Unit", "Unit"],
+			"values": ["+", "m", "m"]
+		},
+		{
+			"in": "1m*1m",
+			"structure": ["Operator", "Unit", "Unit"],
+			"values": ["*", "m", "m"]
+		},
+		{
+			"in": "1m/1m",
+			"structure": ["Operator", "Unit", "Unit"],
+			"values": ["/", "m", "m"]
+		},
+		{
+			"in": "1m^2",
+			"structure": ["Operator", "Unit", "Number"],
+			"values": ["^", "m", 2]
+		}
 	]
 }
