@@ -10,6 +10,7 @@ import { UnitStruct } from "./UnitStruct";
 import { UnitNode } from "../SyntaxTree/UnitNode";
 import { IllegalUnitOperationError } from "./IllegalUnitOperationError";
 import { IllegalNodeError } from "./IllegalNodeError";
+import { Unit } from "./Unit";
 
 export class EvaluationTree {
 	private root: SyntaxNode;
@@ -107,8 +108,6 @@ export class EvaluationTree {
 				default:
 					throw new IllegalOperatorError("Illegal Operator " + operatorNode.operator);
 			}
-		} else {
-			throw new IllegalNodeError(`Node of Type ${node.type} Cannot Exist in The Unit Tree`);
 		}
 	}
 
@@ -125,35 +124,37 @@ export class EvaluationTree {
 			return node;
 		} else if (node) {
 			let operatorNode : OperatorNode = <OperatorNode>node;
-			let leftUnit: SyntaxNode = this.buildUnitTreeHelper(node.left);
-			let rightUit: SyntaxNode = this.buildUnitTreeHelper(node.right);
+			let leftUnit: SyntaxNode = this.evaluateUnitsHelper(node.left, unitStruct);
+			let rightUnit: SyntaxNode = this.evaluateUnitsHelper(node.right, unitStruct);
 			let unitOperator: OperatorNode;
 			switch(operatorNode.operator) {
 				case '+':
-					unitOperator = OperatorNode.createNode('+');
-					unitOperator.left = leftUnit;
-					unitOperator.right = rightUit;
-					return unitOperator;
+					break;
 				case '-':
-					unitOperator = OperatorNode.createNode('-');
-					unitOperator.left = leftUnit;
-					unitOperator.right = rightUit;
-					return unitOperator;
+					break;
 				case '*':
-					unitOperator = OperatorNode.createNode('*');
-					unitOperator.left = leftUnit;
-					unitOperator.right = rightUit;
-					return unitOperator;
+					let multiplyLeftUnitNode = <UnitNode>leftUnit;
+					let multiplyRightUnitNode = <UnitNode>rightUnit;
+					// console.log(unitStruct.currentLevel);
+					unitStruct.currentLevel.push(new Unit(multiplyLeftUnitNode.unit, 1));
+					unitStruct.currentLevel.push(new Unit(multiplyRightUnitNode.unit, 1));
+					return multiplyRightUnitNode;
 				case '/':
-					unitOperator = OperatorNode.createNode('/');
-					unitOperator.left = leftUnit;
-					unitOperator.right = rightUit;
-					return unitOperator;
+					let divideLeftUnit = <UnitNode>leftUnit;
+					let divideRightUnit = <UnitNode>rightUnit;
+					// console.log(unitStruct.currentLevel);
+					unitStruct.currentLevel.push(new Unit(divideLeftUnit.unit, 1));
+					unitStruct.addLevel();
+					unitStruct.currentLevel.push(new Unit(divideRightUnit.unit, 1));
+					// return divideRightUnit;
+					break;
 				case '^':
-					unitOperator = OperatorNode.createNode('^');
-					unitOperator.left = leftUnit;
-					unitOperator.right = rightUit;
-					return unitOperator;
+					let expUnitNode = <UnitNode>leftUnit;
+					let degreeNode = <NumberNode>rightUnit;
+					console.log(unitStruct.currentLevel);
+					let expUnit = new Unit(expUnitNode.unit, degreeNode.number);
+					unitStruct.currentLevel.push(expUnit);
+					return UnitNode.createNode(`${expUnit.unit}^${expUnit.degree}`);
 				default:
 					throw new IllegalOperatorError("Illegal Operator " + operatorNode.operator);
 			}

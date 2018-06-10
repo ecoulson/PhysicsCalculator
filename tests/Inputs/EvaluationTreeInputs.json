@@ -60,5 +60,19 @@
 			"structure": ["Operator", "Unit", "Number"],
 			"values": ["^", "m", 2]
 		}
+	],
+	"evaluteUnitCases": [
+		{
+			"in": "1s^2",
+			"out": "s^2"
+		},
+		{
+			"in": "1m/s",
+			"out": "m/s"
+		},
+		{
+			"in": "1kg*1m/1s^2",
+			"out": "kgm/s^2"
+		}
 	]
 }

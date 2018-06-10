@@ -6,9 +6,11 @@ import { Token } from '../src/ExpressionLexer/Token';
 import { readInputFile } from './Helpers/InputHelper';
 import { checkTreeStructure, checkTreeSize, checkTreeValue } from './Helpers/SyntaxTreeHelper';
 import { IllegalUnitOperationError } from '../src/EvaluationTree/IllegalUnitOperationError';
+import { UnitStruct } from '../src/EvaluationTree/UnitStruct';
 const config = readInputFile("EvaluationTreeInputs");
 const arithmeticCases = config.cases;
 const unitCases = config.unitCases;
+const unitEvalCases = config.evaluteUnitCases;
 const variable = config.variable;
 
 describe("EvaluationTree Test Suite", () => {
@@ -34,6 +36,17 @@ describe("EvaluationTree Test Suite", () => {
 			checkTreeStructure(unitTree, unitCases[i].structure);
 			checkTreeSize(unitTree, unitCases[i].structure.length);
 			checkTreeValue(unitTree, unitCases[i].values);
+		})
+	}
+	for (let i = 0; i < unitEvalCases.length; i++) {
+		it(`Should evaluate ${unitEvalCases[i].in} to ${unitEvalCases[i].out}`, () => {
+			let lexer : ExpressionLexer = new ExpressionLexer(unitEvalCases[i].in);
+			let tokens : Array<Token> = lexer.lex();
+			let tree : SyntaxTree = new SyntaxTree(tokens);
+			tree.build();
+			let evaluationTree = new EvaluationTree(tree);
+			let unitStruct : UnitStruct = evaluationTree.evaluateUnits();
+			expect(unitStruct.toString()).to.equal(unitEvalCases[i].out);
 		})
 	}
 });
