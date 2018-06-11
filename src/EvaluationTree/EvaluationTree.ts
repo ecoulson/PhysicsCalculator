@@ -9,6 +9,7 @@ import { IllegalOperatorError } from "./IllegalOperatorError";
 import { UnitNode } from "../SyntaxTree/UnitNode";
 import { IllegalNodeError } from "./IllegalNodeError";
 import { IllegalUnitOperationError } from "./IllegalUnitOperationError";
+import { Dimension } from "./Dimension";
 
 export class EvaluationTree {
 	private root: SyntaxNode;
@@ -110,40 +111,89 @@ export class EvaluationTree {
 	}
 
 	public evaluateUnits(): string {
-		let unitString = this.evaluateUnitsHelper(this.unitRoot);
-		return unitString;
+		let dimensions = this.evaluateUnitsHelper(this.unitRoot);
+		let unit : string = this.getDimensionsString(dimensions);
+		return unit;
 	}
 
-	private evaluateUnitsHelper(node : SyntaxNode): string {
-		if (node.type == NodeType.Unit) {
-			return (<UnitNode>node).unit;
+	private evaluateUnitsHelper(node : SyntaxNode): Array<Dimension> {
+		if (node == null) {
+			return [];
+		} else if (node.type == NodeType.Unit) {
+			let unit = (<UnitNode>node).unit;
+			return [new Dimension(unit, 1)];
 		} else if (node.type == NodeType.Number) {
-			return (<NumberNode>node).number.toString();
-		} else if (node) {
+			let degree = (<NumberNode>node).number;
+			return [new Dimension(null, degree)];
+		} else if (node.type == NodeType.Operator) {
 			let operatorNode : OperatorNode = <OperatorNode>node;
-			let leftUnit: string = this.evaluateUnitsHelper(node.left);
-			let rightUnit: string = this.evaluateUnitsHelper(node.right);
+			let leftDimensions: Array<Dimension> = this.evaluateUnitsHelper(node.left);
+			let rightDimensions: Array<Dimension> = this.evaluateUnitsHelper(node.right);
 			switch(operatorNode.operator) {
 				case '+':
 				case '-':
-					if (leftUnit == rightUnit || (leftUnit == "") !== (rightUnit == "")) {
-						if (leftUnit != "") {
-							return leftUnit;
-						} else {
-							return rightUnit
-						}			
+					if (this.isDimensionsEqual(leftDimensions, rightDimensions)) {
+						return leftDimensions;
 					} else {
-						throw new IllegalUnitOperationError(`Illegal Unit Operation of ${operatorNode.operator} between ${leftUnit} and ${rightUnit}`)
+						throw new IllegalUnitOperationError(`Illegal Unit Operation of ${operatorNode.operator} between ${this.getDimensionsString(leftDimensions)} and ${this.getDimensionsString(rightDimensions)}`)
+					}
+				case '/':
+					for (let i = 0; i < rightDimensions.length; i++) {
+						rightDimensions[i].degree *= -1;
 					}
 				case '*':
-				case '/':
+					for (let i = 0; i < rightDimensions.length; i++) {
+						let leftIndex = this.indexOfDimension(rightDimensions[i], leftDimensions);
+						if (leftIndex == -1) {
+							leftDimensions.push(rightDimensions[i]);
+						} else {
+							leftDimensions[leftIndex].degree += rightDimensions[i].degree;
+						}
+					}
+					return leftDimensions;
 				case '^':
-					return `${leftUnit}${operatorNode.operator}${rightUnit}`;
+					leftDimensions[0].degree = rightDimensions[0].degree;
+					return leftDimensions;
 				default:
 					throw new IllegalOperatorError(`Illegal Operator of Type ${operatorNode.operator}`);
 			}
 		} else {
 			throw new IllegalNodeError(`Node of Type ${node.type} Cannot Exist in The Unit Tree`);
 		}
+	}
+
+	private isDimensionsEqual(left: Array<Dimension>, right: Array<Dimension>): boolean {
+		if (left.length == 0 || right.length == 0) {
+			return true;
+		}
+		if (left.length != right.length) {
+			return false;
+		}
+		for (let i = 0; i < left.length; i++) {
+			if (!left[i].equals(right[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private getDimensionsString(dimensions: Array<Dimension>): string {
+		let dimensionString = "";
+		for (let i = 0; i < dimensions.length; i++) {
+			dimensionString += dimensions[i].toString();
+			if (i != dimensions.length - 1) {
+				dimensionString += "*";
+			}
+		}
+		return dimensionString
+	}
+
+	private indexOfDimension(dimension: Dimension, dimensions: Array<Dimension>): number {
+		for (let i = 0; i < dimensions.length; i++) {
+			if (dimension.unit == dimensions[i].unit) {
+				return i;
+			}
+		}
+		return -1;
 	}
 }
