@@ -229,8 +229,11 @@ export class EvaluationTree {
 			possibleSimplifications,
 			dimensions
 		);
-		let bestSimplificationDimensions = possibleSimplifications[bestSimplificationUnit];
-		this.simplify(dimensions, bestSimplificationDimensions);
+		if (bestSimplificationUnit != null) {
+			let bestSimplificationDimensions = possibleSimplifications[bestSimplificationUnit];
+			this.simplify(dimensions, bestSimplificationDimensions);
+			dimensions.unshift(new Dimension(bestSimplificationUnit, 1));
+		}
 	}
 
 	private getPossibleSimplifications(dimensions: Array<Dimension>): { [ unit: string]: Array<Dimension> } {
@@ -261,6 +264,9 @@ export class EvaluationTree {
 		dimensions: Array<Dimension>
 	): string {
 		let longestSimplificationUnits : Array<string> = this.getLongestCommonSimplificationUnit(possibleSimplifications);
+		if (longestSimplificationUnits.length == 0) {
+			return null;
+		}
 		if (longestSimplificationUnits.length == 1) {
 			return longestSimplificationUnits[0];
 		}
@@ -321,7 +327,10 @@ export class EvaluationTree {
 	}
 
 	private simplify(dimensions: Array<Dimension>, bestSimplificationDimensions: Array<Dimension>): void {
-		
+		for (let i = 0; i < bestSimplificationDimensions.length; i++) {
+			let dimensionIndex = this.indexOfDimension(bestSimplificationDimensions[i], dimensions);
+			dimensions[dimensionIndex].degree -= bestSimplificationDimensions[i].degree;
+		}
 	}
 
 	private getSmallestDifferenceUnit(differences: { [unit: string]: number }): string {
