@@ -223,83 +223,10 @@ export class EvaluationTree {
 
 	private simplifyUnits(dimensions: Array<Dimension>): void {
 		let possibleSimplifications: number = 0;
-		let currentSimplification : any = {
-			unit: "",
-			start: -1,
-			degrees: [Infinity],
-		}
 		for (const unit in DerivedUnits) {
 			const SIUnits: Array<Dimension> = this.createDimensionArray(DerivedUnits[unit]);
 			let offset : number = 0;
 			let degrees : Array<number> = [];
-			for (let i = 0; i < dimensions.length; i++) {
-				if (dimensions[i].unit == SIUnits[offset].unit) {
-					let diff = dimensions[i].degree - SIUnits[offset].degree;
-					if (unit == "V") {
-						console.log(diff, dimensions[i].degree, SIUnits[offset].degree);
-						console.log(Math.abs(diff) <= Math.abs(dimensions[i].degree));
-					}
-					// should not increase the degree of a dimension, simplification should decrease the degree
-					if (Math.abs(diff) <= Math.abs(dimensions[i].degree)) {
-						degrees.push(dimensions[i].degree - SIUnits[offset].degree);
-						if (offset == SIUnits.length - 1) {
-							console.log(unit);
-							possibleSimplifications++;
-							let simplifcationStruct = {
-								unit: unit,
-								start: i - offset,
-								degrees: degrees,
-							};
-							if (degrees.length >= currentSimplification.degrees.length) {
-								let sumA = 0;
-								let sumB = 0;
-								for (let i = 0; i < degrees.length; i++) {
-									sumA += degrees[i];
-									sumB += currentSimplification.degrees[i];
-								}
-								if (sumA < sumB) {
-									currentSimplification = simplifcationStruct;
-								}
-								currentSimplification = simplifcationStruct;	
-							} else {
-								let sumA = 0;
-								let sumB = 0;
-								for (let i = 0; i < degrees.length; i++) {
-									sumA += degrees[i];
-									sumB += currentSimplification.degrees[i];
-								}
-								if (sumA < sumB) {
-									currentSimplification = simplifcationStruct;
-								}
-								currentSimplification = simplifcationStruct;
-							}
-						} else {
-							offset++;
-						}
-					}
-				} else {
-					offset = 0;
-				}
-			}
-		}
-		console.log(currentSimplification);
-		if (currentSimplification.start != -1) {
-			let dimension = new Dimension(currentSimplification.unit, 1);
-			let indexOfDimension = this.indexOfDimension(dimension, dimensions)
-			if (indexOfDimension == -1) {
-				dimensions.push(dimension);
-			} else {
-				dimensions[indexOfDimension].degree++;
-			}
-
-			let offset = currentSimplification.start;
-			for (let i = 0; i < currentSimplification.degrees.length; i++) {
-				dimensions[offset + i].degree = currentSimplification.degrees[i];
-			}
-		}
-
-		if (possibleSimplifications > 1) {
-			this.simplifyUnits(dimensions);
 		}
 	}
 

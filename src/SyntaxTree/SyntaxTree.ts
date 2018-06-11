@@ -198,7 +198,8 @@ export class SyntaxTree {
 			!this.hasReadAllTokens() && 
 			(this.isNextToken(TokenType.Divide) || 
 			this.isNextToken(TokenType.Multiply)) && 
-			this.tokens[this.offset+1].getTokenType() != TokenType.Number
+			this.tokens[this.offset + 1].getTokenType() != TokenType.Number &&
+			this.tokens[this.offset + 1].getTokenType() != TokenType.LeftParentheses
 		) {
 			let operatorToken = this.readToken();
 			let operatorNode = new OperatorNode(operatorToken);

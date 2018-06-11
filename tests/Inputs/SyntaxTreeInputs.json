@@ -124,6 +124,11 @@
 			"input": "2*|-sin(x+2)|",
 			"structure": ["Operator", "Number", "Absolute", "Operator", "Number", "Invoke", "Variable", "Operator", "Variable", "Number"],
 			"values": ["*", 2, "absolute", "*", -1, "invoke", "sin", "+", "x", 2]
+		},
+		{
+			"input": "1N/(1m*1s^-2)",
+			"structure": ["Operator", "Number", "Unit", "Operator", "Number", "Unit", "Number", "Operator", "Unit", "Number"],
+			"values": ["/", 1, "N", "*", 1, "m", 1, "^", "s", -2]
 		}
 	],
 	"errorCases": [
