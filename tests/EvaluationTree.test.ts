@@ -5,8 +5,6 @@ import { EvaluationTree } from '../src/EvaluationTree/EvaluationTree';
 import { Token } from '../src/ExpressionLexer/Token';
 import { readInputFile } from './Helpers/InputHelper';
 import { checkTreeStructure, checkTreeSize, checkTreeValue } from './Helpers/SyntaxTreeHelper';
-import { IllegalUnitOperationError } from '../src/EvaluationTree/IllegalUnitOperationError';
-import { UnitStruct } from '../src/EvaluationTree/UnitStruct';
 const config = readInputFile("EvaluationTreeInputs");
 const arithmeticCases = config.cases;
 const unitCases = config.unitCases;
@@ -45,7 +43,7 @@ describe("EvaluationTree Test Suite", () => {
 			let tree : SyntaxTree = new SyntaxTree(tokens);
 			tree.build();
 			let evaluationTree = new EvaluationTree(tree);
-			let unitStruct : UnitStruct = evaluationTree.evaluateUnits();
+			let unitStruct : string = evaluationTree.evaluateUnits();
 			expect(unitStruct.toString()).to.equal(unitEvalCases[i].out);
 		})
 	}

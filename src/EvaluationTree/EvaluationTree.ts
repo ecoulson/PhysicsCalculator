@@ -6,11 +6,9 @@ import { VariableNode } from "../SyntaxTree/VariableNode";
 import { InvokeNode } from "../SyntaxTree/InvokeNode";
 import { OperatorNode } from "../SyntaxTree/OperatorNode";
 import { IllegalOperatorError } from "./IllegalOperatorError";
-import { UnitStruct } from "./UnitStruct";
 import { UnitNode } from "../SyntaxTree/UnitNode";
-import { IllegalUnitOperationError } from "./IllegalUnitOperationError";
 import { IllegalNodeError } from "./IllegalNodeError";
-import { Unit } from "./Unit";
+import { IllegalUnitOperationError } from "./IllegalUnitOperationError";
 
 export class EvaluationTree {
 	private root: SyntaxNode;
@@ -111,52 +109,38 @@ export class EvaluationTree {
 		}
 	}
 
-	public evaluateUnits(): UnitStruct {
-		let unitStruct = new UnitStruct();
-		this.evaluateUnitsHelper(this.unitRoot, unitStruct);
-		return unitStruct;
+	public evaluateUnits(): string {
+		let unitString = this.evaluateUnitsHelper(this.unitRoot);
+		return unitString;
 	}
 
-	private evaluateUnitsHelper(node : SyntaxNode, unitStruct: UnitStruct) {
+	private evaluateUnitsHelper(node : SyntaxNode): string {
 		if (node.type == NodeType.Unit) {
-			return node;
+			return (<UnitNode>node).unit;
 		} else if (node.type == NodeType.Number) {
-			return node;
+			return (<NumberNode>node).number.toString();
 		} else if (node) {
 			let operatorNode : OperatorNode = <OperatorNode>node;
-			let leftUnit: SyntaxNode = this.evaluateUnitsHelper(node.left, unitStruct);
-			let rightUnit: SyntaxNode = this.evaluateUnitsHelper(node.right, unitStruct);
-			let unitOperator: OperatorNode;
+			let leftUnit: string = this.evaluateUnitsHelper(node.left);
+			let rightUnit: string = this.evaluateUnitsHelper(node.right);
 			switch(operatorNode.operator) {
 				case '+':
-					break;
 				case '-':
-					break;
+					if (leftUnit == rightUnit || (leftUnit == "") !== (rightUnit == "")) {
+						if (leftUnit != "") {
+							return leftUnit;
+						} else {
+							return rightUnit
+						}			
+					} else {
+						throw new IllegalUnitOperationError(`Illegal Unit Operation of ${operatorNode.operator} between ${leftUnit} and ${rightUnit}`)
+					}
 				case '*':
-					let multiplyLeftUnitNode = <UnitNode>leftUnit;
-					let multiplyRightUnitNode = <UnitNode>rightUnit;
-					// console.log(unitStruct.currentLevel);
-					unitStruct.currentLevel.push(new Unit(multiplyLeftUnitNode.unit, 1));
-					unitStruct.currentLevel.push(new Unit(multiplyRightUnitNode.unit, 1));
-					return multiplyRightUnitNode;
 				case '/':
-					let divideLeftUnit = <UnitNode>leftUnit;
-					let divideRightUnit = <UnitNode>rightUnit;
-					// console.log(unitStruct.currentLevel);
-					unitStruct.currentLevel.push(new Unit(divideLeftUnit.unit, 1));
-					unitStruct.addLevel();
-					unitStruct.currentLevel.push(new Unit(divideRightUnit.unit, 1));
-					// return divideRightUnit;
-					break;
 				case '^':
-					let expUnitNode = <UnitNode>leftUnit;
-					let degreeNode = <NumberNode>rightUnit;
-					console.log(unitStruct.currentLevel);
-					let expUnit = new Unit(expUnitNode.unit, degreeNode.number);
-					unitStruct.currentLevel.push(expUnit);
-					return UnitNode.createNode(`${expUnit.unit}^${expUnit.degree}`);
+					return `${leftUnit}${operatorNode.operator}${rightUnit}`;
 				default:
-					throw new IllegalOperatorError("Illegal Operator " + operatorNode.operator);
+					throw new IllegalOperatorError(`Illegal Operator of Type ${operatorNode.operator}`);
 			}
 		} else {
 			throw new IllegalNodeError(`Node of Type ${node.type} Cannot Exist in The Unit Tree`);
