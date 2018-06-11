@@ -20,9 +20,11 @@ let DerivedUnits : Object = JSON.parse(readFileSync(__dirname + "/DerivedUnits.j
 export class EvaluationTree {
 	private root: SyntaxNode;
 	public unitRoot: SyntaxNode;
+	public usedUnits: Array<string>;
 
 	constructor(tree: SyntaxTree) {
 		this.root = tree.root;
+		this.usedUnits = [];
 		this.unitRoot = this.buildUnitTree();
 	}
 
@@ -35,41 +37,39 @@ export class EvaluationTree {
 			if (node.right == null) {
 				return node.right;
 			} else {
-				return this.convertToSIUnits(<UnitNode>node.right);
+				let unitNode = <UnitNode>node.right;
+				return this.convertToSIUnits(unitNode);
 			}
-		} else if (node.type == NodeType.Unit) {
-			let unitNode = <UnitNode>node;
-			return this.convertToSIUnits(unitNode);
 		} else if (node.type == NodeType.Operator) {
 			let operatorNode : OperatorNode = <OperatorNode>node;
 			let leftUnit: SyntaxNode = this.buildUnitTreeHelper(node.left);
-			let rightUit: SyntaxNode = this.buildUnitTreeHelper(node.right);
+			let rightUnit: SyntaxNode = this.buildUnitTreeHelper(node.right);
 			let unitOperator: OperatorNode;
 			switch(operatorNode.operator) {
 				case '+':
 					unitOperator = OperatorNode.createNode('+');
 					unitOperator.left = leftUnit;
-					unitOperator.right = rightUit;
+					unitOperator.right = rightUnit;
 					return unitOperator;
 				case '-':
 					unitOperator = OperatorNode.createNode('-');
 					unitOperator.left = leftUnit;
-					unitOperator.right = rightUit;
+					unitOperator.right = rightUnit;
 					return unitOperator;
 				case '*':
 					unitOperator = OperatorNode.createNode('*');
 					unitOperator.left = leftUnit;
-					unitOperator.right = rightUit;
+					unitOperator.right = rightUnit;
 					return unitOperator;
 				case '/':
 					unitOperator = OperatorNode.createNode('/');
 					unitOperator.left = leftUnit;
-					unitOperator.right = rightUit;
+					unitOperator.right = rightUnit;
 					return unitOperator;
 				case '^':
 					unitOperator = OperatorNode.createNode('^');
 					unitOperator.left = leftUnit;
-					unitOperator.right = rightUit;
+					unitOperator.right = rightUnit;
 					return unitOperator;
 				default:
 					throw new IllegalOperatorError("Illegal Operator " + operatorNode.operator);
@@ -78,6 +78,9 @@ export class EvaluationTree {
 	}
 
 	private convertToSIUnits(node: UnitNode): SyntaxNode {
+		if (node.unit !== undefined) {
+			this.usedUnits.push(node.unit);
+		}
 		if (DerivedUnits.hasOwnProperty(node.unit)) {
 			let lexer : ExpressionLexer = new ExpressionLexer(DerivedUnits[node.unit]);
 			let tokens : Array<Token> = lexer.lex();
@@ -222,12 +225,97 @@ export class EvaluationTree {
 	}
 
 	private simplifyUnits(dimensions: Array<Dimension>): void {
-		let possibleSimplifications: number = 0;
+		let possibleSimplifications: { [ unit: string]: Array<Dimension> } = {};
 		for (const unit in DerivedUnits) {
-			const SIUnits: Array<Dimension> = this.createDimensionArray(DerivedUnits[unit]);
-			let offset : number = 0;
-			let degrees : Array<number> = [];
+			if (unit != "Gy" && unit != "Sv" && unit != "dioptry") {
+				const SIUnits: Array<Dimension> = this.createDimensionArray(DerivedUnits[unit]);
+				if (this.canSimplify(dimensions, SIUnits)) {
+					possibleSimplifications[unit] = SIUnits;
+				}
+			}
 		}
+		let bestSimplificationUnit = this.getBestSimplification(
+			possibleSimplifications,
+			dimensions
+		);
+		console.log(bestSimplificationUnit);
+	}
+
+	private canSimplify(dimensions: Array<Dimension>, SIUnits: Array<Dimension>): boolean {
+		for (let i = 0; i < SIUnits.length; i++) {
+			let indexOfDimension = this.indexOfDimension(SIUnits[i], dimensions);
+			if (indexOfDimension == -1) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private getBestSimplification(
+		possibleSimplifications: { [ unit: string]: Array<Dimension> }, 
+		dimensions: Array<Dimension>
+	): string {
+		let longestSimplificationUnits : Array<string> = this.getLongestCommonSimplificationUnit(possibleSimplifications);
+		if (longestSimplificationUnits.length == 1) {
+			return longestSimplificationUnits[0];
+		}
+		possibleSimplifications = this.getNewPossibleSimplifications(
+			longestSimplificationUnits, 
+			possibleSimplifications
+		);
+		let differences = this.getDegreeDifferences(possibleSimplifications, dimensions);
+		return ""; 
+	}
+
+	private getLongestCommonSimplificationUnit(
+		possibleSimplifications: { [ unit: string]: Array<Dimension> }
+	): Array<string> {
+		let longestCommonUnits : Array<string> = [];
+		let max = -1;
+		for (const unit in possibleSimplifications) {
+			if (max < possibleSimplifications[unit].length) {
+				max = possibleSimplifications[unit].length;
+				longestCommonUnits = [unit];
+			} else if (max == possibleSimplifications[unit].length) {
+				longestCommonUnits.push(unit);
+			}
+		}
+		return longestCommonUnits;
+	}
+
+	private getNewPossibleSimplifications(
+		units: Array<string>, 
+		simplifications: { [ unit: string]: Array<Dimension> }
+	): { [ unit: string]: Array<Dimension> } {
+		let newSimplifications : { [ unit: string]: Array<Dimension> } = {};
+		for (const unit in simplifications) {
+			let i = units.indexOf(unit);
+			if (i != -1) {
+				newSimplifications[unit] = simplifications[unit];
+			}
+		}
+		return newSimplifications;
+	}
+
+	private getDegreeDifferences(
+		possibleDimensions: Array<Array<Dimension>>, 
+		dimensions: Array<Dimension>
+	): Array<number> {
+		let differenceSums : Array<number> = [];
+		for (let i = 0; i < possibleDimensions.length; i++) {
+			let sum: number = 0;
+			for (let j = 0; j < possibleDimensions[i].length; j++) {
+				let dimensionIndex: number = this.indexOfDimension(possibleDimensions[i][j], dimensions);
+				let diff: number = Math.abs(possibleDimensions[i][j].degree - dimensions[dimensionIndex].degree);
+				sum += diff;
+			}
+			differenceSums.push(sum);
+		}
+		return differenceSums;
+	}
+
+	private getSmallestDifferenceIndex(): number {
+
 	}
 
 	private createDimensionArray(dimensionString: string): Array<Dimension> {
