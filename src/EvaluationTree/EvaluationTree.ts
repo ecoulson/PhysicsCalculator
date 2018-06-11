@@ -10,6 +10,11 @@ import { UnitNode } from "../SyntaxTree/UnitNode";
 import { IllegalNodeError } from "./IllegalNodeError";
 import { IllegalUnitOperationError } from "./IllegalUnitOperationError";
 import { Dimension } from "./Dimension";
+import { ExpressionLexer } from "../ExpressionLexer/ExpressionLexer";
+import { Token } from "../ExpressionLexer/Token";
+import { readFileSync } from "fs";
+
+let DerivedUnits : Object = JSON.parse(readFileSync(__dirname + "/DerivedUnits.json", "utf-8"));
 
 export class EvaluationTree {
 	private root: SyntaxNode;
@@ -18,6 +23,70 @@ export class EvaluationTree {
 	constructor(tree: SyntaxTree) {
 		this.root = tree.root;
 		this.unitRoot = this.buildUnitTree();
+	}
+
+	private buildUnitTree(): SyntaxNode {
+		return this.buildUnitTreeHelper(this.root);
+	}
+
+	private buildUnitTreeHelper(node: SyntaxNode ) : SyntaxNode {
+		if (node.type == NodeType.Number) {
+			if (node.right == null) {
+				return node.right;
+			} else {
+				return this.convertToSIUnits(<UnitNode>node.right);
+			}
+		} else if (node.type == NodeType.Unit) {
+			let unitNode = <UnitNode>node;
+			return this.convertToSIUnits(unitNode);
+		} else if (node.type == NodeType.Operator) {
+			let operatorNode : OperatorNode = <OperatorNode>node;
+			let leftUnit: SyntaxNode = this.buildUnitTreeHelper(node.left);
+			let rightUit: SyntaxNode = this.buildUnitTreeHelper(node.right);
+			let unitOperator: OperatorNode;
+			switch(operatorNode.operator) {
+				case '+':
+					unitOperator = OperatorNode.createNode('+');
+					unitOperator.left = leftUnit;
+					unitOperator.right = rightUit;
+					return unitOperator;
+				case '-':
+					unitOperator = OperatorNode.createNode('-');
+					unitOperator.left = leftUnit;
+					unitOperator.right = rightUit;
+					return unitOperator;
+				case '*':
+					unitOperator = OperatorNode.createNode('*');
+					unitOperator.left = leftUnit;
+					unitOperator.right = rightUit;
+					return unitOperator;
+				case '/':
+					unitOperator = OperatorNode.createNode('/');
+					unitOperator.left = leftUnit;
+					unitOperator.right = rightUit;
+					return unitOperator;
+				case '^':
+					unitOperator = OperatorNode.createNode('^');
+					unitOperator.left = leftUnit;
+					unitOperator.right = rightUit;
+					return unitOperator;
+				default:
+					throw new IllegalOperatorError("Illegal Operator " + operatorNode.operator);
+			}
+		}
+	}
+
+	private convertToSIUnits(node: UnitNode): SyntaxNode {
+		if (DerivedUnits.hasOwnProperty(node.unit)) {
+			let lexer : ExpressionLexer = new ExpressionLexer(DerivedUnits[node.unit]);
+			let tokens : Array<Token> = lexer.lex();
+			let tree : SyntaxTree = new SyntaxTree(tokens);
+			tree.build();
+			let evaluationTree = new EvaluationTree(tree);
+			return evaluationTree.unitRoot;
+		} else {
+			return node;
+		}
 	}
 
 	public evaluateValue(variable: number): number {
@@ -64,54 +133,9 @@ export class EvaluationTree {
 		}
 	}
 
-	private buildUnitTree(): SyntaxNode {
-		return this.buildUnitTreeHelper(this.root);
-	}
-
-	private buildUnitTreeHelper(node: SyntaxNode ) : SyntaxNode {
-		if (node.type == NodeType.Number) {
-			return node.right;
-		} else if (node.type == NodeType.Unit) {
-			return node;
-		} else if (node.type == NodeType.Operator) {
-			let operatorNode : OperatorNode = <OperatorNode>node;
-			let leftUnit: SyntaxNode = this.buildUnitTreeHelper(node.left);
-			let rightUit: SyntaxNode = this.buildUnitTreeHelper(node.right);
-			let unitOperator: OperatorNode;
-			switch(operatorNode.operator) {
-				case '+':
-					unitOperator = OperatorNode.createNode('+');
-					unitOperator.left = leftUnit;
-					unitOperator.right = rightUit;
-					return unitOperator;
-				case '-':
-					unitOperator = OperatorNode.createNode('-');
-					unitOperator.left = leftUnit;
-					unitOperator.right = rightUit;
-					return unitOperator;
-				case '*':
-					unitOperator = OperatorNode.createNode('*');
-					unitOperator.left = leftUnit;
-					unitOperator.right = rightUit;
-					return unitOperator;
-				case '/':
-					unitOperator = OperatorNode.createNode('/');
-					unitOperator.left = leftUnit;
-					unitOperator.right = rightUit;
-					return unitOperator;
-				case '^':
-					unitOperator = OperatorNode.createNode('^');
-					unitOperator.left = leftUnit;
-					unitOperator.right = rightUit;
-					return unitOperator;
-				default:
-					throw new IllegalOperatorError("Illegal Operator " + operatorNode.operator);
-			}
-		}
-	}
-
 	public evaluateUnits(): string {
 		let dimensions = this.evaluateUnitsHelper(this.unitRoot);
+		this.removeCanceledUnits(dimensions);
 		let unit : string = this.getDimensionsString(dimensions);
 		return unit;
 	}
@@ -177,6 +201,23 @@ export class EvaluationTree {
 		return true;
 	}
 
+	private indexOfDimension(dimension: Dimension, dimensions: Array<Dimension>): number {
+		for (let i = 0; i < dimensions.length; i++) {
+			if (dimension.unit == dimensions[i].unit) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	private removeCanceledUnits(dimensions: Array<Dimension>) {
+		for (let i = dimensions.length - 1; i >= 0; i--) {
+			if (dimensions[i].degree == 0) {
+				dimensions.splice(i, 1);
+			}
+		}
+	}
+
 	private getDimensionsString(dimensions: Array<Dimension>): string {
 		let dimensionString = "";
 		for (let i = 0; i < dimensions.length; i++) {
@@ -186,14 +227,5 @@ export class EvaluationTree {
 			}
 		}
 		return dimensionString
-	}
-
-	private indexOfDimension(dimension: Dimension, dimensions: Array<Dimension>): number {
-		for (let i = 0; i < dimensions.length; i++) {
-			if (dimension.unit == dimensions[i].unit) {
-				return i;
-			}
-		}
-		return -1;
 	}
 }

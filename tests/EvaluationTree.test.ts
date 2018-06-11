@@ -37,7 +37,7 @@ describe("EvaluationTree Test Suite", () => {
 		})
 	}
 	for (let i = 0; i < unitEvalCases.length; i++) {
-		it(`Should evaluate ${unitEvalCases[i].in} to ${unitEvalCases[i].out}`, () => {
+		it(`Should evaluate units ${unitEvalCases[i].in} to ${unitEvalCases[i].out}`, () => {
 			let lexer : ExpressionLexer = new ExpressionLexer(unitEvalCases[i].in);
 			let tokens : Array<Token> = lexer.lex();
 			let tree : SyntaxTree = new SyntaxTree(tokens);
