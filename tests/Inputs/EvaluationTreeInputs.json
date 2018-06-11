@@ -33,5 +33,102 @@
 			"in": "(2+5)*x",
 			"out": 14
 		}
+	],
+	"unitCases": [
+		{
+			"in": "1m",
+			"structure": ["Unit"],
+			"values": ["m"]
+		},
+		{
+			"in": "1m+1m",
+			"structure": ["Operator", "Unit", "Unit"],
+			"values": ["+", "m", "m"]
+		},
+		{
+			"in": "1m*1m",
+			"structure": ["Operator", "Unit", "Unit"],
+			"values": ["*", "m", "m"]
+		},
+		{
+			"in": "1m/1m",
+			"structure": ["Operator", "Unit", "Unit"],
+			"values": ["/", "m", "m"]
+		},
+		{
+			"in": "1m^2",
+			"structure": ["Operator", "Unit", "Number"],
+			"values": ["^", "m", 2]
+		}
+	],
+	"evaluteUnitCases": [
+		{
+			"in": "1s^2",
+			"out": "s^2"
+		},
+		{
+			"in": "1m+1m",
+			"out": "m"
+		},
+		{
+			"in": "1m-1m",
+			"out": "m"
+		},
+		{
+			"in": "1m^2-1m^2",
+			"out": "m^2"
+		},
+		{
+			"in": "1m*1m",
+			"out": "m^2"
+		},
+		{
+			"in": "1m*1s",
+			"out": "m*s"
+		},
+		{
+			"in": "1m*1m*1s",
+			"out": "m^2*s"
+		},
+		{
+			"in": "1m*1m*1s+1m*1m*1s",
+			"out": "m^2*s"
+		},
+		{
+			"in": "1m/1s",
+			"out": "m*s^-1"
+		},
+		{
+			"in": "1m/1s/1s",
+			"out": "m*s^-2"
+		},
+		{
+			"in": "1m/1s/1s-1m/1s/1s",
+			"out": "m*s^-2"
+		},
+		{
+			"in": "1m+1",
+			"out": "m"
+		},
+		{
+			"in": "1m*15",
+			"out": "m"
+		},
+		{
+			"in": "1m/15",
+			"out": "m"
+		},
+		{
+			"in": "1m^2*1+1m*5m",
+			"out": "m^2"
+		},
+		{
+			"in": "1m/1s/1m",
+			"out": "s^-1"
+		},
+		{
+			"in": "1C",
+			"out": "A*s"
+		}
 	]
 }
