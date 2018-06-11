@@ -13,6 +13,7 @@ import { Dimension } from "./Dimension";
 import { ExpressionLexer } from "../ExpressionLexer/ExpressionLexer";
 import { Token } from "../ExpressionLexer/Token";
 import { readFileSync } from "fs";
+import { EACCES } from "constants";
 
 let DerivedUnits : Object = JSON.parse(readFileSync(__dirname + "/DerivedUnits.json", "utf-8"));
 
@@ -136,6 +137,8 @@ export class EvaluationTree {
 	public evaluateUnits(): string {
 		let dimensions = this.evaluateUnitsHelper(this.unitRoot);
 		this.removeCanceledUnits(dimensions);
+		this.simplifyUnits(dimensions);
+		this.removeCanceledUnits(dimensions);
 		let unit : string = this.getDimensionsString(dimensions);
 		return unit;
 	}
@@ -210,12 +213,109 @@ export class EvaluationTree {
 		return -1;
 	}
 
-	private removeCanceledUnits(dimensions: Array<Dimension>) {
+	private removeCanceledUnits(dimensions: Array<Dimension>): void {
 		for (let i = dimensions.length - 1; i >= 0; i--) {
 			if (dimensions[i].degree == 0) {
 				dimensions.splice(i, 1);
 			}
 		}
+	}
+
+	private simplifyUnits(dimensions: Array<Dimension>): void {
+		let possibleSimplifications: number = 0;
+		let currentSimplification : any = {
+			unit: "",
+			start: -1,
+			degrees: [Infinity],
+		}
+		for (const unit in DerivedUnits) {
+			const SIUnits: Array<Dimension> = this.createDimensionArray(DerivedUnits[unit]);
+			let offset : number = 0;
+			let degrees : Array<number> = [];
+			for (let i = 0; i < dimensions.length; i++) {
+				if (dimensions[i].unit == SIUnits[offset].unit) {
+					let diff = dimensions[i].degree - SIUnits[offset].degree;
+					if (unit == "V") {
+						console.log(diff, dimensions[i].degree, SIUnits[offset].degree);
+						console.log(Math.abs(diff) <= Math.abs(dimensions[i].degree));
+					}
+					// should not increase the degree of a dimension, simplification should decrease the degree
+					if (Math.abs(diff) <= Math.abs(dimensions[i].degree)) {
+						degrees.push(dimensions[i].degree - SIUnits[offset].degree);
+						if (offset == SIUnits.length - 1) {
+							console.log(unit);
+							possibleSimplifications++;
+							let simplifcationStruct = {
+								unit: unit,
+								start: i - offset,
+								degrees: degrees,
+							};
+							if (degrees.length >= currentSimplification.degrees.length) {
+								let sumA = 0;
+								let sumB = 0;
+								for (let i = 0; i < degrees.length; i++) {
+									sumA += degrees[i];
+									sumB += currentSimplification.degrees[i];
+								}
+								if (sumA < sumB) {
+									currentSimplification = simplifcationStruct;
+								}
+								currentSimplification = simplifcationStruct;	
+							} else {
+								let sumA = 0;
+								let sumB = 0;
+								for (let i = 0; i < degrees.length; i++) {
+									sumA += degrees[i];
+									sumB += currentSimplification.degrees[i];
+								}
+								if (sumA < sumB) {
+									currentSimplification = simplifcationStruct;
+								}
+								currentSimplification = simplifcationStruct;
+							}
+						} else {
+							offset++;
+						}
+					}
+				} else {
+					offset = 0;
+				}
+			}
+		}
+		console.log(currentSimplification);
+		if (currentSimplification.start != -1) {
+			let dimension = new Dimension(currentSimplification.unit, 1);
+			let indexOfDimension = this.indexOfDimension(dimension, dimensions)
+			if (indexOfDimension == -1) {
+				dimensions.push(dimension);
+			} else {
+				dimensions[indexOfDimension].degree++;
+			}
+
+			let offset = currentSimplification.start;
+			for (let i = 0; i < currentSimplification.degrees.length; i++) {
+				dimensions[offset + i].degree = currentSimplification.degrees[i];
+			}
+		}
+
+		if (possibleSimplifications > 1) {
+			this.simplifyUnits(dimensions);
+		}
+	}
+
+	private createDimensionArray(dimensionString: string): Array<Dimension> {
+		let units = dimensionString.split('*');
+		let dimensions = [];
+		for (let i = 0; i < units.length; i++) {
+			let parts = units[i].split('^');
+			let unit = parts[0].replace(/\s/g, '').substring(1, parts[0].length);
+			let degree = parseInt(parts[1]);
+			if (isNaN(degree)) {
+				degree = 1;
+			}
+			dimensions.push(new Dimension(unit, degree));
+		}
+		return dimensions;
 	}
 
 	private getDimensionsString(dimensions: Array<Dimension>): string {
