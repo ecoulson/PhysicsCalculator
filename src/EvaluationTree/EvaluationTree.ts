@@ -13,7 +13,6 @@ import { Dimension } from "./Dimension";
 import { ExpressionLexer } from "../ExpressionLexer/ExpressionLexer";
 import { Token } from "../ExpressionLexer/Token";
 import { readFileSync } from "fs";
-import { EACCES } from "constants";
 
 let DerivedUnits : Object = JSON.parse(readFileSync(__dirname + "/DerivedUnits.json", "utf-8"));
 
@@ -225,6 +224,16 @@ export class EvaluationTree {
 	}
 
 	private simplifyUnits(dimensions: Array<Dimension>): void {
+		let possibleSimplifications: { [ unit: string]: Array<Dimension> } = this.getPossibleSimplifications(dimensions);
+		let bestSimplificationUnit = this.getBestSimplification(
+			possibleSimplifications,
+			dimensions
+		);
+		let bestSimplificationDimensions = possibleSimplifications[bestSimplificationUnit];
+		this.simplify(dimensions, bestSimplificationDimensions);
+	}
+
+	private getPossibleSimplifications(dimensions: Array<Dimension>): { [ unit: string]: Array<Dimension> } {
 		let possibleSimplifications: { [ unit: string]: Array<Dimension> } = {};
 		for (const unit in DerivedUnits) {
 			if (unit != "Gy" && unit != "Sv" && unit != "dioptry") {
@@ -234,11 +243,7 @@ export class EvaluationTree {
 				}
 			}
 		}
-		let bestSimplificationUnit = this.getBestSimplification(
-			possibleSimplifications,
-			dimensions
-		);
-		console.log(bestSimplificationUnit);
+		return possibleSimplifications;
 	}
 
 	private canSimplify(dimensions: Array<Dimension>, SIUnits: Array<Dimension>): boolean {
@@ -264,7 +269,8 @@ export class EvaluationTree {
 			possibleSimplifications
 		);
 		let differences = this.getDegreeDifferences(possibleSimplifications, dimensions);
-		return ""; 
+		let bestUnit = this.getSmallestDifferenceUnit(differences);
+		return bestUnit; 
 	}
 
 	private getLongestCommonSimplificationUnit(
@@ -298,24 +304,37 @@ export class EvaluationTree {
 	}
 
 	private getDegreeDifferences(
-		possibleDimensions: Array<Array<Dimension>>, 
+		possibleSimplifications: { [ unit: string]: Array<Dimension> }, 
 		dimensions: Array<Dimension>
-	): Array<number> {
-		let differenceSums : Array<number> = [];
-		for (let i = 0; i < possibleDimensions.length; i++) {
-			let sum: number = 0;
-			for (let j = 0; j < possibleDimensions[i].length; j++) {
-				let dimensionIndex: number = this.indexOfDimension(possibleDimensions[i][j], dimensions);
-				let diff: number = Math.abs(possibleDimensions[i][j].degree - dimensions[dimensionIndex].degree);
-				sum += diff;
+	): { [unit: string]: number } {
+		let unitDifferences : { [unit: string]: number }  = {};
+		for (const unit in possibleSimplifications) {
+			let sum : number = 0;
+			for (let j = 0; j < possibleSimplifications[unit].length; j++) {
+				let dimensionIndex: number = this.indexOfDimension(possibleSimplifications[unit][j], dimensions);
+				let diff: number = possibleSimplifications[unit][j].degree - dimensions[dimensionIndex].degree;
+				sum += Math.abs(diff);
 			}
-			differenceSums.push(sum);
+			unitDifferences[unit] = sum;
 		}
-		return differenceSums;
+		return unitDifferences;
 	}
 
-	private getSmallestDifferenceIndex(): number {
+	private simplify(dimensions: Array<Dimension>, bestSimplificationDimensions: Array<Dimension>): void {
+		
+	}
 
+	private getSmallestDifferenceUnit(differences: { [unit: string]: number }): string {
+		// can be zero because the differences are absolute values;
+		let min = -1;
+		let minUnit = "";
+		for (const unit in differences) {
+			if (differences[unit] < min || min == -1) {
+				minUnit = unit;
+				min = differences[unit];
+			}
+		}
+		return minUnit;
 	}
 
 	private createDimensionArray(dimensionString: string): Array<Dimension> {
