@@ -13,7 +13,7 @@ const variable = config.variable;
 
 describe("EvaluationTree Test Suite", () => {
 	for (let i = 0; i < arithmeticCases.length; i++) {
-		it(`Should evaluate ${arithmeticCases[i].in} to ${arithmeticCases[i].out}`, () => {
+		it(`Should evaluate ${arithmeticCases[i].in} to ${arithmeticCases[i].out} where x is ${config.variable}`, () => {
 			let lexer : ExpressionLexer = new ExpressionLexer(arithmeticCases[i].in);
 			let tokens : Array<Token> = lexer.lex();
 			let tree : SyntaxTree = new SyntaxTree(tokens);

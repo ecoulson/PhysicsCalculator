@@ -38,10 +38,12 @@ export class SyntaxTree {
 
 	private readSums(): SyntaxNode {
 		let node = this.readFactor();
-		while (!this.hasReadAllTokens() && 
-				!this.isNextToken(TokenType.Absolute) && 
-				!this.isNextToken(TokenType.RightParentheses) && 
-				(this.isNextToken(TokenType.Add) || this.isNextToken(TokenType.Subtract))) {
+		while (
+			!this.hasReadAllTokens() && 
+			!this.isNextToken(TokenType.Absolute) && 
+			!this.isNextToken(TokenType.RightParentheses) && 
+			(this.isNextToken(TokenType.Add) || this.isNextToken(TokenType.Subtract))
+		) {
 			let operatorToken = this.readToken();
 			let operatorNode = new OperatorNode(operatorToken);
 			let rightNode = this.readFactor();
@@ -54,7 +56,11 @@ export class SyntaxTree {
 
 	private readFactor() : SyntaxNode {
 		let node = this.readExponent();
-		while (!this.hasReadAllTokens() && (this.isNextToken(TokenType.Multiply) || this.isNextToken(TokenType.Divide))) {
+		while (
+			!this.hasReadAllTokens() && 
+			(this.isNextToken(TokenType.Multiply) || 
+			this.isNextToken(TokenType.Divide))
+		) {
 			let operatorToken = this.readToken();
 			let operatorNode = new OperatorNode(operatorToken);
 			let rightNode = this.readExponent();
@@ -188,9 +194,13 @@ export class SyntaxTree {
 
 	private readComplexUnit(): SyntaxNode {
 		let node : SyntaxNode = this.readExponentUnit();
-		while (!this.hasReadAllTokens() && 
-				(this.isNextToken(TokenType.Divide) || this.isNextToken(TokenType.Multiply)) && 
-				this.tokens[this.offset+1].getTokenType() != TokenType.Number) {
+		while (
+			!this.hasReadAllTokens() && 
+			(this.isNextToken(TokenType.Divide) || 
+			this.isNextToken(TokenType.Multiply)) && 
+			this.tokens[this.offset + 1].getTokenType() != TokenType.Number &&
+			this.tokens[this.offset + 1].getTokenType() != TokenType.LeftParentheses
+		) {
 			let operatorToken = this.readToken();
 			let operatorNode = new OperatorNode(operatorToken);
 			let rightNode = this.readExponentUnit();
