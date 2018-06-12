@@ -1,13 +1,13 @@
 import { expect } from "chai";
-import { SyntaxTree } from "../../src/SyntaxTree/SyntaxTree";
-import { NodeType } from "../../src/SyntaxTree/NodeTypes";
-import { SyntaxNode } from "../../src/SyntaxTree/SyntaxNode";
-import { NumberNode } from "../../src/SyntaxTree/NumberNode";
-import { UnitNode } from "../../src/SyntaxTree/UnitNode";
-import { OperatorNode } from "../../src/SyntaxTree/OperatorNode";
-import { VariableNode } from "../../src/SyntaxTree/VariableNode";
-import { InvokeNode } from "../../src/SyntaxTree/InvokeNode";
-import { AbsoluteNode } from "../../src/SyntaxTree/AbsoluteNode";
+import { SyntaxTree } from "../../src/ExpressionParser/SyntaxTree/SyntaxTree";
+import { NodeType } from "../../src/ExpressionParser/SyntaxTree/NodeTypes";
+import { SyntaxNode } from "../../src/ExpressionParser/SyntaxTree/SyntaxNode";
+import { NumberNode } from "../../src/ExpressionParser/SyntaxTree/NumberNode";
+import { UnitNode } from "../../src/ExpressionParser/SyntaxTree/UnitNode";
+import { OperatorNode } from "../../src/ExpressionParser/SyntaxTree/OperatorNode";
+import { VariableNode } from "../../src/ExpressionParser/SyntaxTree/VariableNode";
+import { InvokeNode } from "../../src/ExpressionParser/SyntaxTree/InvokeNode";
+import { AbsoluteNode } from "../../src/ExpressionParser/SyntaxTree/AbsoluteNode";
 
 export function checkTreeStructure(tree : SyntaxTree, expectedStructure: Array<NodeType>): void {
 	checkTreeStructureHelper(tree.root, expectedStructure, 0);

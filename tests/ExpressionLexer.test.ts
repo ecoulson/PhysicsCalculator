@@ -1,7 +1,7 @@
 import { expect } from 'chai';
-import { Token } from '../src/ExpressionLexer/Token';
-import { TokenType } from '../src/ExpressionLexer/TokenType';
-import { ExpressionLexer } from '../src/ExpressionLexer/ExpressionLexer';
+import { Token } from '../src/ExpressionParser/ExpressionLexer/Token';
+import { TokenType } from '../src/ExpressionParser/ExpressionLexer/TokenType';
+import { ExpressionLexer } from '../src/ExpressionParser/ExpressionLexer/ExpressionLexer';
 import { readInputFile } from './Helpers/InputHelper';
 const inputs : Array<any> = readInputFile("ExpressionLexerInputs");
 

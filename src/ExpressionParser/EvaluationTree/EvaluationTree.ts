@@ -13,10 +13,12 @@ import { Dimension } from "./Dimension";
 import { ExpressionLexer } from "../ExpressionLexer/ExpressionLexer";
 import { Token } from "../ExpressionLexer/Token";
 import { readFileSync } from "fs";
+import { resolve } from "path";
 
-const DERIVED_UNITS : Object = JSON.parse(readFileSync(__dirname + "/DerivedUnits.json", "utf-8"));
-const PREFIXES : Object = JSON.parse(readFileSync(__dirname + "/Prefixes.json", "utf-8"));
-const UNITS : Array<string> = JSON.parse(readFileSync(__dirname + "/Units.json", "utf-8"));
+const UnitInfoDir = resolve(__dirname, "../UnitInfo");
+const DERIVED_UNITS : Object = JSON.parse(readFileSync(resolve(UnitInfoDir, "DerivedUnits.json"), "utf-8"));
+const PREFIXES : Object = JSON.parse(readFileSync(resolve(UnitInfoDir, "Prefixes.json"), "utf-8"));
+const UNITS : Array<string> = JSON.parse(readFileSync(resolve(UnitInfoDir, "Units.json"), "utf-8"));
 
 export class EvaluationTree {
 	private root: SyntaxNode;

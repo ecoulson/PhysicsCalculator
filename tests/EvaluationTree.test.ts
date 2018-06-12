@@ -1,8 +1,8 @@
 import { expect } from 'chai';
-import { ExpressionLexer } from '../src/ExpressionLexer/ExpressionLexer';
-import { SyntaxTree } from '../src/SyntaxTree/SyntaxTree';
-import { EvaluationTree } from '../src/EvaluationTree/EvaluationTree';
-import { Token } from '../src/ExpressionLexer/Token';
+import { ExpressionLexer } from '../src/ExpressionParser/ExpressionLexer/ExpressionLexer';
+import { SyntaxTree } from '../src/ExpressionParser/SyntaxTree/SyntaxTree';
+import { EvaluationTree } from '../src/ExpressionParser/EvaluationTree/EvaluationTree';
+import { Token } from '../src/ExpressionParser/ExpressionLexer/Token';
 import { readInputFile } from './Helpers/InputHelper';
 import { checkTreeStructure, checkTreeSize, checkTreeValue } from './Helpers/SyntaxTreeHelper';
 const config = readInputFile("EvaluationTreeInputs");
