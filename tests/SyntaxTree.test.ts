@@ -8,7 +8,7 @@ const inputs = readInputFile('SyntaxTreeInputs');
 
 describe("SyntaxTree Test Suite", () => {
 	for (let i = 0; i < inputs.treeCases.length; i++) {
-		it(`Should Be a Tree of ${inputs.treeCases[i].input}`, () => {
+		it(`Should be a tree of ${inputs.treeCases[i].input}`, () => {
 			try {
 				let lexer : ExpressionLexer = new ExpressionLexer(inputs.treeCases[i].input);
 				let tokens : Array<Token> = lexer.lex();
