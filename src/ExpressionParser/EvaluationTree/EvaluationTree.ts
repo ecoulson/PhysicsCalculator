@@ -10,8 +10,6 @@ import { UnitNode } from "../SyntaxTree/UnitNode";
 import { IllegalNodeError } from "./IllegalNodeError";
 import { IllegalUnitOperationError } from "./IllegalUnitOperationError";
 import { Dimension } from "./Dimension";
-import { ExpressionLexer } from "../ExpressionLexer/ExpressionLexer";
-import { Token } from "../ExpressionLexer/Token";
 import { readFileSync } from "fs";
 import { resolve } from "path";
 import { ExpressionParser } from "../ExpressionParser";
@@ -144,6 +142,10 @@ export class EvaluationTree {
 		} else {
 			let prefix = unit[0];
 			let base = unit.substring(1, unit.length);
+			if (prefix == "\\") {
+				prefix = unit.substring(0, 3);
+				base = unit.substring(3, unit.length);
+			}
 			if (PREFIXES.hasOwnProperty(prefix) && UNITS.indexOf(base) != -1 || base == "g") {
 				if (base == "g") {
 					return PREFIXES[prefix] - 3;
@@ -172,6 +174,10 @@ export class EvaluationTree {
 		} else {
 			let prefix = unit[0];
 			let base = unit.substring(1, unit.length);
+			if (prefix == "\\") {
+				prefix = unit.substring(0, 3);
+				base = unit.substring(3, unit.length);
+			}
 			if (PREFIXES.hasOwnProperty(prefix) && UNITS.indexOf(base) != -1 || base == "g") {
 				if (base == "g") {
 					return "kg";

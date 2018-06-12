@@ -3,5 +3,30 @@
 		"in": "x / 2s",
 		"out": "0.5m*s^-1",
 		"variable": "1m"
+	},
+	{
+		"in": "1m / x",
+		"out": "0.5m*s^-1",
+		"variable": "2s"
+	},
+	{
+		"in": "5N + x",
+		"out": "6N",
+		"variable": "1"
+	},
+	{
+		"in": "x * 9m",
+		"out": "4.59s^-1*m",
+		"variable": "0.51s^-1"
+	},
+	{
+		"in": "x/1ns",
+		"out": "1000000000m*s^-1",
+		"variable": "1m"
+	},
+	{
+		"in": "x/1\\mus",
+		"out": "1000000m*s^-1",
+		"variable": "1m"
 	}
 ]

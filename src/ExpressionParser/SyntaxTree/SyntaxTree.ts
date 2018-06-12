@@ -8,6 +8,11 @@ import { OperatorNode } from "./OperatorNode";
 import { VariableNode } from "./VariableNode";
 import { InvokeNode } from "./InvokeNode";
 import { AbsoluteNode } from "./AbsoluteNode";
+import { readFileSync } from "fs";
+import { resolve } from "path";
+
+const UnitInfoDir = resolve(__dirname, "../UnitInfo");
+const UNITS : Array<string> = JSON.parse(readFileSync(resolve(UnitInfoDir, "Units.json"), "utf-8"));
 
 export class SyntaxTree {
 	private tokens : Array<Token>;
@@ -201,7 +206,11 @@ export class SyntaxTree {
 			(this.isNextToken(TokenType.Divide) || 
 			this.isNextToken(TokenType.Multiply)) && 
 			this.tokens[this.offset + 1].getTokenType() != TokenType.Number &&
-			this.tokens[this.offset + 1].getTokenType() != TokenType.LeftParentheses
+			this.tokens[this.offset + 1].getTokenType() != TokenType.LeftParentheses &&
+			(
+				this.tokens[this.offset + 1].getTokenType() == TokenType.Identifier && 
+				UNITS.indexOf(this.tokens[this.offset + 1].getData()) != -1
+			)
 		) {
 			let operatorToken = this.readToken();
 			let operatorNode = new OperatorNode(operatorToken);
