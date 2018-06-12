@@ -104,25 +104,27 @@ export class SyntaxTree {
 
 	private readTerm() : SyntaxNode {
 		let signToken : Token = this.readSign();
-		if (this.isNextToken(TokenType.Number)) {
+		if (!this.hasReadAllTokens() && this.isNextToken(TokenType.Number)) {
 			let numberNode = this.readNumber(signToken);
 			numberNode = this.addUnits(numberNode);
 			return numberNode;
-		} else if (this.isNextToken(TokenType.Identifier)) {
+		} else if (!this.hasReadAllTokens() && this.isNextToken(TokenType.Identifier)) {
 			let node : SyntaxNode = this.readVariable();
 			node = this.transformNodeIfInvoke(node);
 			node = this.transformNodeIfNegative(node, signToken);
 			return node;
-		} else {
+		} else if (!this.hasReadAllTokens()) {
 			let token = this.readToken();
 			throw new UnexpectedTokenError(`Unexpected token type ${token.getTokenType()} at position ${token.getPos()}`);
+		} else {
+			throw new Error("Out of Tokens");
 		}
 	}
 
 	private readSign() : Token {
 		let sign = 1;
 		let pos = this.offset;
-		while (this.isNextToken(TokenType.Subtract)) {
+		while (!this.hasReadAllTokens() && this.isNextToken(TokenType.Subtract)) {
 			sign *= -1;
 			this.readToken();
 		}

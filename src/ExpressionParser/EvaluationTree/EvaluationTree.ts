@@ -14,6 +14,7 @@ import { ExpressionLexer } from "../ExpressionLexer/ExpressionLexer";
 import { Token } from "../ExpressionLexer/Token";
 import { readFileSync } from "fs";
 import { resolve } from "path";
+import { ExpressionParser } from "../ExpressionParser";
 
 const UnitInfoDir = resolve(__dirname, "../UnitInfo");
 const DERIVED_UNITS : Object = JSON.parse(readFileSync(resolve(UnitInfoDir, "DerivedUnits.json"), "utf-8"));
@@ -22,12 +23,14 @@ const UNITS : Array<string> = JSON.parse(readFileSync(resolve(UnitInfoDir, "Unit
 
 export class EvaluationTree {
 	private root: SyntaxNode;
+	private variableTree: EvaluationTree;
 	private base10Exp: number;
 	public unitRoot: SyntaxNode;
 	public usedUnits: Array<string>;
 
-	constructor(tree: SyntaxTree) {
+	constructor(tree: SyntaxTree, variableTree: EvaluationTree) {
 		this.root = tree.root;
+		this.variableTree = variableTree;
 		this.usedUnits = [];
 		this.unitRoot = this.buildUnitTree();
 		this.base10Exp = this.getBase10Exponent(this.unitRoot);
@@ -45,6 +48,8 @@ export class EvaluationTree {
 				let unitNode = <UnitNode>node.right;
 				return this.convertToSIUnits(unitNode);
 			}
+		} else if (node.type == NodeType.Variable) {
+			return this.variableTree.unitRoot;	
 		} else if (node.type == NodeType.Operator) {
 			let operatorNode : OperatorNode = <OperatorNode>node;
 			let leftUnit: SyntaxNode = this.buildUnitTreeHelper(node.left);
@@ -87,12 +92,9 @@ export class EvaluationTree {
 			this.usedUnits.push(node.unit);
 		}
 		if (DERIVED_UNITS.hasOwnProperty(node.unit)) {
-			let lexer : ExpressionLexer = new ExpressionLexer(DERIVED_UNITS[node.unit]);
-			let tokens : Array<Token> = lexer.lex();
-			let tree : SyntaxTree = new SyntaxTree(tokens);
-			tree.build();
-			let evaluationTree = new EvaluationTree(tree);
-			return evaluationTree.unitRoot;
+			let unitParser : ExpressionParser = new ExpressionParser(DERIVED_UNITS[node.unit]);
+			unitParser.evaluate("");
+			return unitParser.evaluationTree.unitRoot;
 		} else {
 			return node;
 		}
@@ -134,6 +136,9 @@ export class EvaluationTree {
 	
 	private getBase10Conversion(node: UnitNode): number {
 		let unit = node.unit;
+		if (unit == "cycles" || unit == "decays") {
+			return 0;
+		}
 		if (UNITS.indexOf(unit) != -1) {
 			return 0;
 		} else {
@@ -159,6 +164,9 @@ export class EvaluationTree {
 	}
 
 	private getBaseUnit(unit: string): string {
+		if (unit == "decays" || unit == "cycles") {
+			return unit;
+		}
 		if (UNITS.indexOf(unit) != -1) {
 			return unit;
 		} else {
@@ -178,17 +186,17 @@ export class EvaluationTree {
 		}
 	}
 
-	public evaluate(variable: number): string {
-		let value : number = this.evaluateValue(variable) * Math.pow(10, this.base10Exp);
+	public evaluate(): string {
+		let value : number = this.evaluateValue() * Math.pow(10, this.base10Exp);
 		let unit : string = this.evaluateUnits();
 		return `${value}${unit}`;
 	}
 
-	public evaluateValue(variable: number): number {
-		return this.evaluateValueHelper(this.root, variable);
+	public evaluateValue(): number {
+		return this.evaluateValueHelper(this.root);
 	}
 
-	private evaluateValueHelper(node: SyntaxNode, variable: number): number {
+	private evaluateValueHelper(node: SyntaxNode): number {
 		if (node == null) {
 			return 0;
 		} else if (node.type == NodeType.Number) {
@@ -197,20 +205,20 @@ export class EvaluationTree {
 		} else if (node.type == NodeType.Variable) {
 			let variableNode = <VariableNode>node;
 			// should check the workspace for constant
-			return variable;
+			return this.variableTree.evaluateValue();
 		} else if (node.type == NodeType.Invoke) {
 			let invokeNode : InvokeNode = <InvokeNode>node;
 			let functionName : string = (<VariableNode>invokeNode.left).variable;
 			let functionEvaluationTree = null // get tree from workspace
-			let functionParameter = this.evaluateValueHelper(invokeNode.right, variable);
+			let functionParameter = this.evaluateValueHelper(invokeNode.right);
 			// return this.evaluateValueHelper(functionEvaluationTree.root, functionParameter);
 			return 0;
 		} else if (node.type == NodeType.Absolute) {
-			return Math.abs(this.evaluateValueHelper(node.right, variable));
+			return Math.abs(this.evaluateValueHelper(node.right));
 		} else if (node.type == NodeType.Operator) {
 			let operatorNode : OperatorNode = <OperatorNode>node;
-			let a : number = this.evaluateValueHelper(operatorNode.left, variable);
-			let b : number = this.evaluateValueHelper(operatorNode.right, variable);
+			let a : number = this.evaluateValueHelper(operatorNode.left);
+			let b : number = this.evaluateValueHelper(operatorNode.right);
 			switch(operatorNode.operator) {
 				case '+':
 					return a + b;

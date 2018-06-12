@@ -10,17 +10,16 @@ const valueEvalCases = config.evaluateValueCases;
 const unitCases = config.unitCases;
 const unitEvalCases = config.evaluateUnitCases;
 const evalCases = config.evaluateCases;
-const variable = config.variable;
 
 describe("EvaluationTree Test Suite", () => {
 	for (let i = 0; i < valueEvalCases.length; i++) {
-		it(`Should evaluate ${valueEvalCases[i].in} to ${valueEvalCases[i].out} where x is ${config.variable}`, () => {
+		it(`Should evaluate ${valueEvalCases[i].in} to ${valueEvalCases[i].out}`, () => {
 			let lexer : ExpressionLexer = new ExpressionLexer(valueEvalCases[i].in);
 			let tokens : Array<Token> = lexer.lex();
 			let tree : SyntaxTree = new SyntaxTree(tokens);
 			tree.build();
-			let evaluationTree = new EvaluationTree(tree);
-			expect(evaluationTree.evaluateValue(variable)).to.equal(valueEvalCases[i].out);
+			let evaluationTree = new EvaluationTree(tree, null);
+			expect(evaluationTree.evaluateValue()).to.equal(valueEvalCases[i].out);
 		})
 	}
 	for (let i = 0; i < unitCases.length; i++) {
@@ -29,7 +28,7 @@ describe("EvaluationTree Test Suite", () => {
 			let tokens : Array<Token> = lexer.lex();
 			let tree : SyntaxTree = new SyntaxTree(tokens);
 			tree.build();
-			let evaluationTree = new EvaluationTree(tree);
+			let evaluationTree = new EvaluationTree(tree, null);
 			let unitTree : SyntaxTree = new SyntaxTree([]);
 			unitTree.root = evaluationTree.unitRoot;
 			checkTreeStructure(unitTree, unitCases[i].structure);
@@ -43,19 +42,19 @@ describe("EvaluationTree Test Suite", () => {
 			let tokens : Array<Token> = lexer.lex();
 			let tree : SyntaxTree = new SyntaxTree(tokens);
 			tree.build();
-			let evaluationTree = new EvaluationTree(tree);
+			let evaluationTree = new EvaluationTree(tree, null);
 			let unitStruct : string = evaluationTree.evaluateUnits();
 			expect(unitStruct.toString()).to.equal(unitEvalCases[i].out);
 		})
 	}
 	for (let i = 0; i < evalCases.length; i++) {
-		it(`Should evaluate ${evalCases[i].in} to ${evalCases[i].out} where x = ${variable}`, () => {
+		it(`Should evaluate ${evalCases[i].in} to ${evalCases[i].out}`, () => {
 			let lexer : ExpressionLexer = new ExpressionLexer(evalCases[i].in);
 			let tokens : Array<Token> = lexer.lex();
 			let tree : SyntaxTree = new SyntaxTree(tokens);
 			tree.build();
-			let evaluationTree = new EvaluationTree(tree);
-			expect(evaluationTree.evaluate(variable)).to.equal(evalCases[i].out);
+			let evaluationTree = new EvaluationTree(tree, null);
+			expect(evaluationTree.evaluate()).to.equal(evalCases[i].out);
 		});
 	}
 });
