@@ -1,6 +1,6 @@
 {
 	"variable": 2,
-	"cases": [
+	"evaluateValueCases": [
 		{
 			"in": "1+1",
 			"out": 2
@@ -32,7 +32,7 @@
 		{
 			"in": "(2+5)*x",
 			"out": 14
-		},
+		}
 	],
 	"unitCases": [
 		{
@@ -61,7 +61,7 @@
 			"values": ["^", "m", 2]
 		}
 	],
-	"evaluteUnitCases": [
+	"evaluateUnitCases": [
 		{
 			"in": "1s^2",
 			"out": "s^2"
@@ -141,6 +141,52 @@
 		{
 			"in": "1kg * 1m/s",
 			"out": "N*s"
+		}
+	],
+	"evaluateCases": [
+		{
+			"in": "1cm",
+			"out": "0.01m"
+		},
+		{
+			"in": "1kg",
+			"out": "1kg"
+		},
+		{
+			"in": "1g",
+			"out": "0.001kg"
+		},
+		{
+			"in": "1mg",
+			"out": "0.000001kg"
+		},
+		{
+			"in": "(6m/s - 1m/s) / 5s",
+			"out": "1m*s^-2"
+		},
+		{
+			"in": "1kg * (6m/s-1m/s)/5s",
+			"out": "1N"
+		},
+		{
+			"in": "5cycles / 2s",
+			"out": "2.5Hz"
+		},
+		{
+			"in": "1kg * 10 m / s",
+			"out": "10N*s"
+		},
+		{
+			"in": "1N / 5m^2",
+			"out": "0.2Pa"
+		},
+		{
+			"in": "x * 5N",
+			"out": "10N"
+		},
+		{
+			"in": "10C/1s",
+			"out": "10A"
 		}
 	]
 }

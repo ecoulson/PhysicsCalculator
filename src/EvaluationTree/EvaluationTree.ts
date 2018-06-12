@@ -131,11 +131,23 @@ export class EvaluationTree {
 	}
 	
 	private getBase10Conversion(node: UnitNode): number {
-		let prefix : string = this.getPrefix(node.unit);
-		if (prefix == null) {
+		let unit = node.unit;
+		if (UNITS.indexOf(unit) != -1) {
 			return 0;
 		} else {
-			return PREFIXES[prefix];
+			let prefix = unit[0];
+			let base = unit.substring(1, unit.length);
+			if (PREFIXES.hasOwnProperty(prefix) && UNITS.indexOf(base) != -1 || base == "g") {
+				if (base == "g") {
+					return PREFIXES[prefix] - 3;
+				}
+				return PREFIXES[prefix];
+			} else {
+				if (unit == "g") {
+					return -3;
+				}
+				return 0;
+			}
 		}
 	}
 
@@ -144,32 +156,30 @@ export class EvaluationTree {
 		node.unit = base;
 	}
 
-	private getPrefix(unit: string): string {
-		if (UNITS.indexOf(unit) != -1) {
-			return null;
-		} else {
-			let prefix = unit[0];
-			let base = unit.substring(1, unit.length);
-			if (PREFIXES.hasOwnProperty(prefix) && UNITS.indexOf(base) != -1) {
-				return prefix;
-			} else {
-				return null;
-			}
-		}
-	}
-
 	private getBaseUnit(unit: string): string {
 		if (UNITS.indexOf(unit) != -1) {
 			return unit;
 		} else {
 			let prefix = unit[0];
 			let base = unit.substring(1, unit.length);
-			if (PREFIXES.hasOwnProperty(prefix) && UNITS.indexOf(base) != -1) {
+			if (PREFIXES.hasOwnProperty(prefix) && UNITS.indexOf(base) != -1 || base == "g") {
+				if (base == "g") {
+					return "kg";
+				}
 				return base;
 			} else {
+				if (unit == "g") {
+					return "kg"
+				}
 				return unit;
 			}
 		}
+	}
+
+	public evaluate(variable: number): string {
+		let value : number = this.evaluateValue(variable) * Math.pow(10, this.base10Exp);
+		let unit : string = this.evaluateUnits();
+		return `${value}${unit}`;
 	}
 
 	public evaluateValue(variable: number): number {

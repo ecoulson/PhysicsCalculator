@@ -6,20 +6,21 @@ import { Token } from '../src/ExpressionLexer/Token';
 import { readInputFile } from './Helpers/InputHelper';
 import { checkTreeStructure, checkTreeSize, checkTreeValue } from './Helpers/SyntaxTreeHelper';
 const config = readInputFile("EvaluationTreeInputs");
-const arithmeticCases = config.cases;
+const valueEvalCases = config.evaluateValueCases;
 const unitCases = config.unitCases;
-const unitEvalCases = config.evaluteUnitCases;
+const unitEvalCases = config.evaluateUnitCases;
+const evalCases = config.evaluateCases;
 const variable = config.variable;
 
 describe("EvaluationTree Test Suite", () => {
-	for (let i = 0; i < arithmeticCases.length; i++) {
-		it(`Should evaluate ${arithmeticCases[i].in} to ${arithmeticCases[i].out} where x is ${config.variable}`, () => {
-			let lexer : ExpressionLexer = new ExpressionLexer(arithmeticCases[i].in);
+	for (let i = 0; i < valueEvalCases.length; i++) {
+		it(`Should evaluate ${valueEvalCases[i].in} to ${valueEvalCases[i].out} where x is ${config.variable}`, () => {
+			let lexer : ExpressionLexer = new ExpressionLexer(valueEvalCases[i].in);
 			let tokens : Array<Token> = lexer.lex();
 			let tree : SyntaxTree = new SyntaxTree(tokens);
 			tree.build();
 			let evaluationTree = new EvaluationTree(tree);
-			expect(evaluationTree.evaluateValue(variable)).to.equal(arithmeticCases[i].out);
+			expect(evaluationTree.evaluateValue(variable)).to.equal(valueEvalCases[i].out);
 		})
 	}
 	for (let i = 0; i < unitCases.length; i++) {
@@ -46,5 +47,15 @@ describe("EvaluationTree Test Suite", () => {
 			let unitStruct : string = evaluationTree.evaluateUnits();
 			expect(unitStruct.toString()).to.equal(unitEvalCases[i].out);
 		})
+	}
+	for (let i = 0; i < evalCases.length; i++) {
+		it(`Should evaluate ${evalCases[i].in} to ${evalCases[i].out} where x = ${variable}`, () => {
+			let lexer : ExpressionLexer = new ExpressionLexer(evalCases[i].in);
+			let tokens : Array<Token> = lexer.lex();
+			let tree : SyntaxTree = new SyntaxTree(tokens);
+			tree.build();
+			let evaluationTree = new EvaluationTree(tree);
+			expect(evaluationTree.evaluate(variable)).to.equal(evalCases[i].out);
+		});
 	}
 });
