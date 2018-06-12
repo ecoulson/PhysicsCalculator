@@ -14,10 +14,13 @@ import { ExpressionLexer } from "../ExpressionLexer/ExpressionLexer";
 import { Token } from "../ExpressionLexer/Token";
 import { readFileSync } from "fs";
 
-let DerivedUnits : Object = JSON.parse(readFileSync(__dirname + "/DerivedUnits.json", "utf-8"));
+const DERIVED_UNITS : Object = JSON.parse(readFileSync(__dirname + "/DerivedUnits.json", "utf-8"));
+const PREFIXES : Object = JSON.parse(readFileSync(__dirname + "/Prefixes.json", "utf-8"));
+const UNITS : Array<string> = JSON.parse(readFileSync(__dirname + "/Units.json", "utf-8"));
 
 export class EvaluationTree {
 	private root: SyntaxNode;
+	private base10Exp: number;
 	public unitRoot: SyntaxNode;
 	public usedUnits: Array<string>;
 
@@ -25,6 +28,7 @@ export class EvaluationTree {
 		this.root = tree.root;
 		this.usedUnits = [];
 		this.unitRoot = this.buildUnitTree();
+		this.base10Exp = this.getBase10Exponent(this.unitRoot);
 	}
 
 	private buildUnitTree(): SyntaxNode {
@@ -80,8 +84,8 @@ export class EvaluationTree {
 		if (node.unit !== undefined) {
 			this.usedUnits.push(node.unit);
 		}
-		if (DerivedUnits.hasOwnProperty(node.unit)) {
-			let lexer : ExpressionLexer = new ExpressionLexer(DerivedUnits[node.unit]);
+		if (DERIVED_UNITS.hasOwnProperty(node.unit)) {
+			let lexer : ExpressionLexer = new ExpressionLexer(DERIVED_UNITS[node.unit]);
 			let tokens : Array<Token> = lexer.lex();
 			let tree : SyntaxTree = new SyntaxTree(tokens);
 			tree.build();
@@ -89,6 +93,82 @@ export class EvaluationTree {
 			return evaluationTree.unitRoot;
 		} else {
 			return node;
+		}
+	}
+
+	private getBase10Exponent(node: SyntaxNode): number {
+		if (node == null) {
+			return 0;
+		} else if (node.type == NodeType.Number) {
+			return (<NumberNode>node).number;
+		} else if (node.type == NodeType.Unit) {
+			let unitNode : UnitNode = <UnitNode>node;
+			let exp = this.getBase10Conversion(unitNode);
+			this.convertToBaseUnit(unitNode);
+			return exp;
+		} else {
+			let operatorNode: OperatorNode = <OperatorNode>node;
+			let leftExponent = this.getBase10Exponent(node.left);
+			let rightExponent = this.getBase10Exponent(node.right);
+			switch (operatorNode.operator) {
+				case '+':
+				case '-':
+					if (leftExponent == rightExponent) {
+						return leftExponent;
+					} else {
+						throw new IllegalUnitOperationError(`Illegal Unit Operation ${operatorNode.operator} between ${leftExponent} and ${rightExponent}`);
+					}
+				case '*':
+					return leftExponent + rightExponent;
+				case '/':
+					return leftExponent - rightExponent;
+				case '^':
+					return leftExponent * rightExponent;
+				default:
+					throw new IllegalOperatorError(`Illegal Operator of Type ${operatorNode.operator}`);
+			}
+		}
+	}
+	
+	private getBase10Conversion(node: UnitNode): number {
+		let prefix : string = this.getPrefix(node.unit);
+		if (prefix == null) {
+			return 0;
+		} else {
+			return PREFIXES[prefix];
+		}
+	}
+
+	private convertToBaseUnit(node: UnitNode): void {
+		let base : string = this.getBaseUnit(node.unit);
+		node.unit = base;
+	}
+
+	private getPrefix(unit: string): string {
+		if (UNITS.indexOf(unit) != -1) {
+			return null;
+		} else {
+			let prefix = unit[0];
+			let base = unit.substring(1, unit.length);
+			if (PREFIXES.hasOwnProperty(prefix) && UNITS.indexOf(base) != -1) {
+				return prefix;
+			} else {
+				return null;
+			}
+		}
+	}
+
+	private getBaseUnit(unit: string): string {
+		if (UNITS.indexOf(unit) != -1) {
+			return unit;
+		} else {
+			let prefix = unit[0];
+			let base = unit.substring(1, unit.length);
+			if (PREFIXES.hasOwnProperty(prefix) && UNITS.indexOf(base) != -1) {
+				return base;
+			} else {
+				return unit;
+			}
 		}
 	}
 
@@ -238,9 +318,9 @@ export class EvaluationTree {
 
 	private getPossibleSimplifications(dimensions: Array<Dimension>): { [ unit: string]: Array<Dimension> } {
 		let possibleSimplifications: { [ unit: string]: Array<Dimension> } = {};
-		for (const unit in DerivedUnits) {
+		for (const unit in DERIVED_UNITS) {
 			if (unit != "Gy" && unit != "Sv" && unit != "dioptry") {
-				const SIUnits: Array<Dimension> = this.createDimensionArray(DerivedUnits[unit]);
+				const SIUnits: Array<Dimension> = this.createDimensionArray(DERIVED_UNITS[unit]);
 				if (this.canSimplify(dimensions, SIUnits)) {
 					possibleSimplifications[unit] = SIUnits;
 				}
