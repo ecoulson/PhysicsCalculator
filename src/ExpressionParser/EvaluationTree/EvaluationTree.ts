@@ -13,6 +13,7 @@ import { Dimension } from "./Dimension";
 import { readFileSync } from "fs";
 import { resolve } from "path";
 import { ExpressionParser } from "../ExpressionParser";
+import { WorkSpace } from "../../WorkSpace/WorkSpace";
 
 const UnitInfoDir = resolve(__dirname, "../UnitInfo");
 const DERIVED_UNITS : Object = JSON.parse(readFileSync(resolve(UnitInfoDir, "DerivedUnits.json"), "utf-8"));
@@ -22,14 +23,14 @@ const DIMENSIONLESS_UNITS : Array<string> = JSON.parse(readFileSync(resolve(Unit
 
 export class EvaluationTree {
 	private root: SyntaxNode;
-	private variableTree: EvaluationTree;
 	private base10Exp: number;
 	public unitRoot: SyntaxNode;
 	public usedUnits: Array<string>;
+	private workspace : WorkSpace;
 
-	constructor(tree: SyntaxTree, variableTree: EvaluationTree) {
+	constructor(tree: SyntaxTree, workspace: WorkSpace) {
+		this.workspace = workspace;
 		this.root = tree.root;
-		this.variableTree = variableTree;
 		this.usedUnits = [];
 		this.unitRoot = this.buildUnitTree();
 		this.base10Exp = this.getBase10Exponent(this.unitRoot);
@@ -48,7 +49,8 @@ export class EvaluationTree {
 				return this.convertToSIUnits(unitNode);
 			}
 		} else if (node.type == NodeType.Variable) {
-			return this.variableTree.unitRoot;
+			console.log("should get from workspace");
+			return null;
 		} else if (node.type == NodeType.Operator) {
 			let operatorNode : OperatorNode = <OperatorNode>node;
 			let leftUnit: SyntaxNode = this.buildUnitTreeHelper(node.left);
@@ -92,7 +94,7 @@ export class EvaluationTree {
 		}
 		if (DERIVED_UNITS.hasOwnProperty(node.unit)) {
 			let unitParser : ExpressionParser = new ExpressionParser(DERIVED_UNITS[node.unit]);
-			unitParser.evaluate("");
+			unitParser.evaluate();
 			return unitParser.evaluationTree.unitRoot;
 		} else {
 			return node;
@@ -212,7 +214,8 @@ export class EvaluationTree {
 		} else if (node.type == NodeType.Variable) {
 			let variableNode = <VariableNode>node;
 			// should check the workspace for constant
-			return this.variableTree.evaluateValue();
+			console.log("check for variable");
+			return null;
 		} else if (node.type == NodeType.Invoke) {
 			let invokeNode : InvokeNode = <InvokeNode>node;
 			let functionName : string = (<VariableNode>invokeNode.left).variable;

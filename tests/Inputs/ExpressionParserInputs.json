@@ -1,40 +1,5 @@
 [
 	{
-		"in": "x / 2s",
-		"out": "0.5m*s^-1",
-		"variable": "1m"
-	},
-	{
-		"in": "1m / x",
-		"out": "0.5m*s^-1",
-		"variable": "2s"
-	},
-	{
-		"in": "5N + x",
-		"out": "6N",
-		"variable": "1"
-	},
-	{
-		"in": "x * 9m",
-		"out": "4.59m*s^-1",
-		"variable": "0.51s^-1"
-	},
-	{
-		"in": "x/1ns",
-		"out": "1000000000m*s^-1",
-		"variable": "1m"
-	},
-	{
-		"in": "x/1\\mus",
-		"out": "1000000m*s^-1",
-		"variable": "1m"
-	},
-	{
-		"in": "x / 2s",
-		"out": "2rad*s^-1",
-		"variable": "4rad"
-	},
-	{
 		"in": "0.5 rad/s * 9m",
 		"out": "4.5m*s^-1"
 	},
@@ -43,8 +8,7 @@
 		"out": "52rad*s^-1"
 	},
 	{
-		"in": "33rev/min * 1min/60s * 6rad/rev * 180\\deg/3rad * t",
-		"out": "49.5\\deg",
-		"variable": "0.25s"
+		"in": "33rev/min * 1min/60s * 6rad/rev * 180\\deg/3rad * 0.25s",
+		"out": "49.5\\deg"
 	}
 ]
