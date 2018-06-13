@@ -55,7 +55,7 @@
 	},
 	{
 		"in": "F_{n}",
-		"out": "N",
+		"out": "231.8564757231792N",
 		"formulas": [
 			"T = 4.5s",
 			"\\Delta\\theta = 2rad * \\pi",

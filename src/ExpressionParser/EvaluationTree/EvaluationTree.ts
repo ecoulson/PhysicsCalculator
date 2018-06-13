@@ -15,7 +15,6 @@ import { resolve } from "path";
 import { ExpressionParser } from "../ExpressionParser";
 import { WorkSpace } from "../../WorkSpace/WorkSpace";
 import { UndefinedVariableError } from "./UndefinedVariableError";
-import { POINT_CONVERSION_COMPRESSED } from "constants";
 import { UndefinedFunctionError } from "./UndefinedFunctionError";
 
 const UnitInfoDir = resolve(__dirname, "../UnitInfo");
@@ -320,7 +319,9 @@ export class EvaluationTree {
 			switch(operatorNode.operator) {
 				case '+':
 				case '-':
-					if (this.isDimensionsEqual(leftDimensions, rightDimensions)) {
+					let leftDimensionsRemoveDimensionless = this.removeDimensionlessUnits(leftDimensions);
+					let rightDimensionsRemoveDimensionless = this.removeDimensionlessUnits(rightDimensions);
+					if (this.isDimensionsEqual(leftDimensionsRemoveDimensionless, rightDimensionsRemoveDimensionless)) {
 						return leftDimensions;
 					} else {
 						throw new IllegalUnitOperationError(`Illegal Unit Operation of ${operatorNode.operator} between ${this.getDimensionsString(leftDimensions)} and ${this.getDimensionsString(rightDimensions)}`)
@@ -522,13 +523,7 @@ export class EvaluationTree {
 		if (denominator.length > 1 && this.hasDimensionlessUnits(denominator)) {
 			this.removeDimensionlessUnitsFromSection(denominator);
 		}
-		for (let i = 0; i < numerator.length; i++) {
-			newDimensions.push(numerator[i]);
-		}
-		for (let i = 0; i < denominator.length; i++) {
-			newDimensions.push(denominator[i]);
-		}
-		return newDimensions;
+		return numerator.concat(denominator);
 	}
 
 	private hasDimensionlessUnits(dimensions: Array<Dimension>): boolean {
@@ -567,6 +562,7 @@ export class EvaluationTree {
 	}
 
 	private getDimensionsString(dimensions: Array<Dimension>): string {
+		// console.log(dimensions);
 		let dimensionString = "";
 		let hasHitNegative = false;
 		for (let i = 0; i < dimensions.length; i++) {
