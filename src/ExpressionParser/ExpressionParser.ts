@@ -7,18 +7,16 @@ import { WorkSpace } from "../WorkSpace/WorkSpace";
 export class ExpressionParser {
 	private syntaxTree : SyntaxTree;
 	public evaluationTree : EvaluationTree;
-	private workspace : WorkSpace;
 
 	constructor(expression: string, workspace: WorkSpace) {
-		this.workspace = workspace;
 		let lexer : ExpressionLexer = new ExpressionLexer(expression);
 		let tokens : Array<Token> = lexer.lex();
 		this.syntaxTree = new SyntaxTree(tokens);
 		this.syntaxTree.build();
+		this.evaluationTree = new EvaluationTree(this.syntaxTree, workspace);
 	}
 
 	public evaluate(): string {
-		this.evaluationTree = new EvaluationTree(this.syntaxTree, this.workspace);
 		return this.evaluationTree.evaluate();
 	}
 }

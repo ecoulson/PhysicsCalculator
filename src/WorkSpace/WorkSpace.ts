@@ -1,4 +1,6 @@
 import { ExpressionParser } from "../ExpressionParser/ExpressionParser";
+import { SyntaxNode } from "../ExpressionParser/SyntaxTree/SyntaxNode";
+import { EvaluationTree } from "../ExpressionParser/EvaluationTree/EvaluationTree";
 
 export class WorkSpace {
 	private formulaMapping : { [variable: string]: ExpressionParser}
@@ -15,8 +17,16 @@ export class WorkSpace {
 		this.formulaMapping[variable] = parser;
 	}
 
-	public hasFormula(formula: string): boolean {
-		return this.formulaMapping.hasOwnProperty("string");
+	public hasFormula(variable: string): boolean {
+		return this.formulaMapping.hasOwnProperty(variable);
+	}
+
+	public getFormula(variable: string): EvaluationTree {
+		return this.formulaMapping[variable].evaluationTree;
+	}
+
+	public getFormulaResultUnit(variable: string): SyntaxNode {
+		return this.formulaMapping[variable].evaluationTree.unitRoot;
 	}
 
 	public evaluate(expression: string): string {
