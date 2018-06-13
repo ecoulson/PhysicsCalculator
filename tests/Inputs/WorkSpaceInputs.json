@@ -50,7 +50,30 @@
 		"out": "11.373653766490346m/s",
 		"formulas": [
 			"r=13.2m",
-			"v=(g*r)^0.5"
+			"v=sqrt(g*r)"
+		]
+	},
+	{
+		"in": "F_{n}",
+		"out": "N",
+		"formulas": [
+			"T = 4.5s",
+			"\\Delta\\theta = 2rad * \\pi",
+			"r = 8m",
+			"m = 40kg",
+			"\\omega = \\Delta\\theta / T",
+			"F_{n} = m*\\omega ^ 2 * r - m*g)"
+		]
+	},
+	{
+		"in": "t",
+		"out": "27.665825350590552s",
+		"formulas": [
+			"d = 380m",
+			"r = d / 2",
+			"\\Delta\\theta = 2rad * \\pi",
+			"a_{c} = g",
+			"t = \\Delta\\theta / sqrt(a_{c}/r)"
 		]
 	}
 ]

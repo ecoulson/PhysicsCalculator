@@ -16,6 +16,7 @@ import { ExpressionParser } from "../ExpressionParser";
 import { WorkSpace } from "../../WorkSpace/WorkSpace";
 import { UndefinedVariableError } from "./UndefinedVariableError";
 import { POINT_CONVERSION_COMPRESSED } from "constants";
+import { UndefinedFunctionError } from "./UndefinedFunctionError";
 
 const UnitInfoDir = resolve(__dirname, "../UnitInfo");
 const DERIVED_UNITS : Object = JSON.parse(readFileSync(resolve(UnitInfoDir, "DerivedUnits.json"), "utf-8"));
@@ -54,6 +55,14 @@ export class EvaluationTree {
 				return this.workspace.getFormulaResultUnit(variableNode.variable);
 			} else {
 				throw new UndefinedVariableError(`Undefined Variable ${variableNode.variable} in workspace`);
+			}
+		} else if (node.type == NodeType.Invoke) {
+			let variableNode: VariableNode = <VariableNode>node.left;
+			if (variableNode.variable == "sqrt") {
+				let nonSqrtedUnit : SyntaxNode = this.buildUnitTreeHelper(node.right);
+				return this.raiseLeftUnitBy(nonSqrtedUnit, 0.5);
+			} else {
+				return this.buildUnitTreeHelper(node.right);
 			}
 		} else if (node.type == NodeType.Operator) {
 			let operatorNode : OperatorNode = <OperatorNode>node;
@@ -253,10 +262,13 @@ export class EvaluationTree {
 		} else if (node.type == NodeType.Invoke) {
 			let invokeNode : InvokeNode = <InvokeNode>node;
 			let functionName : string = (<VariableNode>invokeNode.left).variable;
-			let functionEvaluationTree = null // get tree from workspace
-			let functionParameter = this.evaluateValueHelper(invokeNode.right);
-			// return this.evaluateValueHelper(functionEvaluationTree.root, functionParameter);
-			return 0;
+			let functionParameter : number = this.evaluateValueHelper(invokeNode.right);
+			if (this.workspace.hasFunction(functionName)) {
+				let func: Function = this.workspace.getFunction(functionName);
+				return func(functionParameter);
+			} else {
+				throw new UndefinedFunctionError(`Undefined Function ${functionName}`);
+			}
 		} else if (node.type == NodeType.Absolute) {
 			return Math.abs(this.evaluateValueHelper(node.right));
 		} else if (node.type == NodeType.Operator) {
