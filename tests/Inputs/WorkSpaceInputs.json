@@ -11,7 +11,7 @@
 		"out": "49.50000000000001\\deg",
 		"formulas": [
 			"\\omega = 33rev/min * 1min/60s * (2rad * \\pi) / 1rev * 180\\deg / \\pi rad",
-			"t=0.25s",
+			"t = 0.25s",
 			"\\Delta\\theta = \\omega * t"
 		]
 	},
