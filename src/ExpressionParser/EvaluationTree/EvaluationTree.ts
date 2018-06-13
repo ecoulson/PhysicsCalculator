@@ -496,12 +496,10 @@ export class EvaluationTree {
 	}
 
 	private removeDimensionlessUnitsFromSection(dimensions: Array<Dimension>): void {
-		// on any expression there should only be one dimensionless unit
-		// doesn't make sense to have 1 rad*cycle*s^-1
-		// therefore we can assume that there is only one dimensionless unit
-		// per dimension array
 		for (let i = 0; i < dimensions.length; i++) {
-			if (DIMENSIONLESS_UNITS.indexOf(dimensions[i].unit) != -1) {
+			let unit = dimensions[i].unit;
+			// min and hr are not removed as they can occur in units such as kWh
+			if (DIMENSIONLESS_UNITS.indexOf(unit) != -1 && unit != "min" && unit != "hr") {
 				dimensions.splice(i, 1);
 				return;
 			}
