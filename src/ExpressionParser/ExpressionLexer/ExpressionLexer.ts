@@ -36,7 +36,7 @@ export class ExpressionLexer {
 	private createToken(char: string): Token {		
 		if (this.isDigit(char)) {
 			return this.readNumberToken(char);
-		} else if (LETTER_REGEX.test(char) || char == "\\") {
+		} else if (this.isLetter(char)) {
 			return this.readIdentifierToken(char);
 		} else if (WHITESPACE_REGEX.test(char)) {
 			return new Token(TokenType.Whitespace, '', -1);
@@ -70,7 +70,7 @@ export class ExpressionLexer {
 	}
 
 	private isLetter(char: string): boolean {
-		return LETTER_REGEX.test(char) || char == "\\";
+		return LETTER_REGEX.test(char) || char == "\\" || char == '_' || char == '{' || char == '}';
 	}
 
 	private readNumberToken(char: string): Token {

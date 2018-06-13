@@ -1,11 +1,11 @@
 [
 	{
 		"in": "0.5 rad/s * 9m",
-		"out": "4.5m*s^-1"
+		"out": "4.5m/s"
 	},
 	{
 		"in": "520rev/min * 1min/60s * 6rad/rev",
-		"out": "52rad*s^-1"
+		"out": "52rad/s"
 	},
 	{
 		"in": "33rev/min * 1min/60s * 6rad/rev * 180\\deg/3rad * 0.25s",

@@ -1,9 +1,27 @@
 [
 	{
 		"in": "\\omega",
-		"out": "54.454272662223076rad*s^-1",
+		"out": "54.454272662223076rad/s",
 		"formulas": [
 			"\\omega = 520rev/min * 1min/60s * (2rad * \\pi) / 1rev"
 		]
-	}
+	},
+	{
+		"in": "\\Delta\\theta",
+		"out": "49.50000000000001\\deg",
+		"formulas": [
+			"\\omega = 33rev/min * 1min/60s * (2rad * \\pi) / 1rev * 180\\deg / \\pi rad",
+			"t=0.25s",
+			"\\Delta\\theta = \\omega * t"
+		]
+	},
+	{
+		"in": "a_{c}",
+		"out": "2403.3775867930112m/s^2",
+		"formulas": [
+			"\\omega = 2857rev/min * 1min/60s * 2rad * \\pi / 1rev",
+			"r = 0.02685m",
+			"a_{c} = \\omega ^ 2 * r"
+		]
+	},
 ]

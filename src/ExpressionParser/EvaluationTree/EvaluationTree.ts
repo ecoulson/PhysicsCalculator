@@ -15,6 +15,7 @@ import { resolve } from "path";
 import { ExpressionParser } from "../ExpressionParser";
 import { WorkSpace } from "../../WorkSpace/WorkSpace";
 import { UndefinedVariableError } from "./UndefinedVariableError";
+import { POINT_CONVERSION_COMPRESSED } from "constants";
 
 const UnitInfoDir = resolve(__dirname, "../UnitInfo");
 const DERIVED_UNITS : Object = JSON.parse(readFileSync(resolve(UnitInfoDir, "DerivedUnits.json"), "utf-8"));
@@ -81,10 +82,16 @@ export class EvaluationTree {
 					unitOperator.right = rightUnit;
 					return unitOperator;
 				case '^':
-					unitOperator = OperatorNode.createNode('^');
-					unitOperator.left = leftUnit;
-					unitOperator.right = rightUnit;
-					return unitOperator;
+					if (this.shouldRaiseSubtree(node)) {
+						let numberNode = <NumberNode>node.right;
+						leftUnit = this.raiseLeftUnitBy(leftUnit, numberNode.number)
+						return leftUnit;
+					} else {
+						unitOperator = OperatorNode.createNode('^');
+						unitOperator.left = leftUnit;
+						unitOperator.right = rightUnit;
+						return unitOperator;
+					}
 				default:
 					throw new IllegalOperatorError("Illegal Operator " + operatorNode.operator);
 			}
@@ -96,6 +103,26 @@ export class EvaluationTree {
 			let unitParser : ExpressionParser = new ExpressionParser(DERIVED_UNITS[node.unit], this.workspace);
 			unitParser.evaluate();
 			return unitParser.evaluationTree.unitRoot;
+		} else {
+			return node;
+		}
+	}
+
+	private shouldRaiseSubtree(node: SyntaxNode) {
+		return node.left.type == NodeType.Variable && node.right.type == NodeType.Number;
+	}
+
+	private raiseLeftUnitBy(node: SyntaxNode, degree: number): SyntaxNode {
+		if (node == null) {
+			return node;
+		} else if (node.type == NodeType.Unit) {
+			let unitNode = <UnitNode>node;
+			unitNode.degree *= degree;
+			return unitNode;
+		} else if (node.type == NodeType.Operator) {
+			node.left = this.raiseLeftUnitBy(node.left, degree);
+			node.right = this.raiseLeftUnitBy(node.right, degree);
+			return node;
 		} else {
 			return node;
 		}
@@ -263,11 +290,13 @@ export class EvaluationTree {
 		if (node == null) {
 			return [];
 		} else if (node.type == NodeType.Unit) {
-			let unit = (<UnitNode>node).unit;
-			return [new Dimension(unit, 1)];
+			let unitNode = <UnitNode>node;
+			return [new Dimension(unitNode.unit, unitNode.degree)];
 		} else if (node.type == NodeType.Number) {
 			let degree = (<NumberNode>node).number;
 			return [new Dimension(null, degree)];
+		} else if (node.type == NodeType.Variable) {
+			return [];
 		} else if (node.type == NodeType.Operator) {
 			let operatorNode : OperatorNode = <OperatorNode>node;
 			let leftDimensions: Array<Dimension> = this.evaluateUnitsHelper(node.left);
@@ -523,10 +552,19 @@ export class EvaluationTree {
 
 	private getDimensionsString(dimensions: Array<Dimension>): string {
 		let dimensionString = "";
+		let hasHitNegative = false;
 		for (let i = 0; i < dimensions.length; i++) {
+			if (hasHitNegative) {
+				dimensions[i].degree = -dimensions[i].degree;
+			}
 			dimensionString += dimensions[i].toString();
 			if (i != dimensions.length - 1) {
-				dimensionString += "*";
+				if (dimensions[i + 1].degree < 0 && !hasHitNegative) {
+					hasHitNegative = true;
+					dimensionString += "/";
+				} else {
+					dimensionString += "*";
+				}
 			}
 		}
 		return dimensionString
