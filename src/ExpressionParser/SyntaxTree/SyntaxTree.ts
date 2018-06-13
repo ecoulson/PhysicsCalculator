@@ -26,7 +26,7 @@ export class SyntaxTree {
 	}
 
 	private hasReadAllTokens(): boolean {
-		return this.offset == this.tokens.length;
+		return this.offset >= this.tokens.length;
 	}
 
 	private isNextToken(type: TokenType): boolean {

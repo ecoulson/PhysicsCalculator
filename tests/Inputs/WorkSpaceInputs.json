@@ -16,6 +16,16 @@
 		]
 	},
 	{
+		"in": "v",
+		"out": "4.618141200776996m/s",
+		"formulas": [
+			"\\omega = 4.9 rev/min * 1min/60s * 2rad * \\pi / 1rev",
+			"d = 18m",
+			"r = d / 2",
+			"v = \\omega * r"
+		]
+	},
+	{
 		"in": "a_{c}",
 		"out": "2403.3775867930112m/s^2",
 		"formulas": [
@@ -24,4 +34,23 @@
 			"a_{c} = \\omega ^ 2 * r"
 		]
 	},
+	{
+		"in": "t",
+		"out": "4.810944806254709s",
+		"formulas": [
+			"r = 1.3m",
+			"m = 23kg",
+			"\\Delta\\theta = 2rad * \\pi",
+			"F_{t} = 51N",
+			"t = \\Delta\\theta / ((F_{t}/(m*r))^0.5"
+		]
+	},
+	{
+		"in": "v",
+		"out": "11.373653766490346m/s",
+		"formulas": [
+			"r=13.2m",
+			"v=(g*r)^0.5"
+		]
+	}
 ]

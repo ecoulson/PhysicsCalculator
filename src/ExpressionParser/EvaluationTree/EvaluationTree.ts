@@ -109,12 +109,16 @@ export class EvaluationTree {
 	}
 
 	private shouldRaiseSubtree(node: SyntaxNode) {
-		return node.left.type == NodeType.Variable && node.right.type == NodeType.Number;
+		return (node.left.type == NodeType.Variable || node.left.type == NodeType.Operator) && node.right.type == NodeType.Number;
 	}
 
 	private raiseLeftUnitBy(node: SyntaxNode, degree: number): SyntaxNode {
 		if (node == null) {
 			return node;
+		} else if (node.type == NodeType.Number) {
+			let numberNode = <NumberNode>node;
+			numberNode.number *= degree;
+			return numberNode;
 		} else if (node.type == NodeType.Unit) {
 			let unitNode = <UnitNode>node;
 			unitNode.degree *= degree;
