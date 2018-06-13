@@ -18,6 +18,7 @@ const UnitInfoDir = resolve(__dirname, "../UnitInfo");
 const DERIVED_UNITS : Object = JSON.parse(readFileSync(resolve(UnitInfoDir, "DerivedUnits.json"), "utf-8"));
 const PREFIXES : Object = JSON.parse(readFileSync(resolve(UnitInfoDir, "Prefixes.json"), "utf-8"));
 const UNITS : Array<string> = JSON.parse(readFileSync(resolve(UnitInfoDir, "Units.json"), "utf-8"));
+const DIMENSIONLESS_UNITS : Array<string> = JSON.parse(readFileSync(resolve(UnitInfoDir, "DimensionlessUnits.json"), "utf-8"));
 
 export class EvaluationTree {
 	private root: SyntaxNode;
@@ -47,7 +48,7 @@ export class EvaluationTree {
 				return this.convertToSIUnits(unitNode);
 			}
 		} else if (node.type == NodeType.Variable) {
-			return this.variableTree.unitRoot;	
+			return this.variableTree.unitRoot;
 		} else if (node.type == NodeType.Operator) {
 			let operatorNode : OperatorNode = <OperatorNode>node;
 			let leftUnit: SyntaxNode = this.buildUnitTreeHelper(node.left);
@@ -247,6 +248,7 @@ export class EvaluationTree {
 		this.removeCanceledUnits(dimensions);
 		this.simplifyUnits(dimensions);
 		this.removeCanceledUnits(dimensions);
+		dimensions = this.removeDimensionlessUnits(dimensions);
 		let unit : string = this.getDimensionsString(dimensions);
 		return unit;
 	}
@@ -450,6 +452,54 @@ export class EvaluationTree {
 			}
 		}
 		return minUnit;
+	}
+
+	private removeDimensionlessUnits(dimensions: Array<Dimension>): Array<Dimension> {
+		let newDimensions: Array<Dimension> = [];
+		let numerator : Array<Dimension> = [];
+		let denominator : Array<Dimension> = [];
+		for (let i = 0; i < dimensions.length; i++) {
+			if (dimensions[i].degree > 0) {
+				numerator.push(dimensions[i]);
+			} else {
+				denominator.push(dimensions[i]);
+			}
+		}
+		if (numerator.length > 1 && this.hasDimensionlessUnits(numerator)) {
+			this.removeDimensionlessUnitsFromSection(numerator);
+		}
+		if (denominator.length > 1 && this.hasDimensionlessUnits(denominator)) {
+			this.removeDimensionlessUnitsFromSection(denominator);
+		}
+		for (let i = 0; i < numerator.length; i++) {
+			newDimensions.push(numerator[i]);
+		}
+		for (let i = 0; i < denominator.length; i++) {
+			newDimensions.push(denominator[i]);
+		}
+		return newDimensions;
+	}
+
+	private hasDimensionlessUnits(dimensions: Array<Dimension>): boolean {
+		for (let i = 0; i < dimensions.length; i++) {
+			if (DIMENSIONLESS_UNITS.indexOf(dimensions[i].unit) != -1) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private removeDimensionlessUnitsFromSection(dimensions: Array<Dimension>): void {
+		// on any expression there should only be one dimensionless unit
+		// doesn't make sense to have 1 rad*cycle*s^-1
+		// therefore we can assume that there is only one dimensionless unit
+		// per dimension array
+		for (let i = 0; i < dimensions.length; i++) {
+			if (DIMENSIONLESS_UNITS.indexOf(dimensions[i].unit) != -1) {
+				dimensions.splice(i, 1);
+				return;
+			}
+		}
 	}
 
 	private createDimensionArray(dimensionString: string): Array<Dimension> {

@@ -28,5 +28,10 @@
 	"Sv",
 	"kat",
 	"cycles",
-	"decays"
+	"decays",
+	"rad",
+	"rev",
+	"\\deg",
+	"min",
+	"hour"
 ]
