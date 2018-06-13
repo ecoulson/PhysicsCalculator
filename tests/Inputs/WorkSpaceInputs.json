@@ -1,0 +1,9 @@
+[
+	{
+		"in": "\\omega",
+		"out": "54.454273rad*s^-1",
+		"formulas": [
+			"\\omega = 520rev/min * 1min/60s * 2 * \\pi / 1rev"
+		]
+	}
+]

@@ -7,12 +7,18 @@ export class WorkSpace {
 
 	constructor() {
 		this.formulaMapping = {};
+		this.defineConstants();
+	}
+
+	private defineConstants(): void {
+		this.defineFormula(`e=${Math.E.toString()}`);
+		this.defineFormula(`\\pi=${Math.PI.toString()}`);
 	}
 
 	public defineFormula(formula: string) {
 		let formulaParts : Array<string> = formula.split('=');
-		let variable : string = formulaParts[0];
-		let expression : string = formulaParts[1];
+		let variable : string = formulaParts[0].trim();
+		let expression : string = formulaParts[1].trim();
 		let parser : ExpressionParser = new ExpressionParser(expression, this);
 		this.formulaMapping[variable] = parser;
 	}
@@ -32,5 +38,10 @@ export class WorkSpace {
 	public evaluate(expression: string): string {
 		let parser : ExpressionParser = new ExpressionParser(expression, this);
 		return parser.evaluate();
+	}
+
+	public clear():void {
+		this.formulaMapping = {};
+		this.defineConstants();
 	}
 }
