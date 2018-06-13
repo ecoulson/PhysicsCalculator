@@ -321,6 +321,7 @@ export class EvaluationTree {
 				case '-':
 					let leftDimensionsRemoveDimensionless = this.removeDimensionlessUnits(leftDimensions);
 					let rightDimensionsRemoveDimensionless = this.removeDimensionlessUnits(rightDimensions);
+					console.log(this.root, leftDimensionsRemoveDimensionless, rightDimensionsRemoveDimensionless);
 					if (this.isDimensionsEqual(leftDimensionsRemoveDimensionless, rightDimensionsRemoveDimensionless)) {
 						return leftDimensions;
 					} else {
@@ -507,7 +508,6 @@ export class EvaluationTree {
 	}
 
 	private removeDimensionlessUnits(dimensions: Array<Dimension>): Array<Dimension> {
-		let newDimensions: Array<Dimension> = [];
 		let numerator : Array<Dimension> = [];
 		let denominator : Array<Dimension> = [];
 		for (let i = 0; i < dimensions.length; i++) {
@@ -562,7 +562,6 @@ export class EvaluationTree {
 	}
 
 	private getDimensionsString(dimensions: Array<Dimension>): string {
-		// console.log(dimensions);
 		let dimensionString = "";
 		let hasHitNegative = false;
 		for (let i = 0; i < dimensions.length; i++) {

@@ -75,5 +75,21 @@
 			"a_{c} = g",
 			"t = \\Delta\\theta / sqrt(a_{c}/r)"
 		]
+	},
+	{
+		"in": "\\Delta_x",
+		"out": "m",
+		"formulas": [
+			"m = 90g",
+			"r = 0.6cm",
+			"h = 2.0m",
+			"\\Delta_y = h - r",
+			"F_{t} = 2.2N",
+			"W = m * g",
+			"\\sum_F = 1.318N",
+			"v = sqrt(\\sum_F * r / m)",
+			"t = sqrt(2 * \\Delta_y / g)",
+			"\\Delta_x = v * t"
+		]
 	}
 ]
