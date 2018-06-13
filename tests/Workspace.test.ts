@@ -40,7 +40,12 @@ describe("Workspace Test Suite", () => {
 			}
 		}
 		it(`Should evaluate ${inputs[i].in} to ${inputs[i].out} using these formula(s):\n ${definedFormulas}`, () => {
-
+			for (let j = 0; j < inputs[i].formulas.length; j++) {
+				workspace.defineFormula(inputs[i].formulas[j]);
+			}
+			let result = workspace.evaluate(inputs[i].in);
+			expect(result).to.equal(inputs[i].out);
+			workspace.clear();
 		});
 	}
 })
