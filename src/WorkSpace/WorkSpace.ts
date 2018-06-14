@@ -1,7 +1,6 @@
 import { ExpressionParser } from "../ExpressionParser/ExpressionParser";
 import { SyntaxNode } from "../ExpressionParser/SyntaxTree/SyntaxNode";
 import { EvaluationTree } from "../ExpressionParser/EvaluationTree/EvaluationTree";
-import { ENGINE_METHOD_PKEY_ASN1_METHS } from "constants";
 
 export class WorkSpace {
 	private formulaMapping : { [variable: string]: ExpressionParser}

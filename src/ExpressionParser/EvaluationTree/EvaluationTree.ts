@@ -56,10 +56,12 @@ export class EvaluationTree {
 				throw new UndefinedVariableError(`Undefined Variable ${variableNode.variable} in workspace`);
 			}
 		} else if (node.type == NodeType.Invoke) {
+			console.log("call");
 			let variableNode: VariableNode = <VariableNode>node.left;
 			if (variableNode.variable == "sqrt") {
 				let nonSqrtedUnit : SyntaxNode = this.buildUnitTreeHelper(node.right);
-				return this.raiseLeftUnitBy(nonSqrtedUnit, 0.5);
+				let raised =  this.raiseLeftUnitBy(nonSqrtedUnit, 0.5);
+				return raised;
 			} else {
 				return this.buildUnitTreeHelper(node.right);
 			}
@@ -235,13 +237,13 @@ export class EvaluationTree {
 	}
 
 	public evaluate(): string {
-		let value : number = this.evaluateValue() * Math.pow(10, this.base10Exp);
+		let value : number = this.evaluateValue();
 		let unit : string = this.evaluateUnits();
 		return `${value}${unit}`;
 	}
 
 	public evaluateValue(): number {
-		return this.evaluateValueHelper(this.root);
+		return this.evaluateValueHelper(this.root) * Math.pow(10, this.base10Exp);
 	}
 
 	private evaluateValueHelper(node: SyntaxNode): number {
@@ -321,7 +323,6 @@ export class EvaluationTree {
 				case '-':
 					let leftDimensionsRemoveDimensionless = this.removeDimensionlessUnits(leftDimensions);
 					let rightDimensionsRemoveDimensionless = this.removeDimensionlessUnits(rightDimensions);
-					console.log(this.root, leftDimensionsRemoveDimensionless, rightDimensionsRemoveDimensionless);
 					if (this.isDimensionsEqual(leftDimensionsRemoveDimensionless, rightDimensionsRemoveDimensionless)) {
 						return leftDimensions;
 					} else {

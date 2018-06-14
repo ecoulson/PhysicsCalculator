@@ -77,17 +77,25 @@
 		]
 	},
 	{
-		"in": "\\Delta_x",
+		"in": "sqrt((10s^2 - 5s^2) * 5kg^2)",
+		"out": "5s*kg",
+		"formulas": []
+	},
+	{
+		"in": "v_{x}",
 		"out": "m",
 		"formulas": [
 			"m = 90g",
-			"r = 0.6cm",
+			"r = 60cm",
 			"h = 2.0m",
 			"\\Delta_y = h - r",
 			"F_{t} = 2.2N",
 			"W = m * g",
-			"\\sum_F = 1.318N",
-			"v = sqrt(\\sum_F * r / m)",
+			"\\sum_F = F_{t} - W",
+			"v_{x} = sqrt(\\sum_F * r / m)"
+		],
+		"temp": [
+			"v_{x} = sqrt(\\sum_F * r / m)",
 			"t = sqrt(2 * \\Delta_y / g)",
 			"\\Delta_x = v * t"
 		]
