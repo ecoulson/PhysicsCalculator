@@ -91,7 +91,10 @@ export class ExpressionLexer {
 		let identifier : string = char;
 		
 		if (this.isLetter(this.peek())) {
-			while (!this.isEndOfExpression() && this.isLetter(char)) {
+			while (
+				!this.isEndOfExpression() && 
+				(this.isLetter(char) || this.isDigit(char))) 
+			{
 				identifier += this.expression[this.offset++];
 				char = this.expression[this.offset];
 			}

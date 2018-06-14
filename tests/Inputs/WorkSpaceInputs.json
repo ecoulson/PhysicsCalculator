@@ -228,13 +228,27 @@
 	},
 	{
 		"in": "F_{2}",
-		"out": "N",
+		"out": "199.2857142857143N",
 		"formulas": [
 			"F = 135N",
 			"\\Delta_x_{1} = 0.21m",
 			"\\Delta_x_{2} = 0.31m",
 			"k = F / \\Delta_x_{1}",
 			"F_{2} = k * \\Delta_x_{2}"
+		]
+	},
+	{
+		"in": "h",
+		"out": "1.02m",
+		"formulas": [
+			"k = 3.4kN/m",
+			"\\theta = 31.0 \\deg",
+			"m = 33.0kg",
+			"\\Delta_x = 0.37m",
+			"U_{s} = 1/2 * k * \\Delta_x ^ 2",
+			"h_{r} = U_{s} / (m * g)",
+			"d = h_{r} / sin(\\theta)",
+			"h = d - \\Delta_x"
 		]
 	}
 ]
