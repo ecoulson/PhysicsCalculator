@@ -56,10 +56,11 @@ export class EvaluationTree {
 				throw new UndefinedVariableError(`Undefined Variable ${variableNode.variable} in workspace`);
 			}
 		} else if (node.type == NodeType.Invoke) {
-			console.log("call");
 			let variableNode: VariableNode = <VariableNode>node.left;
 			if (variableNode.variable == "sqrt") {
 				let nonSqrtedUnit : SyntaxNode = this.buildUnitTreeHelper(node.right);
+				console.log("call");
+				console.log(JSON.stringify(nonSqrtedUnit));
 				let raised =  this.raiseLeftUnitBy(nonSqrtedUnit, 0.5);
 				return raised;
 			} else {
@@ -94,6 +95,7 @@ export class EvaluationTree {
 				case '^':
 					if (this.shouldRaiseSubtree(node)) {
 						let numberNode = <NumberNode>node.right;
+						console.log("call");
 						leftUnit = this.raiseLeftUnitBy(leftUnit, numberNode.number)
 						return leftUnit;
 					} else {
@@ -128,15 +130,22 @@ export class EvaluationTree {
 		} else if (node.type == NodeType.Number) {
 			let numberNode = <NumberNode>node;
 			numberNode.number *= degree;
-			return numberNode;
+			let newNumber : NumberNode = NumberNode.createNode(numberNode.number);
+			console.log(newNumber.number);
+			return newNumber;
 		} else if (node.type == NodeType.Unit) {
 			let unitNode = <UnitNode>node;
-			unitNode.degree *= degree;
-			return unitNode;
+			let newUnit = UnitNode.createNode(unitNode.unit);
+			unitNode.degree = unitNode.degree;
+			newUnit.degree *= degree;
+			console.log(newUnit);
+			return newUnit;
 		} else if (node.type == NodeType.Operator) {
-			node.left = this.raiseLeftUnitBy(node.left, degree);
-			node.right = this.raiseLeftUnitBy(node.right, degree);
-			return node;
+			let operatorNode = <OperatorNode>node;
+			let newOperator = OperatorNode.createNode(operatorNode.operator);
+			newOperator.left = this.raiseLeftUnitBy(node.left, degree);
+			newOperator.right = this.raiseLeftUnitBy(node.right, degree);
+			return newOperator;
 		} else {
 			return node;
 		}

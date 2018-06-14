@@ -77,8 +77,8 @@
 		]
 	},
 	{
-		"in": "sqrt((10s^2 - 5s^2) * 5kg^2)",
-		"out": "5s*kg",
+		"in": "sqrt((10N - 5kg * 1m/s^2) * 1m / 5kg )",
+		"out": "1m/s",
 		"formulas": []
 	},
 	{
