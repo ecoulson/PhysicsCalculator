@@ -122,9 +122,54 @@
 			"r = 0.50m",
 			"\\tau = 15N*m",
 			"\\theta = asin(\\tau / (r * F))"
-		],
-		"temp": [
-			
+		]
+	},
+	{
+		"in": "m",
+		"out": "16.842105263157894kg",
+		"formulas": [
+			"\\tau = 12N*m",
+			"r = 0.50m",
+			"\\alpha = 5.7 rad/s^2",
+			"m = (2 * \\tau) / (\\alpha * r ^ 2)"
+		]
+	},
+	{
+		"in": "t",
+		"out": "2.4709090909090907s",
+		"formulas": [
+			"m = 10.0 kg",
+			"r = 3 m",
+			"\\tau = 110 N*m",
+			"\\omega_{f} = 6.04 rad/s",
+			"\\omega_{i} = 0 rad/s",
+			"I = m * r ^ 2 / 2",
+			"\\alpha = \\tau / I",
+			"t = (\\omega_{f} - \\omega_{i}) / \\alpha"
+		]
+	},
+	{
+		"in": "\\sum_I",
+		"out": "1.83176kg*m^2",
+		"formulas": [
+			"m_{d} = 7kg",
+			"r_{d} = 0.65m",
+			"m_{c} = 2.1kg",
+			"r_{c} = 0.41m",
+			"I_{d} = m_{d} * r_{d} ^ 2 / 2",
+			"I_{c} = m_{c} * r_{c} ^ 2",
+			"\\sum_I = I_{c} + I_{d}"
+		]
+	},
+	{
+		"in": "I",
+		"out": "kg*m^2",
+		"formulas": [
+			"r = 0.340m",
+			"F = 16.88N",
+			"\\alpha = 1.20 rad/s^2",
+			"\\theta = 90",
+			"I = r * F * sin(\\theta) / \\alpha"
 		]
 	}
 ]

@@ -33,7 +33,6 @@ export class EvaluationTree {
 		this.workspace = workspace;
 		this.root = tree.root;
 		this.unitRoot = this.buildUnitTree();
-		// console.log(JSON.stringify(this.unitRoot));
 		this.base10Exp = this.getBase10Exponent(this.unitRoot);
 	}
 
@@ -535,10 +534,15 @@ export class EvaluationTree {
 			}
 		}
 		if (numerator.length > 1 && this.hasDimensionlessUnits(numerator)) {
-			this.removeDimensionlessUnitsFromSection(numerator);
+			this.removeDimensionlessUnitsFromNumerator(numerator);
 		}
-		if (denominator.length > 1 && this.hasDimensionlessUnits(denominator)) {
-			this.removeDimensionlessUnitsFromSection(denominator);
+		if (this.hasDimensionlessUnits(denominator)) {
+			for (let i = denominator.length - 1; i >= 0; i--) {
+				let unit = denominator[i].unit;
+				if (DIMENSIONLESS_UNITS.indexOf(unit) != -1 && unit != "min" && unit != "hr") {
+					denominator.splice(i, 1);
+				}
+			}
 		}
 		return numerator.concat(denominator);
 	}
@@ -552,7 +556,7 @@ export class EvaluationTree {
 		return false;
 	}
 
-	private removeDimensionlessUnitsFromSection(dimensions: Array<Dimension>): void {
+	private removeDimensionlessUnitsFromNumerator(dimensions: Array<Dimension>): void {
 		for (let i = 0; i < dimensions.length; i++) {
 			let unit = dimensions[i].unit;
 			// min and hr are not removed as they can occur in units such as kWh
