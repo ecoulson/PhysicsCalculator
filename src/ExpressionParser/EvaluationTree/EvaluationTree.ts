@@ -32,6 +32,7 @@ export class EvaluationTree {
 	constructor(tree: SyntaxTree, workspace: WorkSpace) {
 		this.workspace = workspace;
 		this.root = tree.root;
+		console.log(JSON.stringify(this.root));
 		this.unitRoot = this.buildUnitTree();
 		this.base10Exp = this.getBase10Exponent(this.unitRoot);
 	}
@@ -358,6 +359,9 @@ export class EvaluationTree {
 					}
 					return leftDimensions;
 				case '^':
+					if (leftDimensions.length == 0 && rightDimensions.length == 0) {
+						return [];
+					}
 					leftDimensions[0].degree = rightDimensions[0].degree;
 					return leftDimensions;
 				default:

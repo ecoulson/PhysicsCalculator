@@ -141,7 +141,7 @@ export class SyntaxTree {
 			let numberToken = this.readToken();
 			let signedValue = parseInt(sign.getData()) * parseFloat(numberToken.getData());
 			numberToken.setData(signedValue.toString());
-			return new NumberNode(numberToken, true);
+			return new NumberNode(numberToken);
 		} else {
 			let errorToken : Token = this.readToken();
 			throw new UnexpectedTokenError(`Unexpected ${errorToken.getTokenType()} token at position ${errorToken.getPos()}`);
@@ -153,7 +153,6 @@ export class SyntaxTree {
 		if (!this.hasReadAllTokens() && this.isNextToken(TokenType.Identifier)) {
 			let unitNode : SyntaxNode = this.readComplexUnit();
 			node.right = unitNode;
-			numberNode.isDimensionless = false;
 			return node;
 		} else {
 			return node;
@@ -190,7 +189,7 @@ export class SyntaxTree {
 			let signToken : Token = new Token(TokenType.Multiply, "*", sign.getPos());
 			let signOperatorNode : SyntaxNode = new OperatorNode(signToken);
 			let numberToken : Token = new Token(TokenType.Number, "-1", -1);
-			signOperatorNode.left = new NumberNode(numberToken, true);
+			signOperatorNode.left = new NumberNode(numberToken);
 			signOperatorNode.right = node;
 			node = signOperatorNode;
 			return node;

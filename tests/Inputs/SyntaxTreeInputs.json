@@ -129,6 +129,11 @@
 			"input": "1N/(1m*1s^-2)",
 			"structure": ["Operator", "Number", "Unit", "Operator", "Number", "Unit", "Number", "Operator", "Unit", "Number"],
 			"values": ["/", 1, "N", "*", 1, "m", 1, "^", "s", -2]
+		},
+		{
+			"input": "10^5",
+			"structure": ["Operator", "Number", "Number"],
+			"values": ["^", 10, 5]
 		}
 	],
 	"errorCases": [
