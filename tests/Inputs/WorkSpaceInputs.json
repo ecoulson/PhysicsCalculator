@@ -50,7 +50,7 @@
 		"out": "11.373653766490346m/s",
 		"formulas": [
 			"r=13.2m",
-			"v=sqrt(g*r)"
+			"v=sqrt(-g*r)"
 		]
 	},
 	{
@@ -62,7 +62,7 @@
 			"r = 8m",
 			"m = 40kg",
 			"\\omega = \\Delta\\theta / T",
-			"F_{n} = m*\\omega ^ 2 * r - m*g)"
+			"F_{n} = m*\\omega ^ 2 * r - m * -g)"
 		]
 	},
 	{
@@ -72,7 +72,7 @@
 			"d = 380m",
 			"r = d / 2",
 			"\\Delta\\theta = 2rad * \\pi",
-			"a_{c} = g",
+			"a_{c} = -g",
 			"t = \\Delta\\theta / sqrt(a_{c}/r)"
 		]
 	},
@@ -85,10 +85,10 @@
 			"h = 2.0m",
 			"\\Delta_y = h - r",
 			"F_{t} = 2.2N",
-			"W = m * g",
+			"W = m * -g",
 			"\\sum_F = F_{t} - W",
 			"v_{x} = sqrt(\\sum_F * r / m)",
-			"t = sqrt(2 * \\Delta_y / g)",
+			"t = sqrt(2 * \\Delta_y / -g)",
 			"\\Delta_x = v_{x} * t"
 		],
 		"temp": [
@@ -163,13 +163,69 @@
 	},
 	{
 		"in": "I",
-		"out": "kg*m^2",
+		"out": "4.7826666666666675kg*m^2",
 		"formulas": [
 			"r = 0.340m",
 			"F = 16.88N",
 			"\\alpha = 1.20 rad/s^2",
 			"\\theta = 90",
 			"I = r * F * sin(\\theta) / \\alpha"
+		]
+	},
+	{
+		"in": "W",
+		"out": "0J",
+		"formulas": [
+			"m = 7kg",
+			"h = 1.2m",
+			"d = 2..3m",
+			"a = 0 m/s^2",
+			"F = m * a",
+			"W = F * d"
+		]
+	},
+	{
+		"in": "W",
+		"out": "576810J",
+		"formulas": [
+			"m = 425kg",
+			"\\Delta_y = 117m",
+			"a = 1.8 m/s^2",
+			"F = m * a",
+			"F_{w} = m * -g",
+			"\\Sum_F = F + F_{w}",
+			"W = \\Sum_F * \\Delta_y"
+		]
+	},
+	{
+		"in": "F",
+		"out": "74.82331490465393N",
+		"formulas": [
+			"\\theta = 36\\deg",
+			"W = 908J",
+			"d = 15m",
+			"F = W / (d * cos(\\theta)"
+		]
+	},
+	{
+		"in": "K",
+		"out": "290.4J",
+		"formulas": [
+			"m =0.300kg",
+			"v = 44 m/s",
+			"K = 1 / 2 * m * v^2"
+		]
+	},
+	{
+		"in": "W",
+		"out": "m/s",
+		"formulas": [
+			"v_{i} = 10m/s",
+			"m = 1110kg",
+			"W = 4.00J * 10^5"
+		],
+		"temp": [
+			"v_{f} = sqrt((2 * W / m) + v_{i}^2)"
 		]
 	}
 ]

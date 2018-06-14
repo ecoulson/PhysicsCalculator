@@ -20,7 +20,7 @@ export class WorkSpace {
 	private defineConstants(): void {
 		this.defineFormula(`e=${Math.E.toString()}`);
 		this.defineFormula(`\\pi=${Math.PI.toString()}`);
-		this.defineFormula(`g=9.8m/s^2`);
+		this.defineFormula(`g=-9.8m/s^2`);
 	}
 
 	public defineFormula(formula: string) {

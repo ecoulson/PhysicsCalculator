@@ -544,7 +544,21 @@ export class EvaluationTree {
 				}
 			}
 		}
+		this.sortUnitsByMagnitude(numerator);
+		this.sortUnitsByMagnitude(denominator);
 		return numerator.concat(denominator);
+	}
+
+	private sortUnitsByMagnitude(dimensions: Array<Dimension>) {
+		dimensions.sort((a, b) => {
+			if (a.degree < b.degree) {
+				return -1;
+			} else if (a.degree == b.degree) {
+				return 0;
+			} else {
+				return 1;
+			}
+		})
 	}
 
 	private hasDimensionlessUnits(dimensions: Array<Dimension>): boolean {
