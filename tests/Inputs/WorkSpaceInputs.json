@@ -113,5 +113,18 @@
 			"\\omega_{f} = 0 rad/s",
 			"t = (\\omega_{f} - \\omega_{i}) / \\alpha"
 		]
+	},
+	{
+		"in": "\\theta",
+		"out": "18.40848017058584",
+		"formulas": [
+			"F = 95N",
+			"r = 0.50m",
+			"\\tau = 15N*m",
+			"\\theta = asin(\\tau / (r * F))"
+		],
+		"temp": [
+			
+		]
 	}
 ]

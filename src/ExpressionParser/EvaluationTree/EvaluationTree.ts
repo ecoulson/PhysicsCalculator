@@ -46,8 +46,7 @@ export class EvaluationTree {
 			if (node.right == null) {
 				return null;
 			} else {
-				let unitNode = <UnitNode>node.right;
-				return this.convertToSIUnits(unitNode);
+				return this.convertToSIUnits(node.right);
 			}
 		} else if (node.type == NodeType.Variable) {
 			let variableNode : VariableNode = <VariableNode>node;
@@ -108,12 +107,23 @@ export class EvaluationTree {
 		}
 	}
 
-	private convertToSIUnits(node: UnitNode): SyntaxNode {
-		if (DERIVED_UNITS.hasOwnProperty(node.unit)) {
-			//TODO: move all derived units expressionparsers into the workspace class
-			let unitParser : ExpressionParser = new ExpressionParser(DERIVED_UNITS[node.unit], this.workspace);
-			unitParser.evaluate();
-			return unitParser.evaluationTree.unitRoot;
+	private convertToSIUnits(node: SyntaxNode): SyntaxNode {
+		if (node == null) {
+			return null;
+		} else if (node.type == NodeType.Unit) {
+			let unitNode = <UnitNode>node;
+			if (DERIVED_UNITS.hasOwnProperty(unitNode.unit)) {
+				//TODO: move all derived units expressionparsers into the workspace class
+				let unitParser : ExpressionParser = new ExpressionParser(DERIVED_UNITS[unitNode.unit], this.workspace);
+				unitParser.evaluate();
+				return unitParser.evaluationTree.unitRoot;
+			} else {
+				return node;
+			}
+		} else if (node.type == NodeType.Operator) {
+			node.left = this.convertToSIUnits(node.left);
+			node.right = this.convertToSIUnits(node.right);
+			return node;
 		} else {
 			return node;
 		}
