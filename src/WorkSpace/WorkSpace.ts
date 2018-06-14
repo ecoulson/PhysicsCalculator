@@ -1,6 +1,10 @@
 import { ExpressionParser } from "../ExpressionParser/ExpressionParser";
 import { SyntaxNode } from "../ExpressionParser/SyntaxTree/SyntaxNode";
 import { EvaluationTree } from "../ExpressionParser/EvaluationTree/EvaluationTree";
+import { NodeType } from "../ExpressionParser/SyntaxTree/NodeTypes";
+import { NumberNode } from "../ExpressionParser/SyntaxTree/NumberNode";
+import { UnitNode } from "../ExpressionParser/SyntaxTree/UnitNode";
+import { OperatorNode } from "../ExpressionParser/SyntaxTree/OperatorNode";
 
 export class WorkSpace {
 	private formulaMapping : { [variable: string]: ExpressionParser}
@@ -85,7 +89,31 @@ export class WorkSpace {
 	}
 
 	public getFormulaResultUnit(variable: string): SyntaxNode {
-		return this.formulaMapping[variable].evaluationTree.unitRoot;
+		let unitRoot : SyntaxNode = this.formulaMapping[variable].evaluationTree.unitRoot;
+		return this.cloneResultUnit(unitRoot);
+	}
+
+	private cloneResultUnit(node: SyntaxNode): SyntaxNode {
+		if (node == null) {
+			return node;
+		} else if (node.type == NodeType.Number) {
+			let numberNode = <NumberNode>node;
+			let newNumber = NumberNode.createNode(numberNode.number);
+			return newNumber;
+		} else if (node.type == NodeType.Unit) {
+			let unitNode = <UnitNode>node;
+			let newUnit = UnitNode.createNode(unitNode.unit);
+			newUnit.degree = unitNode.degree;
+			return newUnit;
+		} else if (node.type == NodeType.Operator) {
+			let operatorNode = <OperatorNode>node;
+			let newOperator = OperatorNode.createNode(operatorNode.operator);
+			newOperator.left = this.cloneResultUnit(node.left);
+			newOperator.right = this.cloneResultUnit(node.right);
+			return newOperator;
+		} else {
+			throw new Error("Illegal NodeType in UnitTree");
+		}
 	}
 
 	public evaluate(expression: string): string {

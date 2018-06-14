@@ -33,6 +33,7 @@ export class EvaluationTree {
 		this.workspace = workspace;
 		this.root = tree.root;
 		this.unitRoot = this.buildUnitTree();
+		// console.log(JSON.stringify(this.unitRoot));
 		this.base10Exp = this.getBase10Exponent(this.unitRoot);
 	}
 
@@ -43,7 +44,7 @@ export class EvaluationTree {
 	private buildUnitTreeHelper(node: SyntaxNode ) : SyntaxNode {
 		if (node.type == NodeType.Number) {
 			if (node.right == null) {
-				return node.right;
+				return null;
 			} else {
 				let unitNode = <UnitNode>node.right;
 				return this.convertToSIUnits(unitNode);
@@ -59,8 +60,6 @@ export class EvaluationTree {
 			let variableNode: VariableNode = <VariableNode>node.left;
 			if (variableNode.variable == "sqrt") {
 				let nonSqrtedUnit : SyntaxNode = this.buildUnitTreeHelper(node.right);
-				console.log("call");
-				console.log(JSON.stringify(nonSqrtedUnit));
 				let raised =  this.raiseLeftUnitBy(nonSqrtedUnit, 0.5);
 				return raised;
 			} else {
@@ -95,7 +94,6 @@ export class EvaluationTree {
 				case '^':
 					if (this.shouldRaiseSubtree(node)) {
 						let numberNode = <NumberNode>node.right;
-						console.log("call");
 						leftUnit = this.raiseLeftUnitBy(leftUnit, numberNode.number)
 						return leftUnit;
 					} else {
@@ -112,6 +110,7 @@ export class EvaluationTree {
 
 	private convertToSIUnits(node: UnitNode): SyntaxNode {
 		if (DERIVED_UNITS.hasOwnProperty(node.unit)) {
+			//TODO: move all derived units expressionparsers into the workspace class
 			let unitParser : ExpressionParser = new ExpressionParser(DERIVED_UNITS[node.unit], this.workspace);
 			unitParser.evaluate();
 			return unitParser.evaluationTree.unitRoot;
@@ -131,14 +130,12 @@ export class EvaluationTree {
 			let numberNode = <NumberNode>node;
 			numberNode.number *= degree;
 			let newNumber : NumberNode = NumberNode.createNode(numberNode.number);
-			console.log(newNumber.number);
 			return newNumber;
 		} else if (node.type == NodeType.Unit) {
 			let unitNode = <UnitNode>node;
 			let newUnit = UnitNode.createNode(unitNode.unit);
 			unitNode.degree = unitNode.degree;
 			newUnit.degree *= degree;
-			console.log(newUnit);
 			return newUnit;
 		} else if (node.type == NodeType.Operator) {
 			let operatorNode = <OperatorNode>node;

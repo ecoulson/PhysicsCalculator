@@ -77,13 +77,8 @@
 		]
 	},
 	{
-		"in": "sqrt((10N - 5kg * 1m/s^2) * 1m / 5kg )",
-		"out": "1m/s",
-		"formulas": []
-	},
-	{
-		"in": "v_{x}",
-		"out": "m",
+		"in": "\\Delta_x",
+		"out": "1.5844482290299644m",
 		"formulas": [
 			"m = 90g",
 			"r = 60cm",
@@ -92,12 +87,31 @@
 			"F_{t} = 2.2N",
 			"W = m * g",
 			"\\sum_F = F_{t} - W",
-			"v_{x} = sqrt(\\sum_F * r / m)"
-		],
-		"temp": [
 			"v_{x} = sqrt(\\sum_F * r / m)",
 			"t = sqrt(2 * \\Delta_y / g)",
-			"\\Delta_x = v * t"
+			"\\Delta_x = v_{x} * t"
+		],
+		"temp": [
+			"m = 90g",
+			"r = 60cm",
+			"h = 2.0m",
+			"\\Delta_y = h - r",
+			"F_{t} = 2.2N",
+			"W = m * g",
+			"\\sum_F = F_{t} - W",
+			"v_{x} = sqrt(\\sum_F * r / m)",
+			"t = sqrt(2 * \\Delta_y / g)",
+			"\\Delta_x = v_{x} * t"
+		]
+	},
+	{
+		"in": "t",
+		"out": "54.90196078431372s",
+		"formulas": [
+			"\\omega_{i} = 28 rad/s",
+			"\\alpha = -0.51rad/s^2",
+			"\\omega_{f} = 0 rad/s",
+			"t = (\\omega_{f} - \\omega_{i}) / \\alpha"
 		]
 	}
 ]
