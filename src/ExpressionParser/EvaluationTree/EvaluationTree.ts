@@ -32,7 +32,6 @@ export class EvaluationTree {
 	constructor(tree: SyntaxTree, workspace: WorkSpace) {
 		this.workspace = workspace;
 		this.root = tree.root;
-		console.log(JSON.stringify(this.root));
 		this.unitRoot = this.buildUnitTree();
 		this.base10Exp = this.getBase10Exponent(this.unitRoot);
 	}
@@ -144,8 +143,7 @@ export class EvaluationTree {
 		} else if (node.type == NodeType.Unit) {
 			let unitNode = <UnitNode>node;
 			let newUnit = UnitNode.createNode(unitNode.unit);
-			unitNode.degree = unitNode.degree;
-			newUnit.degree *= degree;
+			newUnit.degree = unitNode.degree * degree;
 			return newUnit;
 		} else if (node.type == NodeType.Operator) {
 			let operatorNode = <OperatorNode>node;
@@ -377,10 +375,19 @@ export class EvaluationTree {
 			return true;
 		}
 		if (left.length != right.length) {
-			return false;
+			for (let i = 0; i < left.length; i++) {
+				let dimensionRightIndex = this.indexOfDimension(left[i], right);
+				if (dimensionRightIndex == -1 && left[i].degree == 0) {
+					return true;
+				}
+				if (!left[i].equals(right[dimensionRightIndex])) {
+					return false;
+				}
+			}
 		}
 		for (let i = 0; i < left.length; i++) {
-			if (!left[i].equals(right[i])) {
+			let dimensionRightIndex = this.indexOfDimension(left[i], right);
+			if (!left[i].equals(right[dimensionRightIndex])) {
 				return false;
 			}
 		}
