@@ -239,16 +239,95 @@
 	},
 	{
 		"in": "h",
-		"out": "1.02m",
+		"out": "1.027246459698461m",
 		"formulas": [
 			"k = 3.4kN/m",
 			"\\theta = 31.0 \\deg",
 			"m = 33.0kg",
 			"\\Delta_x = 0.37m",
 			"U_{s} = 1/2 * k * \\Delta_x ^ 2",
-			"h_{r} = U_{s} / (m * g)",
+			"h_{r} = U_{s} / (m * -g)",
 			"d = h_{r} / sin(\\theta)",
 			"h = d - \\Delta_x"
+		],
+		"temp": [
+			
+		]
+	},
+	{
+		"in": "P",
+		"out": "17.5W",
+		"formulas": [
+			"F = 75N",
+			"\\Delta_x = 42m",
+			"t = 3min * 60s / 1min",
+			"P = F * \\Delta_x / t"
+		]
+	},
+	{
+		"in": "F",
+		"out": "2048.6263736263736N",
+		"formulas": [
+			"v = 27.3m/s",
+			"p = 75.0hp * 745.7 W/hp",
+			"F = p/v"
+		]
+	},
+	{
+		"in": "P",
+		"out": "1.239665121364002hp",
+		"formulas": [
+			"\\theta = 25.0\\deg",
+			"t = 3.0s",
+			"m = 55.8kg",
+			"d = 12.0m",
+			"h_{i} = 0m",
+			"h_{f} = d * sin(\\theta)",
+			"W = m * -g * h_{f} - m * -g * h_{i}",
+			"P = W / t * 1hp / 745.7W"
+		]
+	},
+	{
+		"in": "T_{C}",
+		"out": "170.86666666666667K",
+		"formulas": [
+			"W = 4.0J",
+			"Q_{H} = 15.0J",
+			"T_{H} = 233K",
+			"eff_{max} = W / Q_{H}",
+			"T_{C} = T_{H} * (1 - eff_{max})"
+		]
+	},
+	{
+		"in": "\\Delta_U",
+		"out": "56.099999999999994W",
+		"formulas": [
+			"Q = 0J",
+			"P_{in} = 187W",
+			"P_{out} = 130.9W",
+			"W_{in} = P_{in} * 1s",
+			"W_{out} = P_{out} * 1s",
+			"\\sum_W = W_{in} - W_{out}",
+			"\\Delta_U = (Q + \\sum_W) / 1s"
+		]
+	},
+	{
+		"in": "eff",
+		"out": "0.4035433070866142",
+		"formulas": [
+			"Q_{H} = 508J",
+			"Q_{C} = 303J",
+			"W = Q_{H} - Q_{C}",
+			"eff = W / Q_{H}"
+		]
+	},
+	{
+		"in": "T_{H}",
+		"out": "358.2162162162162K",
+		"formulas": [
+			"COP_{cool} = 3.7",
+			"T_{C} = 9.0\\deg_C + 273K",
+			"T_{H} = T_{C} / COP_{cool} + T_{C}"
 		]
 	}
 ]

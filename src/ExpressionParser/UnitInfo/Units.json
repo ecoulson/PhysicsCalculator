@@ -11,7 +11,7 @@
 	"Pa",
 	"J",
 	"W",
-	"\\degC",
+	"\\deg_C",
 	"C",
 	"V",
 	"\\Omega",
@@ -33,5 +33,6 @@
 	"rev",
 	"\\deg",
 	"min",
-	"hour"
+	"hour",
+	"hp"
 ]

@@ -30,10 +30,11 @@ export class EvaluationTree {
 	private workspace : WorkSpace;
 
 	constructor(tree: SyntaxTree, workspace: WorkSpace) {
+		this.base10Exp = 0;
 		this.workspace = workspace;
 		this.root = tree.root;
 		this.unitRoot = this.buildUnitTree();
-		this.base10Exp = this.getBase10Exponent(this.unitRoot);
+		this.base10Exp += this.getBase10Exponent(this.unitRoot);
 	}
 
 	private buildUnitTree(): SyntaxNode {
@@ -45,7 +46,9 @@ export class EvaluationTree {
 			if (node.right == null) {
 				return null;
 			} else {
-				return this.convertToSIUnits(node.right);
+				let x = this.convertToSIUnits(node.right);
+				// console.log(x);
+				return x;
 			}
 		} else if (node.type == NodeType.Variable) {
 			let variableNode : VariableNode = <VariableNode>node;
@@ -111,13 +114,22 @@ export class EvaluationTree {
 			return null;
 		} else if (node.type == NodeType.Unit) {
 			let unitNode = <UnitNode>node;
-			if (DERIVED_UNITS.hasOwnProperty(unitNode.unit)) {
+			if (DERIVED_UNITS.hasOwnProperty(unitNode.base)) {
 				//TODO: move all derived units expressionparsers into the workspace class
-				let unitParser : ExpressionParser = new ExpressionParser(DERIVED_UNITS[unitNode.unit], this.workspace);
+				let unitParser : ExpressionParser = new ExpressionParser(DERIVED_UNITS[unitNode.base], this.workspace);
 				unitParser.evaluate();
 				return unitParser.evaluationTree.unitRoot;
 			} else {
-				return node;
+				let prefix = this.getPrefix(unitNode);
+				let base = this.getBaseUnit(unitNode.unit);
+				unitNode.base = base;
+				if (DERIVED_UNITS.hasOwnProperty(base)) {
+					this.base10Exp += PREFIXES[prefix];
+					return this.convertToSIUnits(unitNode);
+				} else {
+					unitNode.prefix = prefix;
+					return unitNode;
+				}
 			}
 		} else if (node.type == NodeType.Operator) {
 			node.left = this.convertToSIUnits(node.left);
@@ -125,6 +137,26 @@ export class EvaluationTree {
 			return node;
 		} else {
 			return node;
+		}
+	}
+
+	private setPrefix(node: SyntaxNode, prefix: string): void {
+		let unitNodes: Array<UnitNode> = this.setPrefixHelper(node, prefix);
+		unitNodes[0].prefix = prefix;
+	}
+
+	private setPrefixHelper(node: SyntaxNode, prefix: string): Array<UnitNode> {
+		if (node == null) {
+			return [];
+		} else if (node.type == NodeType.Unit) {
+			let unitNode = <UnitNode>node;
+			return [unitNode];
+		} else if (node.type == NodeType.Operator) {
+			let leftUnitNodes : Array<UnitNode> = this.setPrefixHelper(node.left, prefix);
+			let rightUnitNodes : Array<UnitNode> = this.setPrefixHelper(node.right, prefix);
+			return leftUnitNodes.concat(rightUnitNodes);
+		} else {
+			return [];
 		}
 	}
 
@@ -192,28 +224,41 @@ export class EvaluationTree {
 	
 	private getBase10Conversion(node: UnitNode): number {
 		let unit = node.unit;
-		if (unit == "cycles" || unit == "decays") {
+		if ((unit == "cycles" || unit == "decays") || UNITS.indexOf(unit) != -1) {
 			return 0;
 		}
-		if (UNITS.indexOf(unit) != -1) {
-			return 0;
+		let base = this.getBaseUnit(unit);
+		if (base == "kg") {
+			if (node.prefix == "") {
+				return -3;
+			} else {
+				return PREFIXES[node.prefix] - 3;
+			}
+		}
+		if (node.prefix != "") {
+			return PREFIXES[node.prefix];
 		} else {
-			let prefix = unit[0];
-			let base = unit.substring(1, unit.length);
+			return 0;
+		}
+	}
+
+	private getPrefix(node: UnitNode): string {
+		if (node.unit == "cycles" || node.unit == "decays") {
+			return "";
+		}
+		if (UNITS.indexOf(node.unit) != -1) {
+			return "";
+		} else {
+			let prefix = node.unit[0];
+			let base = node.unit.substring(1, node.unit.length);
 			if (prefix == "\\") {
-				prefix = unit.substring(0, 3);
-				base = unit.substring(3, unit.length);
+				prefix = node.unit.substring(0, 3);
+				base = node.unit.substring(3, node.unit.length);
 			}
 			if (PREFIXES.hasOwnProperty(prefix) && UNITS.indexOf(base) != -1 || base == "g") {
-				if (base == "g") {
-					return PREFIXES[prefix] - 3;
-				}
-				return PREFIXES[prefix];
+				return prefix;
 			} else {
-				if (unit == "g") {
-					return -3;
-				}
-				return 0;
+				return "";
 			}
 		}
 	}
@@ -380,6 +425,9 @@ export class EvaluationTree {
 				if (dimensionRightIndex == -1 && left[i].degree == 0) {
 					return true;
 				}
+				if (dimensionRightIndex == -1) {
+					return false;
+				}
 				if (!left[i].equals(right[dimensionRightIndex])) {
 					return false;
 				}
@@ -427,7 +475,7 @@ export class EvaluationTree {
 	private getPossibleSimplifications(dimensions: Array<Dimension>): { [ unit: string]: Array<Dimension> } {
 		let possibleSimplifications: { [ unit: string]: Array<Dimension> } = {};
 		for (const unit in DERIVED_UNITS) {
-			if (unit != "Gy" && unit != "Sv" && unit != "dioptry") {
+			if (unit != "Gy" && unit != "Sv" && unit != "dioptry" && unit != "\\deg_C") {
 				const SIUnits: Array<Dimension> = this.createDimensionArray(DERIVED_UNITS[unit]);
 				if (this.canSimplify(dimensions, SIUnits)) {
 					possibleSimplifications[unit] = SIUnits;
@@ -550,7 +598,7 @@ export class EvaluationTree {
 		if (this.hasDimensionlessUnits(denominator)) {
 			for (let i = denominator.length - 1; i >= 0; i--) {
 				let unit = denominator[i].unit;
-				if (DIMENSIONLESS_UNITS.indexOf(unit) != -1 && unit != "min" && unit != "hr") {
+				if (DIMENSIONLESS_UNITS.indexOf(unit) != -1 && unit != "min" && unit != "hr" && unit != "hp") {
 					denominator.splice(i, 1);
 				}
 			}
@@ -585,7 +633,7 @@ export class EvaluationTree {
 		for (let i = 0; i < dimensions.length; i++) {
 			let unit = dimensions[i].unit;
 			// min and hr are not removed as they can occur in units such as kWh
-			if (DIMENSIONLESS_UNITS.indexOf(unit) != -1 && unit != "min" && unit != "hr") {
+			if (DIMENSIONLESS_UNITS.indexOf(unit) != -1 && unit != "min" && unit != "hr" && unit != "hp") {
 				dimensions.splice(i, 1);
 				return;
 			}
