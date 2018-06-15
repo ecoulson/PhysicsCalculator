@@ -32,6 +32,7 @@ export class EvaluationTree {
 	constructor(tree: SyntaxTree, workspace: WorkSpace) {
 		this.workspace = workspace;
 		this.root = tree.root;
+		console.log(JSON.stringify(this.root));
 		this.unitRoot = this.buildUnitTree();
 		this.base10Exp = this.getBase10Exponent(this.unitRoot);
 	}
@@ -58,7 +59,8 @@ export class EvaluationTree {
 			let variableNode: VariableNode = <VariableNode>node.left;
 			if (variableNode.variable == "sqrt") {
 				let nonSqrtedUnit : SyntaxNode = this.buildUnitTreeHelper(node.right);
-				return this.raiseLeftUnitBy(nonSqrtedUnit, 0.5);
+				let raised =  this.raiseLeftUnitBy(nonSqrtedUnit, 0.5);
+				return raised;
 			} else {
 				return this.buildUnitTreeHelper(node.right);
 			}
@@ -142,21 +144,15 @@ export class EvaluationTree {
 		} else if (node.type == NodeType.Unit) {
 			let unitNode = <UnitNode>node;
 			let newUnit = UnitNode.createNode(unitNode.unit);
-			newUnit.degree = unitNode.degree;
+			unitNode.degree = unitNode.degree;
 			newUnit.degree *= degree;
 			return newUnit;
 		} else if (node.type == NodeType.Operator) {
 			let operatorNode = <OperatorNode>node;
 			let newOperator = OperatorNode.createNode(operatorNode.operator);
-			if (operatorNode.operator == '^') {
-				newOperator.left = node.left;
-				newOperator.right = this.raiseLeftUnitBy(node.right, degree);
-				return newOperator;
-			} else {
-				newOperator.left = this.raiseLeftUnitBy(node.left, degree);
-				newOperator.right = this.raiseLeftUnitBy(node.right, degree);
-				return newOperator;
-			}
+			newOperator.left = this.raiseLeftUnitBy(node.left, degree);
+			newOperator.right = this.raiseLeftUnitBy(node.right, degree);
+			return newOperator;
 		} else {
 			return node;
 		}
@@ -380,13 +376,10 @@ export class EvaluationTree {
 		if (left.length == 0 || right.length == 0) {
 			return true;
 		}
+		if (left.length != right.length) {
+			return false;
+		}
 		for (let i = 0; i < left.length; i++) {
-			let dimensionIndex = this.indexOfDimension(left[i], right);
-			if (dimensionIndex == -1) {
-				if (left[i].degree == 0) {
-					return true;
-				}
-			}
 			if (!left[i].equals(right[i])) {
 				return false;
 			}
