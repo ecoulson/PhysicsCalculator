@@ -90,18 +90,6 @@
 			"v_{x} = sqrt(\\sum_F * r / m)",
 			"t = sqrt(2 * \\Delta_y / -g)",
 			"\\Delta_x = v_{x} * t"
-		],
-		"temp": [
-			"m = 90g",
-			"r = 60cm",
-			"h = 2.0m",
-			"\\Delta_y = h - r",
-			"F_{t} = 2.2N",
-			"W = m * g",
-			"\\sum_F = F_{t} - W",
-			"v_{x} = sqrt(\\sum_F * r / m)",
-			"t = sqrt(2 * \\Delta_y / g)",
-			"\\Delta_x = v_{x} * t"
 		]
 	},
 	{
@@ -249,9 +237,6 @@
 			"h_{r} = U_{s} / (m * -g)",
 			"d = h_{r} / sin(\\theta)",
 			"h = d - \\Delta_x"
-		],
-		"temp": [
-			
 		]
 	},
 	{
@@ -328,6 +313,71 @@
 			"COP_{cool} = 3.7",
 			"T_{C} = 9.0\\deg_C + 273K",
 			"T_{H} = T_{C} / COP_{cool} + T_{C}"
+		]
+	},
+	{
+		"in": "W",
+		"out": "6122.448979591836J",
+		"formulas": [
+			"COP_{heat} = 4.9",
+			"Q_{H} = 30kW * 1s",
+			"W = Q_{H} / COP_{heat}"
+		]
+	},
+	{
+		"in": "T_{f}",
+		"out": "314.88K",
+		"formulas": [
+			"p_{f} = 0.82Pa * 10^5",
+			"V_{f} = 0.80m^3",
+			"p_{i} = 0.50Pa * 10^5",
+			"V_{i} = 1.25m^3",
+			"T_{i} = 27\\deg_C + 273K",
+			"T_{f} = (p_{f} * V_{f} * T_{i}) / (p_{i} * V_{i})"
+		]
+	},
+	{
+		"in": "W",
+		"out": "218.862J",
+		"formulas": [
+			"p_{o} = 5.4atm * 101325Pa / 1atm",
+			"W = 1/2 * (600cm^3 - 200cm^3) * (2 * p_{o})"
+		]
+	},
+	{
+		"in": "Q",
+		"out": "457955496J",
+		"formulas": [
+			"C = 368 J/kg*K^-1",
+			"L_{f} = 205 kJ/kg",
+			"MP = 1357K",
+			"T_{i} = 300K",
+			"m = 771kg",
+			"\\Delta_t = MP - T_{i}",
+			"Q_{1} = m * C * \\Delta_t",
+			"Q_{2} = m * L_{f}",
+			"Q = Q_{1} + Q_{2}"
+		]
+	},
+	{
+		"in": "t",
+		"out": "0.8423707440100883s",
+		"formulas": [
+			"T_{i} = 273K",
+			"m = 2.0kg",
+			"L_{f} = 334 kJ/kg",
+			"P = 793 kW",
+			"Q = m * L_{f}",
+			"t = Q / P"
+		]
+	},
+	{
+		"in": "E",
+		"out": "180000N/C",
+		"formulas": [
+			"Q = 8.0nC",
+			"d = 2.0cm",
+			"E = k * Q / d^2"
 		]
 	}
 ]
