@@ -440,14 +440,8 @@ export class EvaluationTree {
 
 	private simplifyUnits(dimensions: Array<Dimension>): void {
 		let possibleSimplifications: { [ unit: string]: Array<Dimension> } = this.getPossibleSimplifications(dimensions);
-		let bestSimplificationUnits : Array<string> = this.getBestSimplifications(
-			possibleSimplifications,
-			dimensions
-		);
+		let bestSimplificationUnits : Array<string> = this.getBestSimplifications(dimensions);
 		if (bestSimplificationUnits != null) {
-			console.log(dimensions);
-			console.log(bestSimplificationUnits);
-			console.log();
 			for (let i = 0; i < bestSimplificationUnits.length; i++) {
 				let bestSimplificationDimensions = possibleSimplifications[bestSimplificationUnits[i]];
 				this.simplify(dimensions, bestSimplificationDimensions);
@@ -481,10 +475,9 @@ export class EvaluationTree {
 	}
 
 	private getBestSimplifications(
-		possibleSimplifications: { [ unit: string]: Array<Dimension> }, 
 		dimensions: Array<Dimension>
 	): Array<string> {
-		let unitCombinations : Array<Array<string>> = this.getAllUnitCombinations(dimensions, possibleSimplifications);
+		let unitCombinations : Array<Array<string>> = this.getAllUnitCombinations(dimensions);
 		if (unitCombinations.length == 0) {
 			return null;
 		} else if (unitCombinations.length == 1) {
@@ -503,16 +496,11 @@ export class EvaluationTree {
 		return null;
 	}
 
-	private getAllUnitCombinations(
-		baseDimensions: Array<Dimension>,
-		possibleSimplifications: { [ unit: string]: Array<Dimension> }
-	): Array<Array<string>> {
+	private getAllUnitCombinations(baseDimensions: Array<Dimension>): Array<Array<string>> {
+		let possibleSimplifications: { [ unit: string]: Array<Dimension> } = this.getPossibleSimplifications(baseDimensions);
 		let unitCombinations : Array<Array<string>> = [];
 		for (const unit in possibleSimplifications) {
-			let combination : Array<string> = this.getAllUnitCombinationsHelper(baseDimensions, possibleSimplifications, []);
-			if (!this.hasCombination(combination, unitCombinations)) {
-				unitCombinations.push(combination);
-			}
+			this.getAllUnitCombinationsHelper(baseDimensions, [], unitCombinations);
 		}
 		if (unitCombinations.length > 1) {
 			throw Error('Unhandled Unit Case');
@@ -523,19 +511,23 @@ export class EvaluationTree {
 
 	private getAllUnitCombinationsHelper(
 		baseDimensions: Array<Dimension>,
-		possibleSimplifications: { [ unit: string]: Array<Dimension> },
-		unitCombination : Array<string>
-	): Array<string> {
+		unitCombination : Array<string>,
+		allCombinations: Array<Array<string>>
+	): void {
+		let possibleSimplifications: { [ unit: string]: Array<Dimension> } = this.getPossibleSimplifications(baseDimensions);
 		if (Object.keys(possibleSimplifications).length == 0) {
-			return unitCombination;
+			allCombinations.push(unitCombination);
 		} else {
 			for (const unit in possibleSimplifications) {
 				let dimensions = this.copyBaseDimensions(baseDimensions);
+				console.log(dimensions);
 				this.simplifyAbsolute(dimensions, possibleSimplifications[unit]);
 				this.removeCanceledUnits(dimensions);
 				unitCombination.push(unit);
-				this.getAllUnitCombinationsHelper(dimensions, this.getPossibleSimplifications(dimensions), unitCombination);
-				return unitCombination;
+				console.log(dimensions);
+				console.log();
+				// this.getAllUnitCombinationsHelper(dimensions, unitCombination, allCombinations);
+				unitCombination.pop();
 			}
 		}
 	}
