@@ -278,7 +278,6 @@ export class EvaluationTree {
 	public evaluate(): string {
 		let value : number = this.evaluateValue();
 		let unit : string = this.evaluateUnits();
-		unit = this.handleSpecialSimplificationCases(unit);
 		return `${value}${unit}`;
 	}
 
@@ -441,27 +440,20 @@ export class EvaluationTree {
 
 	private simplifyUnits(dimensions: Array<Dimension>): void {
 		let possibleSimplifications: { [ unit: string]: Array<Dimension> } = this.getPossibleSimplifications(dimensions);
-		let bestSimplificationUnit = this.getBestSimplification(
+		let bestSimplificationUnits : Array<string> = this.getBestSimplifications(
 			possibleSimplifications,
 			dimensions
 		);
-		if (bestSimplificationUnit != null) {
-			let bestSimplificationDimensions = possibleSimplifications[bestSimplificationUnit];
-			this.simplify(dimensions, bestSimplificationDimensions);
-			this.removeCanceledUnits(dimensions);
-			if (dimensions.length > 0) {
-				console.log(dimensions);
+		if (bestSimplificationUnits != null) {
+			console.log(dimensions);
+			console.log(bestSimplificationUnits);
+			console.log();
+			for (let i = 0; i < bestSimplificationUnits.length; i++) {
+				let bestSimplificationDimensions = possibleSimplifications[bestSimplificationUnits[i]];
+				this.simplify(dimensions, bestSimplificationDimensions);
+				this.removeCanceledUnits(dimensions);
+				dimensions.unshift(new Dimension(bestSimplificationUnits[i], 1));
 			}
-			dimensions.unshift(new Dimension(bestSimplificationUnit, 1));
-		}
-	}
-
-	private handleSpecialSimplificationCases(unit: string) {
-		switch(unit) {
-			case "Wb/m":
-				return "N/C";
-			default:
-				return unit;
 		}
 	}
 
@@ -488,40 +480,83 @@ export class EvaluationTree {
 		return true;
 	}
 
-	private getBestSimplification(
+	private getBestSimplifications(
 		possibleSimplifications: { [ unit: string]: Array<Dimension> }, 
 		dimensions: Array<Dimension>
-	): string {
-		let longestSimplificationUnits : Array<string> = this.getLongestCommonSimplificationUnit(possibleSimplifications);
-		if (longestSimplificationUnits.length == 0) {
+	): Array<string> {
+		let unitCombinations : Array<Array<string>> = this.getAllUnitCombinations(dimensions, possibleSimplifications);
+		if (unitCombinations.length == 0) {
 			return null;
+		} else if (unitCombinations.length == 1) {
+			return unitCombinations[0];
 		}
-		if (longestSimplificationUnits.length == 1) {
-			return longestSimplificationUnits[0];
-		}
-		possibleSimplifications = this.getNewPossibleSimplifications(
-			longestSimplificationUnits, 
-			possibleSimplifications
-		);
-		let differences = this.getDegreeDifferences(possibleSimplifications, dimensions);
-		let bestUnit = this.getSmallestDifferenceUnit(differences);
-		return bestUnit; 
+		// if (longestSimplificationUnits.length == 1) {
+		// 	return longestSimplificationUnits[0];
+		// }
+		// possibleSimplifications = this.getNewPossibleSimplifications(
+		// 	longestSimplificationUnits, 
+		// 	possibleSimplifications
+		// );
+		// let differences = this.getDegreeDifferences(possibleSimplifications, dimensions);
+		// let bestUnit = this.getSmallestDifferenceUnit(differences);
+		// return bestUnit; 
+		return null;
 	}
 
-	private getLongestCommonSimplificationUnit(
+	private getAllUnitCombinations(
+		baseDimensions: Array<Dimension>,
 		possibleSimplifications: { [ unit: string]: Array<Dimension> }
-	): Array<string> {
-		let longestCommonUnits : Array<string> = [];
-		let max = -1;
+	): Array<Array<string>> {
+		let unitCombinations : Array<Array<string>> = [];
 		for (const unit in possibleSimplifications) {
-			if (max < possibleSimplifications[unit].length) {
-				max = possibleSimplifications[unit].length;
-				longestCommonUnits = [unit];
-			} else if (max == possibleSimplifications[unit].length) {
-				longestCommonUnits.push(unit);
+			let combination : Array<string> = this.getAllUnitCombinationsHelper(baseDimensions, possibleSimplifications, []);
+			if (!this.hasCombination(combination, unitCombinations)) {
+				unitCombinations.push(combination);
 			}
 		}
-		return longestCommonUnits;
+		if (unitCombinations.length > 1) {
+			throw Error('Unhandled Unit Case');
+		} else {
+			return unitCombinations;
+		}
+	}
+
+	private getAllUnitCombinationsHelper(
+		baseDimensions: Array<Dimension>,
+		possibleSimplifications: { [ unit: string]: Array<Dimension> },
+		unitCombination : Array<string>
+	): Array<string> {
+		if (Object.keys(possibleSimplifications).length == 0) {
+			return unitCombination;
+		} else {
+			for (const unit in possibleSimplifications) {
+				let dimensions = this.copyBaseDimensions(baseDimensions);
+				this.simplifyAbsolute(dimensions, possibleSimplifications[unit]);
+				this.removeCanceledUnits(dimensions);
+				unitCombination.push(unit);
+				this.getAllUnitCombinationsHelper(dimensions, this.getPossibleSimplifications(dimensions), unitCombination);
+				return unitCombination;
+			}
+		}
+	}
+
+	private copyBaseDimensions(baseDimensions: Array<Dimension>) {
+		let dimensions : Array<Dimension> = [];
+		for (let i = 0; i < baseDimensions.length; i++) {
+			dimensions[i] = new Dimension(baseDimensions[i].unit, baseDimensions[i].degree);
+		}
+		return dimensions;
+	}
+
+	private hasCombination(combination : Array<string>, allCombinations : Array<Array<string>>): boolean {
+		for (let i = 0; i < allCombinations.length; i++) {
+			for (let j = 0; j < allCombinations[j].length; j++) {
+				if (allCombinations[j].indexOf(combination[j]) != -1) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private getNewPossibleSimplifications(
@@ -553,6 +588,17 @@ export class EvaluationTree {
 			unitDifferences[unit] = sum;
 		}
 		return unitDifferences;
+	}
+
+	private simplifyAbsolute(dimensions: Array<Dimension>, bestSimplificationDimensions: Array<Dimension>): void {
+		for (let i = 0; i < bestSimplificationDimensions.length; i++) {
+			let dimensionIndex = this.indexOfDimension(bestSimplificationDimensions[i], dimensions);
+			if (dimensions[dimensionIndex].degree < 0) {
+				dimensions[dimensionIndex].degree += bestSimplificationDimensions[i].degree;
+			} else {
+				dimensions[dimensionIndex].degree -= bestSimplificationDimensions[i].degree;
+			}
+		}
 	}
 
 	private simplify(dimensions: Array<Dimension>, bestSimplificationDimensions: Array<Dimension>): void {
