@@ -46,9 +46,7 @@ export class EvaluationTree {
 			if (node.right == null) {
 				return null;
 			} else {
-				let x = this.convertToSIUnits(node.right);
-				// console.log(x);
-				return x;
+				return this.convertToSIUnits(node.right);
 			}
 		} else if (node.type == NodeType.Variable) {
 			let variableNode : VariableNode = <VariableNode>node;
@@ -66,6 +64,8 @@ export class EvaluationTree {
 			} else {
 				return this.buildUnitTreeHelper(node.right);
 			}
+		} else if (node.type == NodeType.Absolute) {
+			return this.buildUnitTreeHelper(node.right);
 		} else if (node.type == NodeType.Operator) {
 			let operatorNode : OperatorNode = <OperatorNode>node;
 			let leftUnit: SyntaxNode = this.buildUnitTreeHelper(node.left);
@@ -137,26 +137,6 @@ export class EvaluationTree {
 			return node;
 		} else {
 			return node;
-		}
-	}
-
-	private setPrefix(node: SyntaxNode, prefix: string): void {
-		let unitNodes: Array<UnitNode> = this.setPrefixHelper(node, prefix);
-		unitNodes[0].prefix = prefix;
-	}
-
-	private setPrefixHelper(node: SyntaxNode, prefix: string): Array<UnitNode> {
-		if (node == null) {
-			return [];
-		} else if (node.type == NodeType.Unit) {
-			let unitNode = <UnitNode>node;
-			return [unitNode];
-		} else if (node.type == NodeType.Operator) {
-			let leftUnitNodes : Array<UnitNode> = this.setPrefixHelper(node.left, prefix);
-			let rightUnitNodes : Array<UnitNode> = this.setPrefixHelper(node.right, prefix);
-			return leftUnitNodes.concat(rightUnitNodes);
-		} else {
-			return [];
 		}
 	}
 
@@ -298,6 +278,7 @@ export class EvaluationTree {
 	public evaluate(): string {
 		let value : number = this.evaluateValue();
 		let unit : string = this.evaluateUnits();
+		unit = this.handleSpecialSimplificationCases(unit);
 		return `${value}${unit}`;
 	}
 
@@ -356,7 +337,6 @@ export class EvaluationTree {
 		let dimensions = this.evaluateUnitsHelper(this.unitRoot);
 		this.removeCanceledUnits(dimensions);
 		this.simplifyUnits(dimensions);
-		this.removeCanceledUnits(dimensions);
 		dimensions = this.removeDimensionlessUnits(dimensions);
 		let unit : string = this.getDimensionsString(dimensions);
 		return unit;
@@ -468,7 +448,20 @@ export class EvaluationTree {
 		if (bestSimplificationUnit != null) {
 			let bestSimplificationDimensions = possibleSimplifications[bestSimplificationUnit];
 			this.simplify(dimensions, bestSimplificationDimensions);
+			this.removeCanceledUnits(dimensions);
+			if (dimensions.length > 0) {
+				console.log(dimensions);
+			}
 			dimensions.unshift(new Dimension(bestSimplificationUnit, 1));
+		}
+	}
+
+	private handleSpecialSimplificationCases(unit: string) {
+		switch(unit) {
+			case "Wb/m":
+				return "N/C";
+			default:
+				return unit;
 		}
 	}
 
