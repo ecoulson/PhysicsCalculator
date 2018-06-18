@@ -21,6 +21,7 @@ const UnitInfoDir = resolve(__dirname, "../UnitInfo");
 const DERIVED_UNITS : Object = JSON.parse(readFileSync(resolve(UnitInfoDir, "DerivedUnits.json"), "utf-8"));
 const PREFIXES : Object = JSON.parse(readFileSync(resolve(UnitInfoDir, "Prefixes.json"), "utf-8"));
 const UNITS : Array<string> = JSON.parse(readFileSync(resolve(UnitInfoDir, "Units.json"), "utf-8"));
+const BASE_UNITS : Array<string> = JSON.parse(readFileSync(resolve(UnitInfoDir, "BaseUnits.json"), "utf-8"));
 const DIMENSIONLESS_UNITS : Array<string> = JSON.parse(readFileSync(resolve(UnitInfoDir, "DimensionlessUnits.json"), "utf-8"));
 
 export class EvaluationTree {
@@ -334,6 +335,7 @@ export class EvaluationTree {
 
 	public evaluateUnits(): string {
 		let dimensions = this.evaluateUnitsHelper(this.unitRoot);
+		console.log(dimensions);
 		this.removeCanceledUnits(dimensions);
 		dimensions = this.simplifyUnits(dimensions);
 		dimensions = this.removeDimensionlessUnits(dimensions);
@@ -442,30 +444,89 @@ export class EvaluationTree {
 		dimensions: Array<Dimension>
 	): Array<Dimension> {
 		let unitCombinations : Array<Array<Dimension>> = this.getAllSimplifications(dimensions);
-		console.log(unitCombinations);
-		console.log();
 		if (unitCombinations.length == 0) {
-			return null;
+			return dimensions;
 		} else if (unitCombinations.length == 1) {
-			return null;
+			return unitCombinations[0];
+		} else {
+			let smallestCombinations = this.getShortestCombinations(unitCombinations);
+			if (smallestCombinations.length == 1) {
+				return smallestCombinations[0];
+			} else {
+				return this.getCombinationWithLeastBaseUnits(smallestCombinations);
+			}
 		}
-		// if (longestSimplificationUnits.length == 1) {
-		// 	return longestSimplificationUnits[0];
-		// }
-		// possibleSimplifications = this.getNewPossibleSimplifications(
-		// 	longestSimplificationUnits, 
-		// 	possibleSimplifications
-		// );
-		// let differences = this.getDegreeDifferences(possibleSimplifications, dimensions);
-		// let bestUnit = this.getSmallestDifferenceUnit(differences);
-		// return bestUnit; 
-		return null;
+	}
+
+	private getCombinationWithLeastBaseUnits(combinations: Array<Array<Dimension>>): Array<Dimension> {
+		let bestCombination: Array<Dimension> = [];
+		let minBaseUnits = Infinity;
+		let count = 0;
+		for (let i = 0; i < combinations.length; i++) {
+			for (let j = 0; j < combinations[i].length; j++) {
+				if (BASE_UNITS.indexOf(combinations[i][j].unit) != -1) {
+					count++;
+				}
+			}
+			minBaseUnits = Math.min(minBaseUnits, count);
+			if (count == minBaseUnits) {
+				bestCombination = combinations[i];
+			}
+		}
+		return bestCombination;
 	}
 
 	private getAllSimplifications(baseDimensions: Array<Dimension>): Array<Array<Dimension>> {
 		let unitCombinations: Array<Array<Dimension>> = [];
 		this.getAllSimplificationsHelper(baseDimensions, [], unitCombinations);
+		unitCombinations = this.combineLikeTerms(unitCombinations);
+		unitCombinations = this.removeEquivalentCombinations(unitCombinations);
 		return unitCombinations;
+	}
+
+	private combineLikeTerms(combinations: Array<Array<Dimension>>): Array<Array<Dimension>> {
+		let newCombinations: Array<Array<Dimension>> = [];
+		for (let i = 0; i < combinations.length; i++) {
+			newCombinations.push([]);
+			for (let j = 0; j < combinations[i].length; j++) {
+				let index = this.indexOfDimension(combinations[i][j], newCombinations[i]);
+				if (index == -1) {
+					newCombinations[i].push(combinations[i][j]);
+				} else {
+					newCombinations[i][index].degree += combinations[i][j].degree;
+				}
+			}
+		}
+		return newCombinations;
+	}
+
+	private removeEquivalentCombinations(combinations: Array<Array<Dimension>>): Array<Array<Dimension>> {
+		let newCombinations: Array<Array<Dimension>> = [];
+		for (let i = 0; i < combinations.length; i++) {
+			let hasCombination = false;
+			for (let j = 0; j < newCombinations.length; j++) {
+				if (combinations[i].length == newCombinations[j].length) {
+					let isEqual = true;
+					for (let k = 0; k < combinations[i].length; k++) {
+						let index = this.indexOfDimension(combinations[i][k], newCombinations[j]);
+						if (index == -1) {
+							isEqual = false;
+						} else {
+							if (combinations[i][k].degree != newCombinations[j][index].degree) {
+								isEqual = false;
+							}
+						}
+					}
+					if (isEqual) {
+						hasCombination = true;
+					}
+				}
+			}
+			if (!hasCombination) {
+				newCombinations.push(combinations[i]);
+			}
+		}
+		return newCombinations;
 	}
 
 	private getAllSimplificationsHelper(
@@ -488,6 +549,7 @@ export class EvaluationTree {
 				}
 				this.simplify(dimensions, simplifications[unit]);
 				this.removeCanceledUnits(dimensions);
+				let dimensionIndex = this.indexOfDimension(unitDimension, dimensions);
 				combination.push(unitDimension);
 				this.getAllSimplificationsHelper(dimensions, combination, allCombinations);
 				combination.pop();
@@ -547,48 +609,6 @@ export class EvaluationTree {
 		return true;
 	}
 
-	private hasCombination(combination : Array<string>, allCombinations : Array<Array<string>>): boolean {
-		for (let i = 0; i < allCombinations.length; i++) {
-			for (let j = 0; j < allCombinations[j].length; j++) {
-				if (allCombinations[j].indexOf(combination[j]) != -1) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	private getNewPossibleSimplifications(
-		units: Array<string>, 
-		simplifications: { [ unit: string]: Array<Dimension> }
-	): { [ unit: string]: Array<Dimension> } {
-		let newSimplifications : { [ unit: string]: Array<Dimension> } = {};
-		for (const unit in simplifications) {
-			let i = units.indexOf(unit);
-			if (i != -1) {
-				newSimplifications[unit] = simplifications[unit];
-			}
-		}
-		return newSimplifications;
-	}
-
-	private getDegreeDifferences(
-		possibleSimplifications: { [ unit: string]: Array<Dimension> }, 
-		dimensions: Array<Dimension>
-	): { [unit: string]: number } {
-		let unitDifferences : { [unit: string]: number }  = {};
-		for (const unit in possibleSimplifications) {
-			let sum : number = 0;
-			for (let j = 0; j < possibleSimplifications[unit].length; j++) {
-				let dimensionIndex: number = this.indexOfDimension(possibleSimplifications[unit][j], dimensions);
-				let diff: number = possibleSimplifications[unit][j].degree - dimensions[dimensionIndex].degree;
-				sum += Math.abs(diff);
-			}
-			unitDifferences[unit] = sum;
-		}
-		return unitDifferences;
-	}
-
 	private simplify(dimensions: Array<Dimension>, simplificationDimensions: Array<Dimension>): void {
 		for (let i = 0; i < simplificationDimensions.length; i++) {
 			let dimensionIndex = this.indexOfDimension(simplificationDimensions[i], dimensions);
@@ -596,17 +616,23 @@ export class EvaluationTree {
 		}
 	}
 
-	private getSmallestDifferenceUnit(differences: { [unit: string]: number }): string {
-		// can be zero because the differences are absolute values;
-		let min = -1;
-		let minUnit = "";
-		for (const unit in differences) {
-			if (differences[unit] < min || min == -1) {
-				minUnit = unit;
-				min = differences[unit];
+	private getShortestCombinations(combinations: Array<Array<Dimension>>): Array<Array<Dimension>> {
+		let shortestCombinations: Array<Array<Dimension>> = [];
+		let minSize = this.getSmallestArraySize(combinations);
+		for (let i = 0; i < combinations.length; i++) {
+			if (combinations[i].length == minSize) {
+				shortestCombinations.push(combinations[i]);
 			}
 		}
-		return minUnit;
+		return shortestCombinations;
+	}
+
+	private getSmallestArraySize(array: Array<Array<any>>): number {
+		let minSize = Infinity;
+		for (let i = 0; i < array.length; i++) {
+			minSize = Math.min(array[i].length, minSize);
+		}
+		return minSize;
 	}
 
 	private removeDimensionlessUnits(dimensions: Array<Dimension>): Array<Dimension> {
