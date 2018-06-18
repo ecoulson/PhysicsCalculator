@@ -326,6 +326,7 @@ export class EvaluationTree {
 				case '/':
 					return a / b;
 				case '^':
+
 					return Math.pow(a, b);
 				default:
 					throw new IllegalOperatorError("Illegal Operator " + operatorNode.operator);
@@ -384,6 +385,9 @@ export class EvaluationTree {
 				case '^':
 					if (leftDimensions.length == 0 && rightDimensions.length == 0) {
 						return [];
+					}
+					if (rightDimensions.length == 0 && leftDimensions.length != 0) {
+						return leftDimensions;
 					}
 					for (let i = 0; i < leftDimensions.length; i++) {
 						leftDimensions[i].degree = rightDimensions[0].degree;
