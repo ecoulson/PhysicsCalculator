@@ -335,7 +335,6 @@ export class EvaluationTree {
 
 	public evaluateUnits(): string {
 		let dimensions = this.evaluateUnitsHelper(this.unitRoot);
-		console.log(dimensions);
 		this.removeCanceledUnits(dimensions);
 		dimensions = this.simplifyUnits(dimensions);
 		dimensions = this.removeDimensionlessUnits(dimensions);
@@ -386,7 +385,9 @@ export class EvaluationTree {
 					if (leftDimensions.length == 0 && rightDimensions.length == 0) {
 						return [];
 					}
-					leftDimensions[0].degree = rightDimensions[0].degree;
+					for (let i = 0; i < leftDimensions.length; i++) {
+						leftDimensions[i].degree = rightDimensions[0].degree;
+					}
 					return leftDimensions;
 				default:
 					throw new IllegalOperatorError(`Illegal Operator of Type ${operatorNode.operator}`);
