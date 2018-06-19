@@ -552,13 +552,11 @@ export class EvaluationTree {
 			allCombinations.push(this.getFullCombination(combination, baseDimensions));
 		} else {
 			for (const unit in simplifications) {
+				const SIUnits: Array<Dimension> = this.createDimensionArray(DERIVED_UNITS[unit]);
 				let dimensions = this.copyBaseDimensions(baseDimensions);
 				let unitDimension = new Dimension(unit, 1);
-				if (this.isOppositeSigns(dimensions, simplifications[unit])) {
+				if (this.isOppositeSigns(SIUnits, simplifications[unit])) {
 					unitDimension = new Dimension(unit, -1);
-					for (let i = 0; i < simplifications[unit].length; i++) {
-						simplifications[unit][i].degree = -simplifications[unit][i].degree;
-					}
 				}
 				this.simplify(dimensions, simplifications[unit]);
 				this.removeCanceledUnits(dimensions);
@@ -574,7 +572,12 @@ export class EvaluationTree {
 		for (const unit in DERIVED_UNITS) {
 			if (unit != "Gy" && unit != "Sv" && unit != "dioptry" && unit != "\\deg_C") {
 				const SIUnits: Array<Dimension> = this.createDimensionArray(DERIVED_UNITS[unit]);
-				if (this.canSimplify(dimensions, SIUnits)) {
+				if (this.isOppositeSigns(dimensions, SIUnits)) {
+					for (let i = 0; i < SIUnits.length; i++) {
+						SIUnits[i].degree = -SIUnits[i].degree;
+					}
+				}
+				if (this.canSimplify(dimensions, SIUnits, unit)) {
 					possibleSimplifications[unit] = SIUnits;
 				}
 			}
@@ -582,14 +585,13 @@ export class EvaluationTree {
 		return possibleSimplifications;
 	}
 
-	private canSimplify(dimensions: Array<Dimension>, SIUnits: Array<Dimension>): boolean {
-		let x = true;
+	private canSimplify(dimensions: Array<Dimension>, SIUnits: Array<Dimension>, unit: string): boolean {
 		for (let i = 0; i < SIUnits.length; i++) {
 			let indexOfDimension = this.indexOfDimension(SIUnits[i], dimensions);
 			if (indexOfDimension == -1) {
 				return false;
 			}
-			if (Math.abs(dimensions[i].degree - SIUnits[i].degree) > Math.abs(dimensions[i].degree)) {
+			if (Math.abs(dimensions[indexOfDimension].degree - SIUnits[i].degree) > Math.abs(dimensions[indexOfDimension].degree)) {
 				return false;
 			}
 		}
@@ -618,7 +620,7 @@ export class EvaluationTree {
 	private isOppositeSigns(dimensions: Array<Dimension>, simplificationDimensions: Array<Dimension>) {
 		for (let i = 0; i < simplificationDimensions.length; i++) {
 			let dimensionIndex = this.indexOfDimension(simplificationDimensions[i], dimensions);	
-			if ((dimensions[dimensionIndex].degree ^ simplificationDimensions[i].degree) >= 0) {
+			if (dimensionIndex != -1 && (dimensions[dimensionIndex].degree ^ simplificationDimensions[i].degree) >= 0) {
 				return false;
 			}
 		}
