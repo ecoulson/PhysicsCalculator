@@ -10,7 +10,7 @@ import { UnitNode } from "../SyntaxTree/UnitNode";
 import { IllegalNodeError } from "./IllegalNodeError";
 import { IllegalUnitOperationError } from "./IllegalUnitOperationError";
 import { Dimension } from "./Dimension";
-import { readFileSync } from "fs";
+import { readFileSync, writeFile, writeFileSync, appendFileSync } from "fs";
 import { resolve } from "path";
 import { ExpressionParser } from "../ExpressionParser";
 import { WorkSpace } from "../../WorkSpace/WorkSpace";
@@ -508,30 +508,38 @@ export class EvaluationTree {
 	private removeEquivalentCombinations(combinations: Array<Array<Dimension>>): Array<Array<Dimension>> {
 		let newCombinations: Array<Array<Dimension>> = [];
 		for (let i = 0; i < combinations.length; i++) {
-			let hasCombination = false;
-			for (let j = 0; j < newCombinations.length; j++) {
-				if (combinations[i].length == newCombinations[j].length) {
-					let isEqual = true;
-					for (let k = 0; k < combinations[i].length; k++) {
-						let index = this.indexOfDimension(combinations[i][k], newCombinations[j]);
-						if (index == -1) {
-							isEqual = false;
-						} else {
-							if (combinations[i][k].degree != newCombinations[j][index].degree) {
-								isEqual = false;
-							}
-						}
-					}
-					if (isEqual) {
-						hasCombination = true;
-					}
-				}
-			}
-			if (!hasCombination) {
+			if (!this.hasCombination(combinations[i], newCombinations)) {
 				newCombinations.push(combinations[i]);
 			}
 		}
 		return newCombinations;
+	}
+
+	private hasCombination(combination: Array<Dimension>, combinations: Array<Array<Dimension>>): boolean {
+		for (let i = 0; i < combinations.length; i++) {
+			if (this.isCombinationEqual(combination, combinations[i])) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private isCombinationEqual(combination: Array<Dimension>, other: Array<Dimension>): boolean {
+		if (combination.length != other.length) {
+			return false;
+		} else {
+			for (let i = 0; i < combination.length; i++) {
+				let j = this.indexOfDimension(combination[i], other);
+				if (j == -1) {
+					return false;
+				} else {
+					if (!combination[i].equals(other[j])) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 	private getAllSimplificationsHelper(
@@ -554,7 +562,6 @@ export class EvaluationTree {
 				}
 				this.simplify(dimensions, simplifications[unit]);
 				this.removeCanceledUnits(dimensions);
-				let dimensionIndex = this.indexOfDimension(unitDimension, dimensions);
 				combination.push(unitDimension);
 				this.getAllSimplificationsHelper(dimensions, combination, allCombinations);
 				combination.pop();
@@ -576,9 +583,13 @@ export class EvaluationTree {
 	}
 
 	private canSimplify(dimensions: Array<Dimension>, SIUnits: Array<Dimension>): boolean {
+		let x = true;
 		for (let i = 0; i < SIUnits.length; i++) {
 			let indexOfDimension = this.indexOfDimension(SIUnits[i], dimensions);
 			if (indexOfDimension == -1) {
+				return false;
+			}
+			if (Math.abs(dimensions[i].degree - SIUnits[i].degree) > Math.abs(dimensions[i].degree)) {
 				return false;
 			}
 		}

@@ -18,6 +18,7 @@ export class WorkSpace {
 	}
 
 	private defineConstants(): void {
+		this.defineFormula(`\\epsilon_{o} = 8.85F/m * 10^-12`);
 		this.defineFormula(`e = ${Math.E.toString()}`);
 		this.defineFormula(`\\pi = ${Math.PI.toString()}`);
 		this.defineFormula(`g = -9.8m/s^2`);
