@@ -279,7 +279,12 @@ export class EvaluationTree {
 	public evaluate(): string {
 		let value : number = this.evaluateValue();
 		let unit : string = this.evaluateUnits();
-		return `${value}${unit}`;
+		let numberString = value.toString();
+		if (numberString.indexOf('e') != -1) {
+			let parts = numberString.split('e');
+			numberString = `${parts[0]}x10^${parts[1]}`
+		}
+		return `${numberString}${unit}`;
 	}
 
 	public evaluateValue(): number {
