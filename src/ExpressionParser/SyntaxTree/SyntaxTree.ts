@@ -13,6 +13,7 @@ import { resolve } from "path";
 
 const UnitInfoDir = resolve(__dirname, "../UnitInfo");
 const UNITS : Array<string> = JSON.parse(readFileSync(resolve(UnitInfoDir, "Units.json"), "utf-8"));
+const PREFIXES : Object = JSON.parse(readFileSync(resolve(UnitInfoDir, "Prefixes.json"), "utf-8"));
 
 export class SyntaxTree {
 	private tokens : Array<Token>;
@@ -26,7 +27,7 @@ export class SyntaxTree {
 	}
 
 	private hasReadAllTokens(): boolean {
-		return this.offset == this.tokens.length;
+		return this.offset >= this.tokens.length;
 	}
 
 	private isNextToken(type: TokenType): boolean {
@@ -141,7 +142,7 @@ export class SyntaxTree {
 			let numberToken = this.readToken();
 			let signedValue = parseInt(sign.getData()) * parseFloat(numberToken.getData());
 			numberToken.setData(signedValue.toString());
-			return new NumberNode(numberToken, true);
+			return new NumberNode(numberToken);
 		} else {
 			let errorToken : Token = this.readToken();
 			throw new UnexpectedTokenError(`Unexpected ${errorToken.getTokenType()} token at position ${errorToken.getPos()}`);
@@ -149,11 +150,9 @@ export class SyntaxTree {
 	}
 
 	private addUnits(node: SyntaxNode): SyntaxNode {
-		let numberNode = <NumberNode>node;
 		if (!this.hasReadAllTokens() && this.isNextToken(TokenType.Identifier)) {
 			let unitNode : SyntaxNode = this.readComplexUnit();
 			node.right = unitNode;
-			numberNode.isDimensionless = false;
 			return node;
 		} else {
 			return node;
@@ -190,7 +189,7 @@ export class SyntaxTree {
 			let signToken : Token = new Token(TokenType.Multiply, "*", sign.getPos());
 			let signOperatorNode : SyntaxNode = new OperatorNode(signToken);
 			let numberToken : Token = new Token(TokenType.Number, "-1", -1);
-			signOperatorNode.left = new NumberNode(numberToken, true);
+			signOperatorNode.left = new NumberNode(numberToken);
 			signOperatorNode.right = node;
 			node = signOperatorNode;
 			return node;
@@ -201,6 +200,8 @@ export class SyntaxTree {
 
 	private readComplexUnit(): SyntaxNode {
 		let node : SyntaxNode = this.readExponentUnit();
+		if (!this.hasReadAllTokens()) {
+		}
 		while (
 			!this.hasReadAllTokens() && 
 			(this.isNextToken(TokenType.Divide) || 
@@ -209,7 +210,7 @@ export class SyntaxTree {
 			this.tokens[this.offset + 1].getTokenType() != TokenType.LeftParentheses &&
 			(
 				this.tokens[this.offset + 1].getTokenType() == TokenType.Identifier && 
-				UNITS.indexOf(this.tokens[this.offset + 1].getData()) != -1
+				UNITS.indexOf(this.getBaseUnit(this.tokens[this.offset + 1].getData())) != -1
 			)
 		) {
 			let operatorToken = this.readToken();
@@ -220,6 +221,33 @@ export class SyntaxTree {
 			node = operatorNode;
 		}
 		return node;
+	}
+
+	private getBaseUnit(unit: string): string {
+		if (unit == "decays" || unit == "cycles") {
+			return unit;
+		}
+		if (UNITS.indexOf(unit) != -1) {
+			return unit;
+		} else {
+			let prefix = unit[0];
+			let base = unit.substring(1, unit.length);
+			if (prefix == "\\") {
+				prefix = unit.substring(0, 3);
+				base = unit.substring(3, unit.length);
+			}
+			if (PREFIXES.hasOwnProperty(prefix) && UNITS.indexOf(base) != -1 || base == "g") {
+				if (base == "g") {
+					return "kg";
+				}
+				return base;
+			} else {
+				if (unit == "g") {
+					return "kg"
+				}
+				return unit;
+			}
+		}
 	}
 
 	private readExponentUnit(): SyntaxNode {

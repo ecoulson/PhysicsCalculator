@@ -1,0 +1,738 @@
+[
+	{
+		"in": "\\omega",
+		"out": "54.454272662223076rad/s",
+		"formulas": [
+			"\\omega = 520rev/min * 1min/60s * (2rad * \\pi) / 1rev"
+		]
+	},
+	{
+		"in": "\\Delta\\theta",
+		"out": "49.50000000000001\\deg",
+		"formulas": [
+			"\\omega = 33rev/min * 1min/60s * (2rad * \\pi) / 1rev * 180\\deg / \\pi rad",
+			"t = 0.25s",
+			"\\Delta\\theta = \\omega * t"
+		]
+	},
+	{
+		"in": "v",
+		"out": "4.618141200776996m/s",
+		"formulas": [
+			"\\omega = 4.9 rev/min * 1min/60s * 2rad * \\pi / 1rev",
+			"d = 18m",
+			"r = d / 2",
+			"v = \\omega * r"
+		]
+	},
+	{
+		"in": "a_{c}",
+		"out": "2403.3775867930112m/s^2",
+		"formulas": [
+			"\\omega = 2857rev/min * 1min/60s * 2rad * \\pi / 1rev",
+			"r = 0.02685m",
+			"a_{c} = \\omega ^ 2 * r"
+		]
+	},
+	{
+		"in": "t",
+		"out": "4.810944806254709s",
+		"formulas": [
+			"r = 1.3m",
+			"m = 23kg",
+			"\\Delta\\theta = 2rad * \\pi",
+			"F_{t} = 51N",
+			"t = \\Delta\\theta / ((F_{t}/(m*r))^0.5"
+		]
+	},
+	{
+		"in": "v",
+		"out": "11.373653766490346m/s",
+		"formulas": [
+			"r=13.2m",
+			"v=sqrt(-g*r)"
+		]
+	},
+	{
+		"in": "F_{n}",
+		"out": "231.8564757231792N",
+		"formulas": [
+			"T = 4.5s",
+			"\\Delta\\theta = 2rad * \\pi",
+			"r = 8m",
+			"m = 40kg",
+			"\\omega = \\Delta\\theta / T",
+			"F_{n} = m*\\omega ^ 2 * r - m * -g)"
+		]
+	},
+	{
+		"in": "t",
+		"out": "27.665825350590552s",
+		"formulas": [
+			"d = 380m",
+			"r = d / 2",
+			"\\Delta\\theta = 2rad * \\pi",
+			"a_{c} = -g",
+			"t = \\Delta\\theta / sqrt(a_{c}/r)"
+		]
+	},
+	{
+		"in": "\\Delta_x",
+		"out": "1.5844482290299644m",
+		"formulas": [
+			"m = 90g",
+			"r = 60cm",
+			"h = 2.0m",
+			"\\Delta_y = h - r",
+			"F_{t} = 2.2N",
+			"W = m * -g",
+			"\\sum_F = F_{t} - W",
+			"v_{x} = sqrt(\\sum_F * r / m)",
+			"t = sqrt(2 * \\Delta_y / -g)",
+			"\\Delta_x = v_{x} * t"
+		]
+	},
+	{
+		"in": "t",
+		"out": "54.90196078431372s",
+		"formulas": [
+			"\\omega_{i} = 28 rad/s",
+			"\\alpha = -0.51rad/s^2",
+			"\\omega_{f} = 0 rad/s",
+			"t = (\\omega_{f} - \\omega_{i}) / \\alpha"
+		]
+	},
+	{
+		"in": "\\theta",
+		"out": "18.40848017058584",
+		"formulas": [
+			"F = 95N",
+			"r = 0.50m",
+			"\\tau = 15N*m",
+			"\\theta = asin(\\tau / (r * F))"
+		]
+	},
+	{
+		"in": "m",
+		"out": "16.842105263157894kg",
+		"formulas": [
+			"\\tau = 12N*m",
+			"r = 0.50m",
+			"\\alpha = 5.7 rad/s^2",
+			"m = (2 * \\tau) / (\\alpha * r ^ 2)"
+		]
+	},
+	{
+		"in": "t",
+		"out": "2.4709090909090907s",
+		"formulas": [
+			"m = 10.0 kg",
+			"r = 3 m",
+			"\\tau = 110 N*m",
+			"\\omega_{f} = 6.04 rad/s",
+			"\\omega_{i} = 0 rad/s",
+			"I = m * r ^ 2 / 2",
+			"\\alpha = \\tau / I",
+			"t = (\\omega_{f} - \\omega_{i}) / \\alpha"
+		]
+	},
+	{
+		"in": "\\sum_I",
+		"out": "1.83176kg*m^2",
+		"formulas": [
+			"m_{d} = 7kg",
+			"r_{d} = 0.65m",
+			"m_{c} = 2.1kg",
+			"r_{c} = 0.41m",
+			"I_{d} = m_{d} * r_{d} ^ 2 / 2",
+			"I_{c} = m_{c} * r_{c} ^ 2",
+			"\\sum_I = I_{c} + I_{d}"
+		]
+	},
+	{
+		"in": "I",
+		"out": "4.7826666666666675kg*m^2",
+		"formulas": [
+			"r = 0.340m",
+			"F = 16.88N",
+			"\\alpha = 1.20 rad/s^2",
+			"\\theta = 90",
+			"I = r * F * sin(\\theta) / \\alpha"
+		]
+	},
+	{
+		"in": "W",
+		"out": "0J",
+		"formulas": [
+			"m = 7kg",
+			"h = 1.2m",
+			"d = 2..3m",
+			"a = 0 m/s^2",
+			"F = m * a",
+			"W = F * d"
+		]
+	},
+	{
+		"in": "W",
+		"out": "576810J",
+		"formulas": [
+			"m = 425kg",
+			"\\Delta_y = 117m",
+			"a = 1.8 m/s^2",
+			"F = m * a",
+			"F_{w} = m * -g",
+			"\\Sum_F = F + F_{w}",
+			"W = \\Sum_F * \\Delta_y"
+		]
+	},
+	{
+		"in": "F",
+		"out": "74.82331490465393N",
+		"formulas": [
+			"\\theta = 36\\deg",
+			"W = 908J",
+			"d = 15m",
+			"F = W / (d * cos(\\theta)"
+		]
+	},
+	{
+		"in": "K",
+		"out": "290.4J",
+		"formulas": [
+			"m =0.300kg",
+			"v = 44 m/s",
+			"K = 1 / 2 * m * v^2"
+		]
+	},
+	{
+		"in": "v_{f}",
+		"out": "28.648223692241736m/s",
+		"formulas": [
+			"v_{i} = 10m/s",
+			"m = 1110kg",
+			"W = 4.00J * 10^5",
+			"v_{f} = sqrt((2 * W / m) + v_{i}^2)"
+		]
+	},
+	{
+		"in": "F_{2}",
+		"out": "199.2857142857143N",
+		"formulas": [
+			"F = 135N",
+			"\\Delta_x_{1} = 0.21m",
+			"\\Delta_x_{2} = 0.31m",
+			"k = F / \\Delta_x_{1}",
+			"F_{2} = k * \\Delta_x_{2}"
+		]
+	},
+	{
+		"in": "h",
+		"out": "1.027246459698461m",
+		"formulas": [
+			"k = 3.4kN/m",
+			"\\theta = 31.0 \\deg",
+			"m = 33.0kg",
+			"\\Delta_x = 0.37m",
+			"U_{s} = 1/2 * k * \\Delta_x ^ 2",
+			"h_{r} = U_{s} / (m * -g)",
+			"d = h_{r} / sin(\\theta)",
+			"h = d - \\Delta_x"
+		]
+	},
+	{
+		"in": "P",
+		"out": "17.5W",
+		"formulas": [
+			"F = 75N",
+			"\\Delta_x = 42m",
+			"t = 3min * 60s / 1min",
+			"P = F * \\Delta_x / t"
+		]
+	},
+	{
+		"in": "F",
+		"out": "2048.6263736263736N",
+		"formulas": [
+			"v = 27.3m/s",
+			"p = 75.0hp * 745.7 W/hp",
+			"F = p/v"
+		]
+	},
+	{
+		"in": "P",
+		"out": "1.239665121364002hp",
+		"formulas": [
+			"\\theta = 25.0\\deg",
+			"t = 3.0s",
+			"m = 55.8kg",
+			"d = 12.0m",
+			"h_{i} = 0m",
+			"h_{f} = d * sin(\\theta)",
+			"W = m * -g * h_{f} - m * -g * h_{i}",
+			"P = W / t * 1hp / 745.7W"
+		]
+	},
+	{
+		"in": "T_{C}",
+		"out": "170.86666666666667K",
+		"formulas": [
+			"W = 4.0J",
+			"Q_{H} = 15.0J",
+			"T_{H} = 233K",
+			"eff_{max} = W / Q_{H}",
+			"T_{C} = T_{H} * (1 - eff_{max})"
+		]
+	},
+	{
+		"in": "\\Delta_U",
+		"out": "56.099999999999994W",
+		"formulas": [
+			"Q = 0J",
+			"P_{in} = 187W",
+			"P_{out} = 130.9W",
+			"W_{in} = P_{in} * 1s",
+			"W_{out} = P_{out} * 1s",
+			"\\sum_W = W_{in} - W_{out}",
+			"\\Delta_U = (Q + \\sum_W) / 1s"
+		]
+	},
+	{
+		"in": "eff",
+		"out": "0.4035433070866142",
+		"formulas": [
+			"Q_{H} = 508J",
+			"Q_{C} = 303J",
+			"W = Q_{H} - Q_{C}",
+			"eff = W / Q_{H}"
+		]
+	},
+	{
+		"in": "T_{H}",
+		"out": "358.2162162162162K",
+		"formulas": [
+			"COP_{cool} = 3.7",
+			"T_{C} = 9.0\\deg_C + 273K",
+			"T_{H} = T_{C} / COP_{cool} + T_{C}"
+		]
+	},
+	{
+		"in": "W",
+		"out": "6122.448979591836J",
+		"formulas": [
+			"COP_{heat} = 4.9",
+			"Q_{H} = 30kW * 1s",
+			"W = Q_{H} / COP_{heat}"
+		]
+	},
+	{
+		"in": "T_{f}",
+		"out": "314.88K",
+		"formulas": [
+			"p_{f} = 0.82Pa * 10^5",
+			"V_{f} = 0.80m^3",
+			"p_{i} = 0.50Pa * 10^5",
+			"V_{i} = 1.25m^3",
+			"T_{i} = 27\\deg_C + 273K",
+			"T_{f} = (p_{f} * V_{f} * T_{i}) / (p_{i} * V_{i})"
+		]
+	},
+	{
+		"in": "W",
+		"out": "218.862J",
+		"formulas": [
+			"p_{o} = 5.4atm * 101325Pa / 1atm",
+			"W = 1/2 * (600cm^3 - 200cm^3) * (2 * p_{o})"
+		]
+	},
+	{
+		"in": "Q",
+		"out": "457955496J",
+		"formulas": [
+			"C = 368 J/kg*K^-1",
+			"L_{f} = 205 kJ/kg",
+			"MP = 1357K",
+			"T_{i} = 300K",
+			"m = 771kg",
+			"\\Delta_t = MP - T_{i}",
+			"Q_{1} = m * C * \\Delta_t",
+			"Q_{2} = m * L_{f}",
+			"Q = Q_{1} + Q_{2}"
+		]
+	},
+	{
+		"in": "t",
+		"out": "0.8423707440100883s",
+		"formulas": [
+			"T_{i} = 273K",
+			"m = 2.0kg",
+			"L_{f} = 334 kJ/kg",
+			"P = 793 kW",
+			"Q = m * L_{f}",
+			"t = Q / P"
+		]
+	},
+	{
+		"in": "E",
+		"out": "180000N/C",
+		"formulas": [
+			"Q = 8.0nC",
+			"d = 2.0cm",
+			"E = k * Q / d^2"
+		]
+	},
+	{
+		"in": "E",
+		"out": "20906666.666666668N/C",
+		"formulas": [
+			"Q = -3.0nC",
+			"m = 6.4g",
+			"F = m * -g",
+			"E = F / |Q|"
+		]
+	},
+	{
+		"in": "\\sum_F",
+		"out": "0.0018082610431019077N",
+		"formulas": [
+			"Q = 5.8nC",
+			"q_{1} = 2nC",
+			"q_{2} = 2nC",
+			"d = 1cm",
+			"\\theta = 60\\deg",
+			"F_{1} = k * q_{1} * Q / d^2",
+			"F_{2} = k * q_{2} * Q / d^2",
+			"\\sum_F = F_{1} * sin(\\theta) + F_{2} * sin(\\theta)"
+		]
+	},
+	{
+		"in": "q_{1}",
+		"out": "1.2400000000000002x10^-8C",
+		"formulas": [
+			"Q = -3.1nC",
+			"d = 0.10m",
+			"q_{2} = 4 * Q",
+			"q_{1} = -q_{2}"
+		]
+	},
+	{
+		"in": "E",
+		"out": "2222222222222221.8N/C",
+		"formulas": [
+			"q_{1} = -0.010C",
+			"q_{2} = 0.20C",
+			"d = 0.90mm",
+			"E = k * q_{2} / d^2"
+		]
+	},
+	{
+		"in": "total_electrons",
+		"out": "2500000000000electrons",
+		"formulas": [
+			"Q = -400nC",
+			"total_electrons = Q * 1electrons / (-1.6C * 10^-19)"
+		]
+	},
+	{
+		"in": "v_{f}",
+		"out": "15205551.328669118m/s",
+		"formulas": [
+			"E = 12000N/C",
+			"v_{i} = 2.0m/s * 10^7",
+			"\\Delta_x = 40mm",
+			"m = 9.1kg * 10^-31",
+			"q = -1.6C * 10^-19",
+			"a = E * q / m",
+			"v_{f} = sqrt(v_{i}^2 + 2 * a * \\Delta_x)"
+		]
+	},
+	{
+		"in": "\\theta",
+		"out": "4.150932838864399\\deg",
+		"formulas": [
+			"d = 1.0m",
+			"m_{1} = 5g",
+			"m_{2} = 5g",
+			"q_{1} = 91nC",
+			"q_{2} = 91nC",
+			"x = (k * q_{1} * q_{2}) / (4 * d^2 * m_{1} * -g)",
+			"\\theta = x^(1/3) * 180\\deg / \\pi"
+		]
+	},
+	{
+		"in": "U_{e}",
+		"out": "1.8000000000000002x10^-8J",
+		"formulas": [
+			"q_{1} = 6.0C * 10^-6",
+			"V = 0.003V",
+			"U_{e} = V * q_{1}"
+		]
+	},
+	{
+		"in": "-W",
+		"out": "40.5J",
+		"formulas": [
+			"q_{1} = 3.0C * 10^-6",
+			"q_{2} = 9.0C * 10^-6",
+			"d = 6mm",
+			"V_{\\infty} = 0",
+			"W = k * -q_{2} * q_{1} / d"
+		]
+	},
+	{
+		"in": "\\Delta_V",
+		"out": "626.25V",
+		"formulas": [
+			"v_{i} =  2.0m/s * 10^5",
+			"v_{f} = 4.0m/s * 10^5",
+			"m = 1.67kg * 10^-27",
+			"q = 1.6C * 10^-19",
+			"k_{f} = 1/2 * m * v_{f}^2",
+			"k_{i} = 1/2 * m * v_{i}^2",
+			"\\Delta_V = (k_{f} - k_{i}) / abs(-q)"
+		]
+	},
+	{
+		"in": "\\sum_V",
+		"out": "0V",
+		"formulas": [
+			"d = 1.6cm",
+			"q_{1} = 2nC",
+			"q_{2} = -1nC",
+			"q_{3} = -1nC",
+			"\\theta = 30\\deg",
+			"r = d * sin(\\theta)",
+			"\\sum_V = k * (q_{1} / r + q_{2} / r + q_{3} / r)"
+		]
+	},
+	{
+		"in": "U_{e}",
+		"out": "7.82735796741864x10^-8J",
+		"formulas": [
+			"r = 7mm",
+			"d = 1mm",
+			"\\sigma = 3.0\\muC/m^2",
+			"A = \\pi * r^2",
+			"q = A * \\sigma",
+			"V = (d * \\sigma) / (-2 * \\epsilon_{o})",
+			"U_{e} = V * -q"
+		]
+	},
+	{
+		"in": "A",
+		"out": "0.00006900000000000001m^2",
+		"formulas": [
+			"\\sigma = 1.0nC/mm^2",
+			"C = 3.0pF",
+			"V = 23000V",
+			"A = C * V / \\sigma"
+		]
+	},
+	{
+		"in": "electrons",
+		"out": "2375000000000000000electrons",
+		"formulas": [
+			"I = 380mA",
+			"t = 1s",
+			"q = I * t",
+			"electrons = q * 1electrons/(1.6C * 10^-19)"
+		]
+	},
+	{
+		"in": "electrons",
+		"out": "2249999999999999700electrons",
+		"formulas": [
+			"I = 6mA",
+			"t = 60s",
+			"q = I * t",
+			"electrons = q *1electrons/(1.6C * 10^-19)"
+		]
+	},
+	{
+		"in": "I",
+		"out": "0.9074852129730301A",
+		"formulas": [
+			"P_{max} = 14W",
+			"R = 17\\Omega",
+			"I = sqrt(P_{max} / R)"
+		]
+	},
+	{
+		"in": "P",
+		"out": "0.000405W",
+		"formulas": [
+			"V = 9.0V",
+			"R = 200k\\Omega",
+			"P = V^2 / R"
+		]
+	},
+	{
+		"in": "V",
+		"out": "2.5V",
+		"formulas": [
+			"Q = 4.0C",
+			"W = 10J",
+			"V = W / Q"
+		]
+	},
+	{
+		"in": "U_{e}",
+		"out": "21.6J",
+		"formulas": [
+			"\\epsilon = 1V",
+			"t = 1hr * 60min / 1hr * 60s / 1min",
+			"I = 6mA",
+			"U_{e} = \\epsilon * I * t"
+		]
+	},
+	{
+		"in": "E_{rem}",
+		"out": "16000J",
+		"formulas": [
+			"I = 1.5A",
+			"U_{e} = 43kJ",
+			"t = 1hr * 60min/1hr * 60s/1min",
+			"\\Delta_V = 5.0V",
+			"q = I * t",
+			"W = -q * \\Delta_V",
+			"E_{rem} = U_{e} + W"
+		]
+	},
+	{
+		"in": "R_{eq}",
+		"out": "400\\Omega",
+		"formulas": [
+			"R = 160\\Omega",
+			"R_{23} = (1/R + 1/R)^-1",
+			"R_{eq} = R + R + R_{23}"
+		]
+	},
+	{
+		"in": "R_{eq}",
+		"out": "600\\Omega",
+		"formulas": [
+			"R = 600\\Omega",
+			"R_{12} = (1/R + 1/R)^-1",
+			"R_{34} = (1/R + 1/R)^-1",
+			"R_{eq} = R_{12} + R_{34}"
+		]
+	},
+	{
+		"in": "P",
+		"out": "3.5555555555555554W",
+		"formulas": [
+			"R_{1} = 2\\Omega",
+			"R_{2} = 1\\Omega",
+			"R_{3} = 5\\Omega",
+			"R_{4} = 1\\Omega",
+			"R_{5} = 4\\Omega",
+			"V = 12V",
+			"R_{12} = R_{1} + R_{2}",
+			"R_{34} = R_{3} + R_{4}",
+			"R_{1234} = (1/R_{12} + 1/R_{34})^-1",
+			"R_{eq} = R_{1234} + R_{5}",
+			"I = V / R_{eq}",
+			"V_{5} = I * R_{5}",
+			"V_{1234} = I * R_{1234}",
+			"V_{12} = V_{1234}",
+			"I_{12} = V_{12} / R_{12}",
+			"V_{34} = V_{1234}",
+			"I_{34} = V_{34} / R_{34}",
+			"I_{1} = I_{12}",
+			"V_{1} = I_{1} * R_{1}",
+			"P = I_{1} * V_{1}"
+		]
+	},
+	{
+		"in": "Q",
+		"out": "0.0022605635528912854C",
+		"formulas": [
+			"V = 70V",
+			"R = 0.20M\\Omega",
+			"C = 90\\muF",
+			"t_{i} = 0s",
+			"t_{f} = 8.0s",
+			"Q = C * V * (1 - e ^ (-1 * (t_{f} / (R * C))))"
+		]
+	},
+	{
+		"in": "V_{B}",
+		"out": "6V",
+		"formulas": [
+			"V = 9V",
+			"V_{A} = 9V",
+			"V_{D} = 0V",
+			"R_{1} = 5\\Omega",
+			"R_{2} = 10\\Omega",
+			"R_{eq} = R_{1} + R_{2}",
+			"I = V / R_{eq}",
+			"V_{R1} = I * R_{1}",
+			"V_{B} = V - V_{R1}"
+		]
+	},
+	{
+		"in": "\\iota",
+		"out": "37.06046139041273",
+		"formulas": [
+			"h = 50m",
+			"d = 37.5m",
+			"n_{1} = 1.00",
+			"n_{2} = 1.33",
+			"\\theta_{2} = atan(d / h)",
+			"\\theta_{1} = asin(n_{2} * sin(\\theta_{2}) / n_{1})",
+			"\\iota = 90 - \\theta_{1}"
+		]
+	},
+	{
+		"in": "n_{1} / 1\\deg",
+		"out": "1.240071682515885",
+		"formulas": [
+			"\\theta_{3} = 90\\deg",
+			"h_{o} = 158cm",
+			"h_{s} = 66cm",
+			"d_{o} = 90cm",
+			"d_{A} = 200cm",
+			"n_{3} = 1",
+			"\\theta_{2} = atan((d_{A} - d_{o}) / h_{o})",
+			"n_{2} = n_{3} * sin(\\theta_{3}) / sin(\\theta_{2})",
+			"\\theta_{1} = atan(d_{o} / h_{s})",
+			"n_{1} = n_{2} * sin(\\theta_{2}) / sin(\\theta_{1})"
+		]
+	},
+	{
+		"in": "v",
+		"out": "150000000m/s",
+		"formulas": [
+			"n_{2} = 2.0",
+			"v = c / n_{2}"
+		]
+	},
+	{
+		"in": "m",
+		"out": "-1.5",
+		"formulas": [
+			"d_{o} = 50cm",
+			"d_{i} = 75cm",
+			"m = -d_{i} / d_{o}"
+		]
+	},
+	{
+		"in": "d_{i}",
+		"out": "0.7499999999999999m",
+		"formulas": [
+			"C = 0.6m",
+			"d_{o} = 0.5m",
+			"f = C / 2",
+			"d_{i} = (1/f - 1/d_{o})^-1"
+		]
+	},
+	{
+		"in": "d_{o}",
+		"out": "0.18m",
+		"formulas": [
+			"C = 0.6m",
+			"f = C / 2",
+			"m = 2.5",
+			"d_{o} = f * (m -1) / m"
+		]
+	}
+]
