@@ -149,7 +149,6 @@ export class SyntaxTree {
 	}
 
 	private addUnits(node: SyntaxNode): SyntaxNode {
-		let numberNode = <NumberNode>node;
 		if (!this.hasReadAllTokens() && this.isNextToken(TokenType.Identifier)) {
 			let unitNode : SyntaxNode = this.readComplexUnit();
 			node.right = unitNode;
@@ -200,6 +199,7 @@ export class SyntaxTree {
 
 	private readComplexUnit(): SyntaxNode {
 		let node : SyntaxNode = this.readExponentUnit();
+		console.log(this.tokens[this.offset + 1].getData())
 		while (
 			!this.hasReadAllTokens() && 
 			(this.isNextToken(TokenType.Divide) || 
