@@ -23,6 +23,7 @@ export class WorkSpace {
 		this.defineFormula(`\\pi = ${Math.PI.toString()}`);
 		this.defineFormula(`g = -9.8m/s^2`);
 		this.defineFormula(`k = 9.0N*m^2/C^2 * 10^9`);
+		this.defineFormula(`c = 3.0m/s * 10^8`)
 	}
 
 	public defineFormula(formula: string) {

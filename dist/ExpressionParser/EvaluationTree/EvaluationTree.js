@@ -561,9 +561,6 @@ var EvaluationTree = /** @class */ (function () {
                 this.simplify(dimensions, simplifications[unit]);
                 this.removeCanceledUnits(dimensions);
                 combination.push(unitDimension);
-                if (combination.length < 10) {
-                    console.log(combination);
-                }
                 this.getAllSimplificationsHelper(dimensions, combination, allCombinations);
                 combination.pop();
             }

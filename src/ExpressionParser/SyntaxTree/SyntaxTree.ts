@@ -13,6 +13,7 @@ import { resolve } from "path";
 
 const UnitInfoDir = resolve(__dirname, "../UnitInfo");
 const UNITS : Array<string> = JSON.parse(readFileSync(resolve(UnitInfoDir, "Units.json"), "utf-8"));
+const PREFIXES : Object = JSON.parse(readFileSync(resolve(UnitInfoDir, "Prefixes.json"), "utf-8"));
 
 export class SyntaxTree {
 	private tokens : Array<Token>;
@@ -199,7 +200,8 @@ export class SyntaxTree {
 
 	private readComplexUnit(): SyntaxNode {
 		let node : SyntaxNode = this.readExponentUnit();
-		console.log(this.tokens[this.offset + 1].getData())
+		if (!this.hasReadAllTokens()) {
+		}
 		while (
 			!this.hasReadAllTokens() && 
 			(this.isNextToken(TokenType.Divide) || 
@@ -208,7 +210,7 @@ export class SyntaxTree {
 			this.tokens[this.offset + 1].getTokenType() != TokenType.LeftParentheses &&
 			(
 				this.tokens[this.offset + 1].getTokenType() == TokenType.Identifier && 
-				UNITS.indexOf(this.tokens[this.offset + 1].getData()) != -1
+				UNITS.indexOf(this.getBaseUnit(this.tokens[this.offset + 1].getData())) != -1
 			)
 		) {
 			let operatorToken = this.readToken();
@@ -219,6 +221,33 @@ export class SyntaxTree {
 			node = operatorNode;
 		}
 		return node;
+	}
+
+	private getBaseUnit(unit: string): string {
+		if (unit == "decays" || unit == "cycles") {
+			return unit;
+		}
+		if (UNITS.indexOf(unit) != -1) {
+			return unit;
+		} else {
+			let prefix = unit[0];
+			let base = unit.substring(1, unit.length);
+			if (prefix == "\\") {
+				prefix = unit.substring(0, 3);
+				base = unit.substring(3, unit.length);
+			}
+			if (PREFIXES.hasOwnProperty(prefix) && UNITS.indexOf(base) != -1 || base == "g") {
+				if (base == "g") {
+					return "kg";
+				}
+				return base;
+			} else {
+				if (unit == "g") {
+					return "kg"
+				}
+				return unit;
+			}
+		}
 	}
 
 	private readExponentUnit(): SyntaxNode {

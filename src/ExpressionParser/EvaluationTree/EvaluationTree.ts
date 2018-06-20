@@ -459,17 +459,18 @@ export class EvaluationTree {
 		} else if (unitCombinations.length == 1) {
 			return unitCombinations[0];
 		} else {
-			let smallestCombinations = this.getShortestCombinations(unitCombinations);
+			let smallestCombinations : Array<Array<Dimension>> = this.getShortestCombinations(unitCombinations);
 			if (smallestCombinations.length == 1) {
 				return smallestCombinations[0];
 			} else {
-				return this.getCombinationWithLeastBaseUnits(smallestCombinations);
+				let leastBaseUnits : Array<Array<Dimension>> = this.getCombinationWithLeastBaseUnits(smallestCombinations);
+				return leastBaseUnits[0];
 			}
 		}
 	}
 
-	private getCombinationWithLeastBaseUnits(combinations: Array<Array<Dimension>>): Array<Dimension> {
-		let bestCombination: Array<Dimension> = [];
+	private getCombinationWithLeastBaseUnits(combinations: Array<Array<Dimension>>): Array<Array<Dimension>> {
+		let bestCombinations: Array<Array<Dimension>> = [];
 		let minBaseUnits = Infinity;
 		let count = 0;
 		for (let i = 0; i < combinations.length; i++) {
@@ -480,10 +481,10 @@ export class EvaluationTree {
 			}
 			minBaseUnits = Math.min(minBaseUnits, count);
 			if (count == minBaseUnits) {
-				bestCombination = combinations[i];
+				bestCombinations.push(combinations[i]);
 			}
 		}
-		return bestCombination;
+		return bestCombinations;
 	}
 
 	private getAllSimplifications(baseDimensions: Array<Dimension>): Array<Array<Dimension>> {
