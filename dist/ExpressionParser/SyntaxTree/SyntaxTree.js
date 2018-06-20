@@ -13,6 +13,7 @@ var fs_1 = require("fs");
 var path_1 = require("path");
 var UnitInfoDir = path_1.resolve(__dirname, "../UnitInfo");
 var UNITS = JSON.parse(fs_1.readFileSync(path_1.resolve(UnitInfoDir, "Units.json"), "utf-8"));
+var PREFIXES = JSON.parse(fs_1.readFileSync(path_1.resolve(UnitInfoDir, "Prefixes.json"), "utf-8"));
 var SyntaxTree = /** @class */ (function () {
     function SyntaxTree(tokens) {
         this.tokens = tokens;
@@ -134,7 +135,6 @@ var SyntaxTree = /** @class */ (function () {
         }
     };
     SyntaxTree.prototype.addUnits = function (node) {
-        var numberNode = node;
         if (!this.hasReadAllTokens() && this.isNextToken(TokenType_1.TokenType.Identifier)) {
             var unitNode = this.readComplexUnit();
             node.right = unitNode;
@@ -185,13 +185,15 @@ var SyntaxTree = /** @class */ (function () {
     };
     SyntaxTree.prototype.readComplexUnit = function () {
         var node = this.readExponentUnit();
+        if (!this.hasReadAllTokens()) {
+        }
         while (!this.hasReadAllTokens() &&
             (this.isNextToken(TokenType_1.TokenType.Divide) ||
                 this.isNextToken(TokenType_1.TokenType.Multiply)) &&
             this.tokens[this.offset + 1].getTokenType() != TokenType_1.TokenType.Number &&
             this.tokens[this.offset + 1].getTokenType() != TokenType_1.TokenType.LeftParentheses &&
             (this.tokens[this.offset + 1].getTokenType() == TokenType_1.TokenType.Identifier &&
-                UNITS.indexOf(this.tokens[this.offset + 1].getData()) != -1)) {
+                UNITS.indexOf(this.getBaseUnit(this.tokens[this.offset + 1].getData())) != -1)) {
             var operatorToken = this.readToken();
             var operatorNode = new OperatorNode_1.OperatorNode(operatorToken);
             var rightNode = this.readExponentUnit();
@@ -200,6 +202,34 @@ var SyntaxTree = /** @class */ (function () {
             node = operatorNode;
         }
         return node;
+    };
+    SyntaxTree.prototype.getBaseUnit = function (unit) {
+        if (unit == "decays" || unit == "cycles") {
+            return unit;
+        }
+        if (UNITS.indexOf(unit) != -1) {
+            return unit;
+        }
+        else {
+            var prefix = unit[0];
+            var base = unit.substring(1, unit.length);
+            if (prefix == "\\") {
+                prefix = unit.substring(0, 3);
+                base = unit.substring(3, unit.length);
+            }
+            if (PREFIXES.hasOwnProperty(prefix) && UNITS.indexOf(base) != -1 || base == "g") {
+                if (base == "g") {
+                    return "kg";
+                }
+                return base;
+            }
+            else {
+                if (unit == "g") {
+                    return "kg";
+                }
+                return unit;
+            }
+        }
     };
     SyntaxTree.prototype.readExponentUnit = function () {
         var node = this.readSimpleUnit();

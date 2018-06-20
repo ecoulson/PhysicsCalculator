@@ -21,6 +21,7 @@ export declare class SyntaxTree {
     private transformNodeIfInvoke;
     private transformNodeIfNegative;
     private readComplexUnit;
+    private getBaseUnit;
     private readExponentUnit;
     private readSimpleUnit;
 }

@@ -285,7 +285,12 @@ var EvaluationTree = /** @class */ (function () {
     EvaluationTree.prototype.evaluate = function () {
         var value = this.evaluateValue();
         var unit = this.evaluateUnits();
-        return "" + value + unit;
+        var numberString = value.toString();
+        if (numberString.indexOf('e') != -1) {
+            var parts = numberString.split('e');
+            numberString = parts[0] + "x10^" + parts[1];
+        }
+        return "" + numberString + unit;
     };
     EvaluationTree.prototype.evaluateValue = function () {
         return this.evaluateValueHelper(this.root) * Math.pow(10, this.base10Exp);
@@ -470,12 +475,13 @@ var EvaluationTree = /** @class */ (function () {
                 return smallestCombinations[0];
             }
             else {
-                return this.getCombinationWithLeastBaseUnits(smallestCombinations);
+                var leastBaseUnits = this.getCombinationWithLeastBaseUnits(smallestCombinations);
+                return leastBaseUnits[0];
             }
         }
     };
     EvaluationTree.prototype.getCombinationWithLeastBaseUnits = function (combinations) {
-        var bestCombination = [];
+        var bestCombinations = [];
         var minBaseUnits = Infinity;
         var count = 0;
         for (var i = 0; i < combinations.length; i++) {
@@ -486,10 +492,10 @@ var EvaluationTree = /** @class */ (function () {
             }
             minBaseUnits = Math.min(minBaseUnits, count);
             if (count == minBaseUnits) {
-                bestCombination = combinations[i];
+                bestCombinations.push(combinations[i]);
             }
         }
-        return bestCombination;
+        return bestCombinations;
     };
     EvaluationTree.prototype.getAllSimplifications = function (baseDimensions) {
         var unitCombinations = [];
@@ -517,31 +523,38 @@ var EvaluationTree = /** @class */ (function () {
     EvaluationTree.prototype.removeEquivalentCombinations = function (combinations) {
         var newCombinations = [];
         for (var i = 0; i < combinations.length; i++) {
-            var hasCombination = false;
-            for (var j = 0; j < newCombinations.length; j++) {
-                if (combinations[i].length == newCombinations[j].length) {
-                    var isEqual = true;
-                    for (var k = 0; k < combinations[i].length; k++) {
-                        var index = this.indexOfDimension(combinations[i][k], newCombinations[j]);
-                        if (index == -1) {
-                            isEqual = false;
-                        }
-                        else {
-                            if (combinations[i][k].degree != newCombinations[j][index].degree) {
-                                isEqual = false;
-                            }
-                        }
-                    }
-                    if (isEqual) {
-                        hasCombination = true;
-                    }
-                }
-            }
-            if (!hasCombination) {
+            if (!this.hasCombination(combinations[i], newCombinations)) {
                 newCombinations.push(combinations[i]);
             }
         }
         return newCombinations;
+    };
+    EvaluationTree.prototype.hasCombination = function (combination, combinations) {
+        for (var i = 0; i < combinations.length; i++) {
+            if (this.isCombinationEqual(combination, combinations[i])) {
+                return true;
+            }
+        }
+        return false;
+    };
+    EvaluationTree.prototype.isCombinationEqual = function (combination, other) {
+        if (combination.length != other.length) {
+            return false;
+        }
+        else {
+            for (var i = 0; i < combination.length; i++) {
+                var j = this.indexOfDimension(combination[i], other);
+                if (j == -1) {
+                    return false;
+                }
+                else {
+                    if (!combination[i].equals(other[j])) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     };
     EvaluationTree.prototype.getAllSimplificationsHelper = function (baseDimensions, combination, allCombinations) {
         var simplifications = this.getSimplifications(baseDimensions);
@@ -550,13 +563,11 @@ var EvaluationTree = /** @class */ (function () {
         }
         else {
             for (var unit in simplifications) {
+                var SIUnits = this.createDimensionArray(DERIVED_UNITS[unit]);
                 var dimensions = this.copyBaseDimensions(baseDimensions);
                 var unitDimension = new Dimension_1.Dimension(unit, 1);
-                if (this.isOppositeSigns(dimensions, simplifications[unit])) {
+                if (this.isOppositeSigns(SIUnits, simplifications[unit])) {
                     unitDimension = new Dimension_1.Dimension(unit, -1);
-                    for (var i = 0; i < simplifications[unit].length; i++) {
-                        simplifications[unit][i].degree = -simplifications[unit][i].degree;
-                    }
                 }
                 this.simplify(dimensions, simplifications[unit]);
                 this.removeCanceledUnits(dimensions);
@@ -571,17 +582,25 @@ var EvaluationTree = /** @class */ (function () {
         for (var unit in DERIVED_UNITS) {
             if (unit != "Gy" && unit != "Sv" && unit != "dioptry" && unit != "\\deg_C") {
                 var SIUnits = this.createDimensionArray(DERIVED_UNITS[unit]);
-                if (this.canSimplify(dimensions, SIUnits)) {
+                if (this.isOppositeSigns(dimensions, SIUnits)) {
+                    for (var i = 0; i < SIUnits.length; i++) {
+                        SIUnits[i].degree = -SIUnits[i].degree;
+                    }
+                }
+                if (this.canSimplify(dimensions, SIUnits, unit)) {
                     possibleSimplifications[unit] = SIUnits;
                 }
             }
         }
         return possibleSimplifications;
     };
-    EvaluationTree.prototype.canSimplify = function (dimensions, SIUnits) {
+    EvaluationTree.prototype.canSimplify = function (dimensions, SIUnits, unit) {
         for (var i = 0; i < SIUnits.length; i++) {
             var indexOfDimension = this.indexOfDimension(SIUnits[i], dimensions);
             if (indexOfDimension == -1) {
+                return false;
+            }
+            if (Math.abs(dimensions[indexOfDimension].degree - SIUnits[i].degree) > Math.abs(dimensions[indexOfDimension].degree)) {
                 return false;
             }
         }
@@ -607,7 +626,7 @@ var EvaluationTree = /** @class */ (function () {
     EvaluationTree.prototype.isOppositeSigns = function (dimensions, simplificationDimensions) {
         for (var i = 0; i < simplificationDimensions.length; i++) {
             var dimensionIndex = this.indexOfDimension(simplificationDimensions[i], dimensions);
-            if ((dimensions[dimensionIndex].degree ^ simplificationDimensions[i].degree) >= 0) {
+            if (dimensionIndex != -1 && (dimensions[dimensionIndex].degree ^ simplificationDimensions[i].degree) >= 0) {
                 return false;
             }
         }

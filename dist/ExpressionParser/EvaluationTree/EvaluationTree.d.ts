@@ -30,6 +30,8 @@ export declare class EvaluationTree {
     private getAllSimplifications;
     private combineLikeTerms;
     private removeEquivalentCombinations;
+    private hasCombination;
+    private isCombinationEqual;
     private getAllSimplificationsHelper;
     private getSimplifications;
     private canSimplify;

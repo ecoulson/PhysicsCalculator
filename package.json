@@ -1,7 +1,7 @@
 {
   "name": "physicscalculator",
   "version": "1.0.0",
-  "description": "A calculator including units",
+  "description": "A calculator that can handle the majority of your introductory physics needs!",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
   "scripts": {
